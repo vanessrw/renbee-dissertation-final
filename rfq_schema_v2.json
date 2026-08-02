@@ -1,0 +1,126 @@
+{
+  "_about": "Reference schema v2 \u2014 regenerated to match the live rfq_input the API actually builds. The runtime source of truth is FIELDS + assemble_rfq_input() in epc_to_rfq.py; this file is documentation only and is not loaded by the code. v2 adds the site_context section and EPC-derived property fields that v1 was missing.",
+  "input_fields": {
+    "common": [
+      "technology_requested",
+      "preferred_contact_method",
+      "desired_installation_timeline",
+      "motivation",
+      "budget_range",
+      "additional_notes"
+    ],
+    "property": [
+      "epc_found",
+      "epc_rating",
+      "epc_score",
+      "property_type",
+      "built_form",
+      "floor_area_m2",
+      "construction_age_band",
+      "current_heating_system",
+      "current_fuel_type",
+      "hot_water_system",
+      "walls_description",
+      "roof_description",
+      "windows_description",
+      "occupancy_status",
+      "access_constraints"
+    ],
+    "heat_pump": [
+      "emitter_type",
+      "hot_water_cylinder_space_available",
+      "external_unit_space",
+      "garden_or_side_access",
+      "heat_pump_type_interest",
+      "radiator_suitability_known",
+      "insulation_status_basic",
+      "boiler_age_years",
+      "noise_or_planning_constraints",
+      "bus_interest",
+      "cooling_interest"
+    ],
+    "solar_pv": [
+      "roof_orientation",
+      "usable_roof_area_m2",
+      "roof_shading_level",
+      "roof_type",
+      "roof_pitch",
+      "roof_condition",
+      "number_of_roof_faces",
+      "annual_electricity_bill_gbp",
+      "daytime_electricity_usage",
+      "battery_interest",
+      "ev_present_or_planned",
+      "roof_under_warranty"
+    ],
+    "battery": [
+      "existing_solar_pv",
+      "battery_purpose",
+      "backup_power_required",
+      "battery_location_preference",
+      "existing_solar_pv_capacity_kwp",
+      "desired_capacity_band",
+      "annual_electricity_bill_gbp",
+      "daytime_electricity_usage",
+      "ev_present_or_planned",
+      "time_of_use_tariff"
+    ],
+    "solar_thermal": [
+      "roof_orientation",
+      "usable_roof_area_m2",
+      "roof_shading_level",
+      "hot_water_cylinder_space_available",
+      "number_of_occupants",
+      "number_of_bathrooms",
+      "current_water_heating_type",
+      "existing_cylinder_size_litres",
+      "roof_type",
+      "roof_pitch",
+      "roof_condition",
+      "collector_type_preference",
+      "auxiliary_heating_intended"
+    ],
+    "recommendation": [
+      "epc_recommendations_available",
+      "recommendation_source",
+      "raw_recommendation_items"
+    ],
+    "site_context": {
+      "planning": [
+        "listed_building",
+        "listed_grade",
+        "conservation_area_name",
+        "article_4",
+        "aonb_name",
+        "whs_name",
+        "national_park_name"
+      ],
+      "grid": [
+        "licence_area",
+        "primary_substation",
+        "demand_headroom_mw",
+        "demand_headroom_percent",
+        "demand_rag",
+        "generation_headroom_mw",
+        "year",
+        "scenario"
+      ],
+      "data_sources": "list of source-name strings, for attribution"
+    }
+  },
+  "proxy_property_markers": {
+    "_note": "Added to the property section only when EPC data is estimated (proxy paths), not in the normal EPC-found case.",
+    "fields": [
+      "epc_source",
+      "proxy_comparator_count",
+      "proxy_confidence",
+      "proxy_postcodes",
+      "proxy_picked"
+    ]
+  },
+  "output_fields": [
+    "rfq_summary",
+    "recommendation_summary",
+    "recommendation_disclaimer"
+  ]
+}

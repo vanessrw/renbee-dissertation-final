@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renbee — Get a quote (demo)</title>
+<style>
+  :root {
+    --accent: #0d9488;
+    --accent-dark: #0f766e;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --error: #dc2626;
+    --success: #15803d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 24px 16px 80px; }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 20px;
+    align-items: start;
+  }
+  .layout.aside-hidden {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .page-main { min-width: 0; }
+  .page-aside { position: sticky; top: 16px; }
+  .aside-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 12px;
+  }
+  .aside-card h3 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 600;
+  }
+  .aside-card .demo-note {
+    margin: 0 0 10px;
+    padding: 6px 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 4px;
+    color: #b91c1c;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .aside-card .pc-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .aside-card .pc-row:last-child { border-bottom: none; }
+  .aside-card .pc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .aside-card .pc { font-family: monospace; font-weight: 600; color: #0f766e; }
+  .aside-card .pc-meta { color: var(--muted); font-size: 11px; margin-top: 2px; line-height: 1.4; }
+  .aside-card .copy-btn {
+    background: #f3f4f6;
+    border: 1px solid var(--border);
+    color: #374151;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .aside-card .copy-btn:hover { background: #e5e7eb; border-color: #d1d5db; }
+  .aside-card .copy-btn.copied {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #14532d;
+  }
+  @media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; }
+    .page-aside { position: static; }
+  }
+  header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header .subtitle { color: var(--muted); font-size: 14px; margin: 0; }
+  header .demo-pill {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 6px;
+  }
+
+  .steps {
+    display: flex;
+    gap: 4px;
+    margin: 16px 0 0;
+    font-size: 12px;
+  }
+  .steps .step {
+    flex: 1;
+    padding: 8px 4px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .steps .step.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+  .steps .step.done {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: var(--accent-dark);
+  }
+
+  section.card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  section.card h2 { margin: 0 0 4px; font-size: 18px; }
+  section.card .lead { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+
+  label { display: block; margin-bottom: 12px; font-size: 14px; font-weight: 500; }
+  label .hint { font-weight: 400; color: var(--muted); font-size: 12px; }
+  input, select, textarea {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  }
+  textarea { resize: vertical; min-height: 60px; }
+
+  button.primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  button.primary:hover { background: var(--accent-dark); }
+  button.primary:disabled { background: #94a3b8; cursor: not-allowed; }
+  button.secondary {
+    background: white;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button.link {
+    background: none;
+    border: none;
+    color: var(--accent-dark);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 0;
+  }
+
+  .auto-fill {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .site-intel {
+    background: #faf5ff;
+    border: 1px solid #d8b4fe;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .site-intel .auto-title {
+    color: #6b21a8;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .site-intel .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .site-intel .badge {
+    position: relative;
+    display: inline-block;
+    padding: 4px 9px;
+    background: #f3e8ff;
+    border: 1px solid #d8b4fe;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #581c87;
+    cursor: help;
+  }
+  .site-intel .badge.warn { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
+  .site-intel .badge.good { background: #dcfce7; border-color: #86efac; color: #14532d; }
+  .site-intel .badge[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    width: max-content;
+    max-width: 260px;
+    white-space: normal;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    z-index: 100;
+    pointer-events: none;
+  }
+  .site-intel .badge[data-tip]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #1f2937;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .site-intel .empty { color: #6b7280; font-style: italic; font-size: 12px; }
+  .site-intel .credit {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #6b7280;
+    border-top: 1px solid #e9d5ff;
+    padding-top: 6px;
+  }
+  .auto-fill .auto-title {
+    color: var(--success);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .auto-fill dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 12px;
+    margin: 0;
+  }
+  .auto-fill dt { color: var(--muted); }
+  .auto-fill dd { margin: 0; font-weight: 500; }
+
+  .candidates { list-style: none; padding: 0; margin: 0 0 12px; }
+  .candidates li {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+  .candidates li:hover { border-color: var(--accent); background: #f0fdfa; }
+  .candidates li.selected {
+    border-color: var(--accent);
+    background: #ccfbf1;
+    font-weight: 500;
+  }
+  .candidates .meta { color: var(--muted); font-size: 12px; }
+  .candidates .fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #334155;
+  }
+  .candidates .fields .key { color: var(--muted); }
+  .candidates .fields .val { font-weight: 500; }
+
+  .recommendation {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 14px 16px;
+    border-radius: 4px;
+    margin: 12px 0;
+  }
+  .recommendation p { margin: 0; }
+  .recommendation .disclaimer {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .rfq-preview {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 12px 0;
+  }
+  .rfq-preview h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    color: #92400e;
+  }
+  .rfq-preview .body {
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #fde68a;
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+  .rfq-field-label {
+    display: block;
+    margin: 12px 0 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #92400e;
+  }
+  .rfq-preview .editable {
+    width: 100%;
+    box-sizing: border-box;
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #fde68a;
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    resize: vertical;
+  }
+  .rfq-preview .editable.mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    white-space: pre;
+  }
+  .rfq-preview .editable:focus {
+    outline: none;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+  }
+  .json-status { font-weight: 500; font-size: 12px; margin-left: 6px; }
+  .json-status.valid { color: #15803d; }
+  .json-status.invalid { color: var(--error); }
+  #final-rfq-preview { text-align: left; margin-top: 18px; }
+  #final-rfq-preview .final-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #92400e;
+    margin: 12px 0 4px;
+  }
+  #final-rfq-preview .final-label:first-child { margin-top: 0; }
+  #final-rfq-preview .final-json {
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid #fde68a;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    white-space: pre;
+    overflow: auto;
+    max-height: 320px;
+    margin: 0;
+  }
+  .save-status { margin-top: 8px; font-size: 13px; }
+  .save-status.ok { color: #15803d; }
+  .save-status.err { color: var(--error); }
+
+  .error-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: var(--error);
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .completeness-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 4px 0 16px;
+  }
+  .completeness-bar .fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+
+  details.debug {
+    margin-top: 24px;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  details.debug summary { cursor: pointer; padding: 4px 0; }
+  details.debug pre {
+    max-height: 320px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 8px 0 0;
+    background: #0f172a;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  .thanks {
+    text-align: center;
+    padding: 32px 16px;
+  }
+  .thanks .checkmark {
+    font-size: 48px;
+    color: var(--success);
+    margin-bottom: 12px;
+  }
+
+  /* Loading spinner + dedicated section */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  .loading-section { text-align: center; padding: 48px 24px; }
+  .loading-section .label {
+    font-size: 16px; font-weight: 500; margin: 0 0 4px;
+  }
+  .loading-section .sublabel {
+    color: var(--muted); font-size: 13px; margin: 0;
+  }
+  @keyframes pulseDots {
+    0%, 20% { content: ''; }
+    40% { content: '.'; }
+    60% { content: '..'; }
+    80%, 100% { content: '...'; }
+  }
+  .loading-dots::after { content: ''; animation: pulseDots 1.5s infinite; }
+
+  /* Inline button spinner (used on Step 4 vendor cards) */
+  .button-spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Renbee — Get a quote <span class="demo-pill">demo</span></h1>
+    <p class="subtitle">Tell us about your home; we'll match you with verified installers.</p>
+    <nav class="steps">
+      <div class="step" data-step="1">1. Postcode</div>
+      <div class="step" data-step="2">2. Details</div>
+      <div class="step" data-step="3">3. Recommendation &amp; RFQ</div>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <div class="page-main">
+  <main>
+
+    <!-- Step 1 -->
+    <section class="card" id="step-1">
+      <h2>Where do you live?</h2>
+      <p class="lead">We'll look up your home's energy data automatically.</p>
+      <div id="step-1-error" class="error-banner hidden"></div>
+      <form id="step-1-form">
+        <label>Postcode
+          <input type="text" name="postcode" placeholder="e.g. CV12 8UE" required autocomplete="off">
+        </label>
+        <label>What would you like to install?
+          <select name="technology" required>
+            <option value="heat_pump">Heat pump</option>
+            <option value="solar_pv">Solar PV</option>
+            <option value="battery">Battery storage</option>
+            <option value="solar_thermal">Solar thermal</option>
+          </select>
+        </label>
+        <button type="submit" class="primary">Find my property</button>
+      </form>
+
+    </section>
+
+    <!-- Step 1.5 — address picker (conditional) -->
+    <section class="card hidden" id="step-1-5">
+      <h2>Which address is yours?</h2>
+      <p class="lead">Your postcode covers more than one property. Please select yours.</p>
+      <ul class="candidates" id="candidates-list"></ul>
+      <button type="button" class="primary" id="step-1-5-continue" disabled>Continue</button>
+      <hr style="margin: 18px 0; border: none; border-top: 1px solid #e5e7eb;">
+      <p class="lead" style="font-size: 14px; color: #6b7280;">Not sure which is yours? We can estimate your home's energy details from similar properties on your street instead.</p>
+      <button type="button" class="secondary" id="use-street-average">Use street average estimate →</button>
+    </section>
+
+    <!-- Step 1.6 — nearby property picker (conditional, when input postcode has 0 EPCs) -->
+    <section class="card hidden" id="step-1-6">
+      <h2>Pick the home most like yours</h2>
+      <p class="lead">There's no EPC on file for your postcode, but we found these nearby. Choose the one closest to your property — or use the average of all of them.</p>
+      <ul class="candidates" id="nearby-candidates-list"></ul>
+      <button type="button" class="primary" id="step-1-6-continue" disabled>Continue with selected property</button>
+      <hr style="margin: 18px 0; border: none; border-top: 1px solid #e5e7eb;">
+      <p class="lead" style="font-size: 14px; color: #6b7280;">Or, if you'd rather use the typical values across all of these properties:</p>
+      <button type="button" class="secondary" id="use-nearby-average">Use average of all →</button>
+    </section>
+
+    <!-- Step 2 — property details / technology fields -->
+    <section class="card hidden" id="step-2">
+      <h2>A few more details</h2>
+      <p class="lead">We auto-filled what we could from your home's energy certificate.</p>
+      <div id="auto-fill-summary"></div>
+      <div id="site-intel-panel"></div>
+      <div class="completeness-bar"><div class="fill" id="completeness-fill" style="width:0%"></div></div>
+      <p class="lead" id="completeness-text"></p>
+      <div id="step-2-error" class="error-banner hidden"></div>
+      <form id="step-2-form"></form>
+      <button type="button" class="primary" id="step-2-submit">Get my recommendation</button>
+    </section>
+
+    <!-- Loading state (shown during LLM calls) -->
+    <section class="card hidden" id="loading">
+      <div class="loading-section">
+        <div class="spinner"></div>
+        <p class="label" id="loading-label">Generating your recommendation</p>
+        <p class="sublabel"><span id="loading-sublabel">Analysing your home's energy data</span><span class="loading-dots"></span></p>
+      </div>
+    </section>
+
+    <!-- Step 3 — recommendation + RFQ generation -->
+    <section class="card hidden" id="step-3">
+      <h2>Your home energy recommendation</h2>
+      <p class="lead">Based on your home's official EPC data.</p>
+      <div class="recommendation">
+        <p id="recommendation-text"></p>
+        <p class="disclaimer" id="recommendation-disclaimer"></p>
+      </div>
+      <button type="button" class="primary" id="generate-rfq-btn">Generate RFQ</button>
+
+      <div class="rfq-preview hidden" id="rfq-preview">
+        <h3>Here's the RFQ we'll send (review and edit before submitting)</h3>
+        <label class="rfq-field-label" for="rfq-text">RFQ summary (editable)</label>
+        <textarea id="rfq-text" class="editable" rows="8"></textarea>
+        <label class="rfq-field-label" for="rfq-json">Structured RFQ data — JSON (editable)
+          <span class="json-status" id="rfq-json-status"></span>
+        </label>
+        <textarea id="rfq-json" class="editable mono" rows="14" spellcheck="false"></textarea>
+        <div style="margin-top: 12px;">
+          <button type="button" class="primary" id="confirm-submit">Confirm and submit</button>
+          <button type="button" class="secondary" id="cancel-submit">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 5 — done -->
+    <section class="card hidden" id="step-5">
+      <div class="thanks">
+        <div class="checkmark">✓</div>
+        <h2>Your RFQ is ready</h2>
+        <p class="lead">This is the final RFQ that would be sent to the installer.</p>
+        <div class="rfq-preview" id="final-rfq-preview">
+          <div class="final-label">RFQ summary</div>
+          <div class="body" id="final-rfq-text"></div>
+          <div class="final-label">Structured RFQ data (JSON)</div>
+          <pre class="final-json" id="final-rfq-json"></pre>
+        </div>
+        <div style="margin-top: 14px;">
+          <button type="button" class="primary" id="save-rfq">Save RFQ</button>
+          <button type="button" class="secondary" onclick="location.reload()">Start over</button>
+          <div class="save-status" id="save-status"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+    </div>
+    <aside class="page-aside" id="test-postcodes-aside">
+      <div class="aside-card">
+        <h3>Test postcodes</h3>
+        <p class="demo-note">⚠ Demo only — these are sample postcodes for trying the flow, not part of the live product.</p>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">E1 6AN</span><button class="copy-btn" type="button" data-pc="E1 6AN">Copy</button></div>
+          <div class="pc-meta">London. EPC <strong>D</strong> + Bishopsgate conservation area (full demo).</div>
+        </div>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">OX7 3EL</span><button class="copy-btn" type="button" data-pc="OX7 3EL">Copy</button></div>
+          <div class="pc-meta">Single address auto-filled from EPC + Cotswolds AONB.</div>
+        </div>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">BA1 1LZ</span><button class="copy-btn" type="button" data-pc="BA1 1LZ">Copy</button></div>
+          <div class="pc-meta">Central Bath. No EPC at the postcode (triggers nearby picker) + Bath conservation area + City of Bath WHS.</div>
+        </div>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">SE1 9SG</span><button class="copy-btn" type="button" data-pc="SE1 9SG">Copy</button></div>
+          <div class="pc-meta">Borough. No EPC + conservation area + Article 4.</div>
+        </div>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">RG9 1AY</span><button class="copy-btn" type="button" data-pc="RG9 1AY">Copy</button></div>
+          <div class="pc-meta">Multiple addresses. Exercises the address picker.</div>
+        </div>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">GL54 2BP</span><button class="copy-btn" type="button" data-pc="GL54 2BP">Copy</button></div>
+          <div class="pc-meta">0 EPCs but neighbours found. Exercises the nearby property picker.</div>
+        </div>
+        <div class="pc-row">
+          <div class="pc-header"><span class="pc">SW1A 2AA</span><button class="copy-btn" type="button" data-pc="SW1A 2AA">Copy</button></div>
+          <div class="pc-meta">0 EPCs, no neighbours. Falls through to the 4-question manual form.</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <details class="debug" id="raw-llm-panel">
+    <summary>Raw LLM output (debug) — click to expand</summary>
+    <pre id="raw-llm-log" style="max-height: 180px;">No LLM call yet. Generate a recommendation or RFQ to see the raw model response here.</pre>
+  </details>
+
+  <details class="debug">
+    <summary>API debug log</summary>
+    <pre id="debug-log"></pre>
+  </details>
+</div>
+
+<script>
+  // -------- API base detection --------
+  // Same-origin if served by FastAPI; fallback to localhost:8000 if opened via file://
+  const API_BASE = (location.protocol === 'file:' || !location.host)
+    ? 'http://localhost:8000'
+    : '';
+
+  // -------- State --------
+  const state = {
+    sessionId: null,
+    technology: null,
+    postcode: null,
+    autoFilled: null,
+    missingFields: null,
+    chosenLmkKey: null,
+    chosenProxyPostcode: null,
+  };
+
+  // -------- Debug log --------
+  const debugEl = document.getElementById('debug-log');
+  function logDebug(label, data) {
+    const ts = new Date().toLocaleTimeString();
+    const line = `[${ts}] ${label}\n${JSON.stringify(data, null, 2)}\n\n`;
+    debugEl.textContent += line;
+    debugEl.scrollTop = debugEl.scrollHeight;
+  }
+
+  // -------- Raw LLM output panel --------
+  const rawLlmEl = document.getElementById('raw-llm-log');
+  const PARSE_STATUS_NOTES = {
+    ok: 'JSON parsed cleanly, value taken as-is',
+    nested_unwrapped: 'model double-wrapped its output; we unwrapped one layer',
+    regex_fallback: 'JSON parse failed; regex-extracted the value from raw text',
+    raw_fallback: 'JSON parse + regex both failed; showing raw text instead of blank',
+    mock: 'mock LLM (DEMO_MOCK_LLM=1) — not a real model call',
+  };
+  function logRawLlm(label, raw, parseStatus) {
+    if (raw === undefined || raw === null) return;
+    const ts = new Date().toLocaleTimeString();
+    const sep = "─".repeat(60);
+    const note = PARSE_STATUS_NOTES[parseStatus] || '(unknown status)';
+    const statusLine = parseStatus
+      ? `parse_status: ${parseStatus}  (${note})\n`
+      : '';
+    const block = `[${ts}] ${label}\n${statusLine}${sep}\n${raw}\n${sep}\n\n`;
+    // Replace placeholder text on first call, then append.
+    const placeholder = "No LLM call yet";
+    if (rawLlmEl.textContent.startsWith(placeholder)) {
+      rawLlmEl.textContent = block;
+    } else {
+      rawLlmEl.textContent += block;
+    }
+    rawLlmEl.scrollTop = rawLlmEl.scrollHeight;
+  }
+
+  // -------- Step indicator --------
+  function setActiveStep(n) {
+    document.querySelectorAll('.steps .step').forEach((el, i) => {
+      const stepNum = i + 1;
+      el.classList.remove('active', 'done');
+      if (stepNum < n) el.classList.add('done');
+      else if (stepNum === n) el.classList.add('active');
+    });
+    // Test-postcodes sidebar is only useful while the user is still
+    // entering a postcode (Step 1 + the 1.5 / 1.6 pickers, which still
+    // report as step 1 here). Hide it once they progress to Step 2+.
+    const aside = document.getElementById('test-postcodes-aside');
+    const layout = document.querySelector('.layout');
+    if (aside) aside.style.display = n === 1 ? '' : 'none';
+    if (layout) layout.classList.toggle('aside-hidden', n !== 1);
+  }
+
+  // -------- Section toggle --------
+  function showSection(id) {
+    document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showLoading(label, sublabel) {
+    document.getElementById('loading-label').textContent = label;
+    document.getElementById('loading-sublabel').textContent = sublabel;
+    showSection('loading');
+  }
+
+  function showError(stepId, message) {
+    const banner = document.querySelector(`#${stepId}-error`);
+    banner.textContent = message;
+    banner.classList.remove('hidden');
+  }
+  function clearError(stepId) {
+    const banner = document.querySelector(`#${stepId}-error`);
+    banner?.classList.add('hidden');
+  }
+
+  // -------- API calls --------
+  async function apiCall(path, body) {
+    let r;
+    try {
+      r = await fetch(API_BASE + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+    } catch (err) {
+      // Network/transport failure (server down, restarted, laptop offline).
+      // Return a sentinel status instead of throwing, so every caller resets its
+      // spinner/button and shows an error rather than hanging forever.
+      logDebug(`POST ${path} -> NETWORK ERROR`, { error: String(err) });
+      return { status: 0, body: { detail: { error: 'Could not reach the server — is it running?' } } };
+    }
+    let data;
+    try { data = await r.json(); } catch { data = {}; }
+    logDebug(`POST ${path} -> ${r.status}`, data);
+    return { status: r.status, body: data };
+  }
+
+  // -------- Step 1 — postcode submit --------
+  document.getElementById('step-1-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError('step-1');
+    const fd = new FormData(e.target);
+    const payload = {
+      postcode: fd.get('postcode').trim(),
+      technology: fd.get('technology'),
+    };
+
+    state.postcode = payload.postcode;
+    state.technology = payload.technology;
+
+    showLoading(
+      "Looking up your property",
+      "Querying the official EPC database"
+    );
+
+    const { status, body } = await apiCall('/api/initiate', payload);
+
+    if (status === 200) {
+      enterStep2(body);
+    } else if (status === 409) {
+      const errCode = body.detail?.error;
+      if (errCode === 'proxy_nearby_candidates') {
+        enterStep1_6(body.detail.candidates);
+      } else {
+        // ambiguous_address (or unspecified — same picker)
+        enterStep1_5(body.detail.candidates);
+      }
+    } else if (status === 400) {
+      showSection('step-1');
+      showError('step-1', body.detail?.error || 'Invalid input');
+    } else {
+      showSection('step-1');
+      showError('step-1', `Unexpected error (${status}). See debug log.`);
+    }
+  });
+
+  // -------- Step 1.5 — address picker --------
+  function enterStep1_5(candidates) {
+    setActiveStep(1);
+    const list = document.getElementById('candidates-list');
+    list.innerHTML = '';
+    candidates.forEach((c) => {
+      const li = document.createElement('li');
+      li.dataset.lmkKey = c.lmk_key;
+      li.innerHTML = `<div>${c.address}</div><div class="meta">Last assessed ${c.inspection_date}</div>`;
+      li.addEventListener('click', () => {
+        list.querySelectorAll('li').forEach(x => x.classList.remove('selected'));
+        li.classList.add('selected');
+        state.chosenLmkKey = c.lmk_key;
+        document.getElementById('step-1-5-continue').disabled = false;
+      });
+      list.appendChild(li);
+    });
+    showSection('step-1-5');
+  }
+
+  document.getElementById('step-1-5-continue').addEventListener('click', async () => {
+    if (!state.chosenLmkKey) return;
+
+    showLoading(
+      "Loading property details",
+      "Fetching the certificate you selected"
+    );
+
+    const { status, body } = await apiCall('/api/initiate', {
+      postcode: state.postcode,
+      technology: state.technology,
+      lmk_key: state.chosenLmkKey,
+    });
+    if (status === 200) {
+      enterStep2(body);
+    } else {
+      showSection('step-1-5');
+      alert(`Couldn't load that property (${status}). See the API debug log.`);
+    }
+  });
+
+  // -------- Step 1.6 — nearby property picker (Layer 2) --------
+  function enterStep1_6(candidates) {
+    setActiveStep(1);
+    state.chosenLmkKey = null;
+    state.chosenProxyPostcode = null;
+    const list = document.getElementById('nearby-candidates-list');
+    list.innerHTML = '';
+    candidates.forEach((c) => {
+      const li = document.createElement('li');
+      li.dataset.lmkKey = c.lmk_key;
+      li.dataset.proxyPostcode = c.postcode || '';
+      const area = (c.floor_area_m2 != null) ? `${c.floor_area_m2} m²` : '—';
+      const ptype = c.property_type ? humanize(c.property_type) : '—';
+      const heating = c.current_heating_system || '—';
+      const fuel = c.current_fuel_type || '—';
+      const addrLine = c.address || `EPC in ${c.postcode}`;
+      li.innerHTML = `
+        <div>${addrLine}</div>
+        <div class="meta">Postcode ${c.postcode} · Last assessed ${c.inspection_date}</div>
+        <div class="fields">
+          <div><span class="key">Property type:</span> <span class="val">${ptype}</span></div>
+          <div><span class="key">Floor area:</span> <span class="val">${area}</span></div>
+          <div><span class="key">Heating:</span> <span class="val">${heating}</span></div>
+          <div><span class="key">Fuel:</span> <span class="val">${fuel}</span></div>
+        </div>`;
+      li.addEventListener('click', () => {
+        list.querySelectorAll('li').forEach(x => x.classList.remove('selected'));
+        li.classList.add('selected');
+        state.chosenLmkKey = c.lmk_key;
+        state.chosenProxyPostcode = c.postcode || '';
+        document.getElementById('step-1-6-continue').disabled = false;
+      });
+      list.appendChild(li);
+    });
+    showSection('step-1-6');
+  }
+
+  document.getElementById('step-1-6-continue').addEventListener('click', async () => {
+    if (!state.chosenLmkKey) return;
+
+    showLoading(
+      "Loading nearby property details",
+      "Using the property you picked as a proxy for yours"
+    );
+
+    const { status, body } = await apiCall('/api/initiate', {
+      postcode: state.postcode,
+      technology: state.technology,
+      lmk_key: state.chosenLmkKey,
+      proxy_postcode: state.chosenProxyPostcode,
+    });
+    if (status === 200) {
+      enterStep2(body);
+    } else {
+      showSection('step-1-6');
+      alert(`Couldn't load that property (${status}). See the API debug log.`);
+    }
+  });
+
+  document.getElementById('use-nearby-average').addEventListener('click', async () => {
+    showLoading(
+      "Estimating from nearby properties",
+      "Averaging EPC data from properties in nearby postcodes"
+    );
+
+    const { status, body } = await apiCall('/api/initiate', {
+      postcode: state.postcode,
+      technology: state.technology,
+      use_proxy_nearby_average: true,
+    });
+    if (status === 200) {
+      enterStep2(body);
+    } else {
+      showSection('step-1-6');
+      alert(`Couldn't build a nearby estimate (${status}). See the API debug log.`);
+    }
+  });
+
+  document.getElementById('use-street-average').addEventListener('click', async () => {
+    // Skip address selection entirely. Server aggregates every EPC in the
+    // postcode and returns a proxy property section tagged epc_source="proxy".
+    showLoading(
+      "Estimating from your street",
+      "Aggregating EPC data from similar properties on your postcode"
+    );
+
+    const { status, body } = await apiCall('/api/initiate', {
+      postcode: state.postcode,
+      technology: state.technology,
+      use_proxy: true,
+    });
+    if (status === 200) {
+      enterStep2(body);
+    } else {
+      showSection('step-1-5');
+      alert(`Couldn't build a street estimate (${status}). See the API debug log.`);
+    }
+  });
+
+  // -------- Step 2 — render dynamic form --------
+  function enterStep2(initiateBody) {
+    setActiveStep(2);
+    state.sessionId = initiateBody.session_id;
+    state.autoFilled = initiateBody.auto_filled;
+    state.missingFields = initiateBody.missing_fields;
+
+    // Auto-fill summary card — four states: EPC found / same-postcode proxy /
+    // nearby-postcode proxy / no EPC anywhere (Case B).
+    const af = document.getElementById('auto-fill-summary');
+    af.innerHTML = '';
+    const epcSource = state.autoFilled?.epc_source;
+    const isProxySame = epcSource === 'proxy';
+    const isProxyNearby = epcSource === 'proxy_nearby';
+    const skipKeys = new Set([
+      'epc_found', 'epc_source', 'proxy_comparator_count',
+      'proxy_confidence', 'proxy_postcodes',
+    ]);
+    if (initiateBody.epc_found) {
+      const dl = Object.entries(state.autoFilled)
+        .filter(([k, v]) => v != null && v !== '' && !skipKeys.has(k))
+        .map(([k, v]) => `<dt>${humanize(k)}</dt><dd>${v}</dd>`)
+        .join('');
+      af.innerHTML = `<div class="auto-fill">
+        <div class="auto-title">✓ We found your property</div>
+        <dl>${dl}</dl>
+      </div>`;
+    } else if (isProxySame || isProxyNearby) {
+      const n = state.autoFilled.proxy_comparator_count;
+      const conf = state.autoFilled.proxy_confidence;
+      const pcList = state.autoFilled.proxy_postcodes || [];
+      const headline = isProxyNearby
+        ? `◆ No EPC for your postcode — estimated from ${n} propert${n === 1 ? 'y' : 'ies'} in ${pcList.length} nearby postcode${pcList.length === 1 ? '' : 's'}`
+        : `◆ Estimated from ${n} similar propert${n === 1 ? 'y' : 'ies'} on your street`;
+      const pcLine = isProxyNearby && pcList.length
+        ? `<p style="margin:6px 0 4px;font-size:12px;color:#1e3a8a;">Source postcodes: ${pcList.join(', ')}</p>`
+        : '';
+      const dl = Object.entries(state.autoFilled)
+        .filter(([k, v]) => v != null && v !== '' && !skipKeys.has(k))
+        .map(([k, v]) => `<dt>${humanize(k)}</dt><dd>${v}</dd>`)
+        .join('');
+      af.innerHTML = `<div class="auto-fill" style="background:#dbeafe;border-color:#3b82f6;">
+        <div class="auto-title" style="color:#1e40af;">
+          ${headline}
+          <span style="font-weight:400;font-size:12px;margin-left:6px;color:#1e40af;">(confidence: ${conf})</span>
+        </div>
+        <p style="margin:6px 0 10px;font-size:13px;color:#1e3a8a;">These values are an estimate based on neighbouring EPCs, not a measurement of your specific home. The recommendation will note that.</p>
+        ${pcLine}
+        <dl>${dl}</dl>
+      </div>`;
+    } else {
+      af.innerHTML = `<div class="auto-fill" style="background:#fef3c7;border-color:#fcd34d;">
+        <div class="auto-title" style="color:#92400e;">Couldn't find an EPC for that address</div>
+        <p style="margin:6px 0 0;font-size:13px;">No problem — please tell us about your property below.</p>
+      </div>`;
+    }
+
+    // Site intelligence — planning constraints + grid headroom (external data)
+    renderSiteIntel(initiateBody.site_context || {});
+
+    // Completeness
+    const score = initiateBody.completeness?.score ?? 0;
+    document.getElementById('completeness-fill').style.width = `${Math.round(score * 100)}%`;
+    document.getElementById('completeness-text').textContent =
+      `${initiateBody.completeness.populated} of ${initiateBody.completeness.required} required fields filled.`;
+
+    // Render dynamic form
+    const form = document.getElementById('step-2-form');
+    form.innerHTML = '';
+    Object.entries(state.missingFields).forEach(([section, fields]) => {
+      const heading = document.createElement('h3');
+      heading.style.fontSize = '14px';
+      heading.style.marginTop = '20px';
+      heading.style.color = 'var(--muted)';
+      heading.style.textTransform = 'uppercase';
+      heading.textContent = sectionTitle(section);
+      form.appendChild(heading);
+
+      fields.forEach(f => {
+        const label = document.createElement('label');
+        label.textContent = f.label;
+        let input;
+        if (f.type === 'select') {
+          input = document.createElement('select');
+          const blank = document.createElement('option');
+          blank.value = ''; blank.textContent = '— choose —';
+          input.appendChild(blank);
+          (f.options || []).forEach(opt => {
+            const o = document.createElement('option');
+            o.value = opt; o.textContent = humanize(opt);
+            input.appendChild(o);
+          });
+        } else if (f.type === 'textarea') {
+          input = document.createElement('textarea');
+        } else if (f.type === 'number') {
+          input = document.createElement('input');
+          input.type = 'number';
+        } else {
+          input = document.createElement('input');
+          input.type = 'text';
+        }
+        input.name = `${section}__${f.name}`;
+        label.appendChild(input);
+        form.appendChild(label);
+      });
+    });
+
+    showSection('step-2');
+  }
+
+  document.getElementById('step-2-submit').addEventListener('click', async () => {
+    clearError('step-2');
+    const form = document.getElementById('step-2-form');
+    const fd = new FormData(form);
+    const additional = {};
+    for (const [k, v] of fd.entries()) {
+      if (!v) continue;
+      const [section, field] = k.split('__');
+      additional[section] = additional[section] || {};
+      additional[section][field] = v;
+    }
+
+    // Pre-validate locally so we don't wipe the form on a 422 (which would
+    // also cost an LLM call). Validation re-runs server-side too.
+    const localMissing = collectLocalMissing(additional);
+    if (localMissing.length) {
+      showError('step-2', `Please complete: ${localMissing.join('; ')}`);
+      return;
+    }
+
+    showLoading(
+      "Generating your recommendation",
+      "Asking Llama to summarise your EPC data"
+    );
+
+    const { status, body } = await apiCall('/api/generate', {
+      session_id: state.sessionId,
+      additional_fields: additional,
+    });
+    if (status === 200) {
+      logRawLlm('POST /api/generate (homeowner recommendation)', body.raw_response, body.parse_status);
+      enterStep3(body);
+    } else if (status === 422) {
+      // Server-side re-check fell through (rare); go back to step 2
+      showSection('step-2');
+      const missing = body.detail?.missing_fields || {};
+      const names = Object.values(missing).flat().map(f => f.label).join('; ');
+      showError('step-2', `Please complete: ${names}`);
+    } else if (status === 404) {
+      showSection('step-2');
+      showError('step-2',
+        'Your session expired (server may have restarted). Please refresh the page and start over.');
+    } else {
+      showSection('step-2');
+      showError('step-2', `Unexpected error (${status}). See debug log.`);
+    }
+  });
+
+  // Prevent an implicit submit (e.g. pressing Enter in a single text/number
+  // input) from doing a native page reload that would wipe the whole journey.
+  document.getElementById('step-2-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('step-2-submit').click();
+  });
+
+  function collectLocalMissing(additional) {
+    // Return labels of any required field that's still empty in `additional`,
+    // keyed against the missing_fields list returned by /api/initiate.
+    const out = [];
+    Object.entries(state.missingFields || {}).forEach(([section, fields]) => {
+      fields.forEach(f => {
+        const v = additional[section]?.[f.name];
+        if (v === undefined || v === null || v === '') out.push(f.label);
+      });
+    });
+    return out;
+  }
+
+  // -------- Step 3 — show recommendation --------
+  function enterStep3(body) {
+    setActiveStep(3);
+    document.getElementById('recommendation-text').textContent = body.recommendation_summary;
+    document.getElementById('recommendation-disclaimer').textContent = body.recommendation_disclaimer;
+    showSection('step-3');
+  }
+
+  // -------- Step 3 — generate RFQ (installer-facing) + editable preview --------
+  // Live JSON validity hint for the editable structured-data box.
+  function validateRfqJson() {
+    const ta = document.getElementById('rfq-json');
+    const status = document.getElementById('rfq-json-status');
+    if (!ta.value.trim()) { status.textContent = ''; status.className = 'json-status'; return; }
+    try {
+      JSON.parse(ta.value);
+      status.textContent = '✓ valid JSON';
+      status.className = 'json-status valid';
+    } catch (err) {
+      status.textContent = '✗ invalid JSON';
+      status.className = 'json-status invalid';
+    }
+  }
+  document.getElementById('rfq-json').addEventListener('input', validateRfqJson);
+
+  document.getElementById('generate-rfq-btn').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const alreadyGenerated = !document.getElementById('rfq-preview').classList.contains('hidden');
+
+    // If an RFQ is already on screen, this is a re-generate: warn that it
+    // discards any manual edits before overwriting the boxes.
+    if (alreadyGenerated) {
+      const ok = confirm('Regenerate the RFQ? This replaces the current RFQ and discards any edits you have made.');
+      if (!ok) return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="button-spinner"></span>Generating...';
+
+    // No vendor_id — installer selection has been removed from the flow.
+    const { status, body } = await apiCall('/api/generate-rfq', {
+      session_id: state.sessionId,
+    });
+
+    btn.disabled = false;
+
+    if (status === 200) {
+      logRawLlm('POST /api/generate-rfq (installer-facing RFQ)', body.raw_response, body.parse_status);
+      // Editable RFQ prose + editable structured JSON (local edits only).
+      document.getElementById('rfq-text').value = body.rfq_summary || '';
+      document.getElementById('rfq-json').value = JSON.stringify(body.rfq_input || {}, null, 2);
+      validateRfqJson();
+      document.getElementById('rfq-preview').classList.remove('hidden');
+      // Relabel so it's clear a second click re-runs (and the warning above
+      // guards against silently clobbering edits).
+      btn.textContent = 'Regenerate RFQ';
+      document.getElementById('rfq-preview').scrollIntoView({ behavior: 'smooth' });
+    } else {
+      btn.textContent = alreadyGenerated ? 'Regenerate RFQ' : 'Generate RFQ';
+      if (status === 404) {
+        alert('Your session expired (server may have restarted). Refresh and start over.');
+      } else {
+        alert(`Unexpected error (${status}). See the API debug log at the bottom.`);
+      }
+    }
+  });
+
+  document.getElementById('cancel-submit').addEventListener('click', () => {
+    document.getElementById('rfq-preview').classList.add('hidden');
+    // Preview discarded — reset the button back to its first-run label.
+    document.getElementById('generate-rfq-btn').textContent = 'Generate RFQ';
+  });
+
+  document.getElementById('confirm-submit').addEventListener('click', () => {
+    // Don't advance the HITL review with invalid JSON — the final RFQ must parse.
+    try {
+      JSON.parse(document.getElementById('rfq-json').value);
+    } catch (err) {
+      validateRfqJson();  // make sure the red "invalid JSON" hint is showing
+      const box = document.getElementById('rfq-json');
+      box.scrollIntoView({ behavior: 'smooth' });
+      box.focus();
+      return;
+    }
+    // Carry BOTH (possibly edited) boxes through to the done screen so the
+    // reviewer's edits visibly take effect. Edits are front-end only.
+    document.getElementById('final-rfq-text').textContent =
+      document.getElementById('rfq-text').value;
+    document.getElementById('final-rfq-json').textContent =
+      document.getElementById('rfq-json').value;
+    showSection('step-5');
+    setActiveStep(5);
+  });
+
+  // -------- Save the final (edited) RFQ to the server (Renbee shares it) -----
+  document.getElementById('save-rfq').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const statusEl = document.getElementById('save-status');
+    const summary = document.getElementById('rfq-text').value;
+    const jsonText = document.getElementById('rfq-json').value;
+
+    let rfqInput;
+    try {
+      rfqInput = JSON.parse(jsonText);
+    } catch (err) {
+      statusEl.className = 'save-status err';
+      statusEl.textContent = 'The structured RFQ data is not valid JSON — fix it (the box shows a red “invalid JSON” hint) before saving.';
+      return;
+    }
+
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="button-spinner"></span>Saving...';
+    statusEl.className = 'save-status';
+    statusEl.textContent = '';
+
+    const { status, body } = await apiCall('/api/save-rfq', {
+      session_id: state.sessionId,
+      rfq_summary: summary,
+      rfq_input: rfqInput,
+    });
+
+    btn.disabled = false;
+
+    if (status === 200) {
+      btn.textContent = 'Saved ✓';
+      statusEl.className = 'save-status ok';
+      statusEl.textContent = `Saved on the server: ${body.path}`;
+    } else {
+      btn.textContent = originalLabel;
+      statusEl.className = 'save-status err';
+      statusEl.textContent = `Could not save (error ${status}). See the API debug log at the bottom.`;
+    }
+  });
+
+  // -------- Site intelligence renderer --------
+  function renderSiteIntel(ctx) {
+    const el = document.getElementById('site-intel-panel');
+    if (!el) return;
+    el.innerHTML = '';
+    const planning = ctx.planning || {};
+    const grid = ctx.grid || null;
+    const badges = [];
+
+    if (planning.listed_building) {
+      const grade = planning.listed_grade ? `Grade ${planning.listed_grade} ` : '';
+      badges.push({
+        cls: 'warn',
+        text: `🏛️ ${grade}listed building`,
+        tip: 'Listed building consent is required for any external work (heat-pump unit, solar panels, etc.). Your installer should plan for a consent application.',
+      });
+    }
+    if (planning.conservation_area_name) {
+      badges.push({
+        cls: 'warn',
+        text: `🌳 Conservation area: ${planning.conservation_area_name}`,
+        tip: 'Permitted Development rights are restricted in conservation areas — planning permission is likely needed for visible external equipment.',
+      });
+    }
+    if (planning.article_4) {
+      badges.push({
+        cls: 'warn',
+        text: '📜 Article 4 direction',
+        tip: 'The local council has removed specific Permitted Development rights here. The installer should check which apply before quoting.',
+      });
+    }
+    if (planning.aonb_name) {
+      badges.push({
+        cls: 'warn',
+        text: `🏞️ AONB: ${planning.aonb_name}`,
+        tip: 'Area of Outstanding Natural Beauty — extra planning sensitivity. Roof-mounted equipment may need consent.',
+      });
+    }
+    if (planning.whs_name) {
+      badges.push({
+        cls: 'warn',
+        text: `🏛️ World Heritage Site: ${planning.whs_name}`,
+        tip: 'World Heritage Site designation — heritage-sensitive installs only.',
+      });
+    }
+    if (planning.national_park_name) {
+      badges.push({
+        cls: 'warn',
+        text: `⛰️ National Park: ${planning.national_park_name}`,
+        tip: 'National Park area — extra planning sensitivity.',
+      });
+    }
+    if (grid) {
+      const rag = (grid.demand_rag || '').toLowerCase();
+      const ragCls = rag.startsWith('green') ? 'good' : rag.startsWith('red') ? 'warn' : '';
+      const sub = grid.primary_substation || 'nearest substation';
+      const dh = grid.demand_headroom_mw;
+      if (dh != null) {
+        badges.push({
+          cls: ragCls,
+          text: `⚡ Demand headroom: ${dh} MW at ${sub}`,
+          tip: `Your local primary substation has ${dh} MW of demand headroom (Counterfactual scenario, ${grid.year}). RAG status: ${grid.demand_rag || 'unknown'}. Relevant for heat-pump load.`,
+        });
+      }
+      const gh = grid.generation_headroom_mw;
+      if (gh != null) {
+        badges.push({
+          cls: 'good',
+          text: `🔆 Export headroom: ${gh} MW`,
+          tip: `Generation (inverter) headroom at ${sub}. Relevant for solar PV / battery export sizing.`,
+        });
+      }
+      if (grid.licence_area) {
+        badges.push({
+          cls: '',
+          text: `🗺️ ${grid.licence_area}`,
+          tip: 'Distribution network operator licence area.',
+        });
+      }
+    }
+
+    const sources = ctx.data_sources || [];
+    const LICENCE_LINKS = {
+      'planning.data.gov.uk':
+        '<a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" target="_blank" rel="noopener">Open Government Licence v3.0</a>',
+      'UK Power Networks Open Data':
+        '<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>',
+    };
+    const creditLines = sources.map(s => {
+      const lic = LICENCE_LINKS[s] || 'open licence';
+      return `${s} (${lic})`;
+    });
+    const credit = creditLines.length
+      ? `Cross-checked with ${creditLines.join(' and ')}. ` +
+        `Planning data: contains public sector information licensed under the Open Government Licence v3.0.` +
+        (ctx.grid ? ` Grid data &copy; UK Power Networks, used under CC BY 4.0.` : ``)
+      : '';
+
+    if (badges.length === 0) {
+      el.innerHTML = `<div class="site-intel">
+        <div class="auto-title">◆ Site intelligence we checked for you</div>
+        <p class="empty">We checked the open planning and grid datasets — no special constraints recorded at your address.</p>
+        ${credit ? `<div class="credit">${credit}</div>` : ''}
+      </div>`;
+      return;
+    }
+
+    const badgeHtml = badges
+      .map(b => `<span class="badge ${b.cls}" data-tip="${b.tip.replace(/"/g, '&quot;')}">${b.text}</span>`)
+      .join('');
+    el.innerHTML = `<div class="site-intel">
+      <div class="auto-title">◆ Site intelligence we checked for you</div>
+      <div class="badges">${badgeHtml}</div>
+      <p style="margin:4px 0 0;font-size:12px;color:#6b7280;">Hover any tag for what it means for your install.</p>
+      ${credit ? `<div class="credit">${credit}</div>` : ''}
+    </div>`;
+  }
+
+  // -------- Helpers --------
+  function humanize(s) {
+    if (s == null) return '';
+    return String(s).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+  function sectionTitle(section) {
+    return ({
+      common: 'About your enquiry',
+      property: 'About your property',
+      heat_pump: 'About your heating',
+      solar_pv: 'About your roof',
+      battery: 'About your battery requirements',
+      solar_thermal: 'About your hot water and roof',
+    })[section] || humanize(section);
+  }
+
+  // -------- Test-postcode copy buttons (sidebar) --------
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.copy-btn');
+    if (!btn) return;
+    const pc = btn.dataset.pc;
+    if (!pc) return;
+    const finish = () => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove('copied');
+      }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(pc).then(finish).catch(() => {
+        // Fallback: select-then-copy via a temporary textarea
+        const ta = document.createElement('textarea');
+        ta.value = pc;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+        finish();
+      });
+    }
+  });
+
+  // -------- Init --------
+  setActiveStep(1);
+  showSection('step-1');
+</script>
+</body>
+</html>

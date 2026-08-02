@@ -1,0 +1,2003 @@
+[
+  {
+    "case_id": "REAL_001",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Cut gas use and lower carbon emissions.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_31326F23",
+        "submission_date": "2026-07-25",
+        "postcode": "E1 6AN"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "top-floor_flat",
+        "built_form": "semi-detached",
+        "floor_area_m2": 78.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "D",
+        "epc_score": 58,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "Roof room(s), no insulation (assumed)",
+        "windows_description": "Single glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Room-in-roof insulation",
+          "50 mm internal or external wall insulation",
+          "Replace single glazed windows with low-E double glazed windows"
+        ]
+      },
+      "heat_pump": {
+        "emitter_type": "radiators",
+        "hot_water_cylinder_space_available": "yes",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "yes"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Bishopsgate",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_002",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Reduce electricity bills and generate own power.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_6C12FD72",
+        "submission_date": "2026-07-25",
+        "postcode": "OX7 3EL"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "detached_house",
+        "built_form": "detached",
+        "floor_area_m2": 88.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "E",
+        "epc_score": 42,
+        "current_heating_system": "Boiler and radiators, oil",
+        "current_fuel_type": "oil (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Sandstone or limestone, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 150 mm loft insulation",
+        "windows_description": "Single glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Floor insulation (solid floor)",
+          "Draught proof single-glazed windows",
+          "Solar water heating",
+          "Replace single glazed windows with low-E double glazed windows",
+          "Solar photovoltaic panels, 2.5 kWp",
+          "Wind turbine"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 28,
+        "roof_shading_level": "low"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": null,
+          "article_4": false,
+          "aonb_name": "Cotswolds",
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_003",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_12_months",
+        "motivation": "Heat water more cheaply over the summer.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_F5F2B739",
+        "submission_date": "2026-07-25",
+        "postcode": "BA2 6AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "mid-floor_flat",
+        "built_form": null,
+        "floor_area_m2": 162.0,
+        "construction_age_band": null,
+        "epc_rating": "B",
+        "epc_score": 87,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas",
+        "hot_water_system": "From main system",
+        "walls_description": "Average thermal transmittance 0.25 W/m²K",
+        "roof_description": "(other premises above)",
+        "windows_description": null,
+        "occupancy_status": null,
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "southeast",
+        "usable_roof_area_m2": 6,
+        "roof_shading_level": "none",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_occupants": 4,
+        "number_of_bathrooms": 2
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Bath",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": "City of Bath",
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_004",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_3_months",
+        "motivation": "Store solar power and have backup during outages.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_7057FD84",
+        "submission_date": "2026-07-25",
+        "postcode": "SE5 8AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "basement_flat",
+        "built_form": "end-terrace",
+        "floor_area_m2": 56.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "D",
+        "epc_score": 67,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "(another dwelling above)",
+        "windows_description": "Some double glazing",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Floor insulation (solid floor)",
+          "Low energy lighting for all fixed outlets",
+          "Replace single glazed windows with low-E double glazed windows"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "existing",
+        "battery_purpose": "both",
+        "backup_power_required": "yes",
+        "battery_location_preference": "garage"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Camberwell Grove",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_005",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "asap",
+        "motivation": "Replace an ageing oil boiler.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_C92E59B2",
+        "submission_date": "2026-07-25",
+        "postcode": "RG9 1AY"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "top-floor_flat",
+        "built_form": "mid-terrace",
+        "floor_area_m2": 49.0,
+        "construction_age_band": "1930-1949",
+        "epc_rating": "E",
+        "epc_score": 46,
+        "current_heating_system": "Room heaters, electric",
+        "current_fuel_type": "electricity (not community)",
+        "hot_water_system": "Electric immersion, off-peak",
+        "walls_description": "Cavity wall, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 250 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Cavity wall insulation",
+          "High heat retention storage heaters",
+          "Heat recovery system for mixer showers"
+        ]
+      },
+      "heat_pump": {
+        "emitter_type": "underfloor_heating",
+        "hot_water_cylinder_space_available": "yes",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "no"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": null,
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_006",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Charge an electric vehicle from the roof.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_DE3F3EC9",
+        "submission_date": "2026-07-25",
+        "postcode": "CV12 8UE"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "top-floor_flat",
+        "built_form": "enclosed_end-terrace",
+        "floor_area_m2": 73.0,
+        "construction_age_band": "1996-2002",
+        "epc_rating": "C",
+        "epc_score": 70,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Cavity wall, as built, insulated (assumed)",
+        "roof_description": "Pitched, 250 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "west",
+        "usable_roof_area_m2": 18,
+        "roof_shading_level": "moderate"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": null,
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_007",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Explore options for a rural off-gas property.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_4CC19ACB",
+        "submission_date": "2026-07-25",
+        "postcode": "GL54 2BP"
+      },
+      "property": {
+        "epc_found": false,
+        "epc_source": "proxy_nearby",
+        "proxy_comparator_count": 11,
+        "proxy_confidence": "high",
+        "property_type": "mid-terrace_house",
+        "built_form": "mid-terrace",
+        "floor_area_m2": 64.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "D",
+        "epc_score": null,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Sandstone or limestone, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 250 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null,
+        "proxy_postcodes": [
+          "GL54 2AE",
+          "GL54 2AQ",
+          "GL54 2BT"
+        ]
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "proxy_aggregate",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp",
+          "Replace single glazed windows with low-E double glazed windows",
+          "Upgrade heating controls"
+        ]
+      },
+      "heat_pump": {
+        "emitter_type": "mixed",
+        "hot_water_cylinder_space_available": "unknown",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "yes"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Bourton-on-the-Water Conservation Area",
+          "article_4": false,
+          "aonb_name": "Cotswolds",
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_008",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "within_12_months",
+        "motivation": "Add storage to an existing solar array.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_3E01B667",
+        "submission_date": "2026-07-25",
+        "postcode": "SW1A 2AA"
+      },
+      "property": {
+        "epc_found": false,
+        "property_type": "flat",
+        "built_form": null,
+        "floor_area_m2": 70,
+        "construction_age_band": null,
+        "epc_rating": null,
+        "epc_score": null,
+        "current_heating_system": "electric_storage_heaters",
+        "current_fuel_type": "electricity",
+        "hot_water_system": null,
+        "walls_description": null,
+        "roof_description": null,
+        "windows_description": null,
+        "occupancy_status": null,
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "planned",
+        "battery_purpose": "self_consumption",
+        "backup_power_required": "no",
+        "battery_location_preference": "utility_room"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Whitehall",
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_009",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Lower bills in a shared rented house.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_B184DF27",
+        "submission_date": "2026-07-25",
+        "postcode": "LS6 1AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "ground-floor_flat",
+        "built_form": "enclosed_mid-terrace",
+        "floor_area_m2": 76.0,
+        "construction_age_band": "1900-1929",
+        "epc_rating": "D",
+        "epc_score": 64,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Sandstone or limestone, as built, no insulation (assumed)",
+        "roof_description": "Flat, no insulation (assumed)",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Low energy lighting for all fixed outlets",
+          "Upgrade heating controls"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "southwest",
+        "usable_roof_area_m2": 22,
+        "roof_shading_level": "none"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "HEADINGLEY",
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_010",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_3_months",
+        "motivation": "Cut the cost of heating water for a large family.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_52504E16",
+        "submission_date": "2026-07-25",
+        "postcode": "PL4 7AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "top-floor_flat",
+        "built_form": "mid-terrace",
+        "floor_area_m2": 72.0,
+        "construction_age_band": "1900-1929",
+        "epc_rating": "D",
+        "epc_score": 63,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Granite or whinstone, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 150 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Replace boiler with new condensing boiler",
+          "Flue gas heat recovery in conjunction with boiler"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 5,
+        "roof_shading_level": "low",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_occupants": 5,
+        "number_of_bathrooms": 2
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": null,
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_011",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_12_months",
+        "motivation": "Low-carbon heating for a high-efficiency Lake District home.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_3A7641CD",
+        "submission_date": "2026-07-25",
+        "postcode": "LA22 9SH"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "detached_house",
+        "built_form": "detached",
+        "floor_area_m2": 160.0,
+        "construction_age_band": "1967-1975",
+        "epc_rating": "A",
+        "epc_score": 94,
+        "current_heating_system": "Air source heat pump, underfloor, electric",
+        "current_fuel_type": "electricity (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Cavity wall, with internal insulation",
+        "roof_description": "Pitched, 300 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {
+        "emitter_type": "radiators",
+        "hot_water_cylinder_space_available": "yes",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "yes"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Grasmere Town End",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": "The English Lake District",
+          "national_park_name": "Lake District"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_012",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Generate own power in a national park village.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_ADE0980B",
+        "submission_date": "2026-07-25",
+        "postcode": "YO62 5AD"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "end-terrace_house",
+        "built_form": "end-terrace",
+        "floor_area_m2": 77.0,
+        "construction_age_band": "1900-1929",
+        "epc_rating": "D",
+        "epc_score": 62,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 100 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Floor insulation (solid floor)",
+          "Low energy lighting for all fixed outlets",
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 20,
+        "roof_shading_level": "low"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Helmsley",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "North York Moors"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_013",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Store energy and reduce grid reliance.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_39EE9DE2",
+        "submission_date": "2026-07-25",
+        "postcode": "SO43 7BQ"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "semi-detached_house",
+        "built_form": "semi-detached",
+        "floor_area_m2": 244.0,
+        "construction_age_band": null,
+        "epc_rating": "C",
+        "epc_score": 80,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas",
+        "hot_water_system": "From main system",
+        "walls_description": "Average thermal transmittance 0.20 W/m²K",
+        "roof_description": "Average thermal transmittance 0.18 W/m²K",
+        "windows_description": null,
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Solar photovoltaic panels, 2.5 kWp"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "existing",
+        "battery_purpose": "self_consumption",
+        "backup_power_required": "no",
+        "battery_location_preference": "garage"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Lyndhurst",
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "New Forest"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_014",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_12_months",
+        "motivation": "Cheaper hot water for an old moorland cottage.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_137FCE0F",
+        "submission_date": "2026-07-25",
+        "postcode": "TQ13 7TB"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "enclosed_end-terrace_house",
+        "built_form": "enclosed_end-terrace",
+        "floor_area_m2": 124.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "F",
+        "epc_score": 37,
+        "current_heating_system": "Boiler and radiators, oil",
+        "current_fuel_type": "oil (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Granite or whinstone, as built, no insulation (assumed)",
+        "roof_description": "Pitched, no insulation (assumed)",
+        "windows_description": null,
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Cavity wall insulation",
+          "50 mm internal or external wall insulation",
+          "Floor insulation",
+          "Low energy lighting for all fixed outlets",
+          "Install condensing boiler",
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp",
+          "Wind turbine"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 4,
+        "roof_shading_level": "none",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_occupants": 3,
+        "number_of_bathrooms": 1
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Widecombe-in-the-Moor",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "Dartmoor"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_015",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Replace expensive off-gas heating.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_780CAFDB",
+        "submission_date": "2026-07-25",
+        "postcode": "DL8 3RA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "detached_house",
+        "built_form": "detached",
+        "floor_area_m2": 111.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "G",
+        "epc_score": 1,
+        "current_heating_system": "Boiler and radiators, LPG",
+        "current_fuel_type": "bottled LPG",
+        "hot_water_system": "From main system",
+        "walls_description": "Sandstone or limestone, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 100 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Increase loft insulation to 270 mm",
+          "Cavity wall insulation",
+          "50 mm internal or external wall insulation",
+          "Floor insulation (suspended floor)",
+          "Floor insulation (solid floor)",
+          "Low energy lighting for all fixed outlets",
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp"
+        ]
+      },
+      "heat_pump": {
+        "emitter_type": "radiators",
+        "hot_water_cylinder_space_available": "yes",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "yes"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": null,
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "Yorkshire Dales"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_016",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Explore solar for a Peak District home with no EPC on record.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_1A5E6446",
+        "submission_date": "2026-07-25",
+        "postcode": "DE45 1BT"
+      },
+      "property": {
+        "epc_found": false,
+        "epc_source": "proxy_nearby",
+        "proxy_comparator_count": 12,
+        "proxy_confidence": "high",
+        "property_type": "ground-floor_flat",
+        "built_form": "semi-detached",
+        "floor_area_m2": 59.5,
+        "construction_age_band": "before 1900",
+        "epc_rating": "C",
+        "epc_score": null,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "electricity (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Granite or whin, as built, no insulation (assumed)",
+        "roof_description": "(another dwelling above)",
+        "windows_description": "Single glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null,
+        "proxy_postcodes": [
+          "DE45 1EW"
+        ]
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "proxy_aggregate",
+        "raw_recommendation_items": [
+          "Replace single glazed windows with low-E double glazed windows",
+          "50 mm internal or external wall insulation",
+          "High heat retention storage heaters",
+          "Heat recovery system for mixer showers",
+          "Low energy lighting for all fixed outlets"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "southwest",
+        "usable_roof_area_m2": 25,
+        "roof_shading_level": "low"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Bakewell",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "Peak District"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_017",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Assess heat pump feasibility near Bath city centre.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_2C3E4996",
+        "submission_date": "2026-07-25",
+        "postcode": "BA1 1LZ"
+      },
+      "property": {
+        "epc_found": false,
+        "property_type": "mid-floor_flat",
+        "built_form": "detached",
+        "floor_area_m2": 72.0,
+        "construction_age_band": null,
+        "epc_rating": "C",
+        "epc_score": 74,
+        "current_heating_system": "Room heaters, electric",
+        "current_fuel_type": "Electricity: electricity, unspecified tariff",
+        "hot_water_system": "Electric immersion, standard tariff",
+        "walls_description": "Average thermal transmittance 0.25 W/m²K",
+        "roof_description": "(other premises above)",
+        "windows_description": null,
+        "occupancy_status": null,
+        "access_constraints": null,
+        "epc_source": "proxy_nearby",
+        "proxy_picked": true,
+        "proxy_comparator_count": 1,
+        "proxy_confidence": "low",
+        "proxy_postcodes": [
+          "BA1 1QN"
+        ]
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "proxy_aggregate",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {
+        "emitter_type": "mixed",
+        "hot_water_cylinder_space_available": "unknown",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "no"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Bath",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": "City of Bath",
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_018",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_3_months",
+        "motivation": "Add storage in a Warwick townhouse.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_D2E14E31",
+        "submission_date": "2026-07-25",
+        "postcode": "CV34 4BJ"
+      },
+      "property": {
+        "epc_found": false,
+        "epc_source": "proxy",
+        "proxy_comparator_count": 23,
+        "proxy_confidence": "high",
+        "property_type": "mid-floor_flat",
+        "built_form": "detached",
+        "floor_area_m2": 85.0,
+        "construction_age_band": "1900-1929",
+        "epc_rating": "C",
+        "epc_score": null,
+        "current_heating_system": "Community scheme",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "Community scheme",
+        "walls_description": "Average thermal transmittance 0.21 W/m²K",
+        "roof_description": "Average thermal transmittance 0.18 W/m²K",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null,
+        "proxy_postcodes": [
+          "CV34 4BJ"
+        ]
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "proxy_aggregate",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Heat recovery system for mixer showers",
+          "Draught proof single-glazed windows",
+          "Replace single glazed windows with low-E double glazed windows",
+          "Low energy lighting for all fixed outlets"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "planned",
+        "battery_purpose": "both",
+        "backup_power_required": "yes",
+        "battery_location_preference": "utility_room"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Warwick",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_019",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Maximise self-generation on a new-build.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_514287FF",
+        "submission_date": "2026-07-25",
+        "postcode": "MK10 9AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "detached_house",
+        "built_form": "detached",
+        "floor_area_m2": 271.0,
+        "construction_age_band": null,
+        "epc_rating": "A",
+        "epc_score": 95,
+        "current_heating_system": "Air source heat pump, underfloor, electric",
+        "current_fuel_type": "Electricity: electricity, unspecified tariff",
+        "hot_water_system": "From main system",
+        "walls_description": "Average thermal transmittance 0.17 W/m²K",
+        "roof_description": "Average thermal transmittance 0.11 W/m²K",
+        "windows_description": null,
+        "occupancy_status": null,
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 30,
+        "roof_shading_level": "none"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Broughton",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_020",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "within_12_months",
+        "motivation": "Move off oil in a poorly-rated rural home.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_4EE62E33",
+        "submission_date": "2026-07-25",
+        "postcode": "NR21 9AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "mid-terrace_house",
+        "built_form": "mid-terrace",
+        "floor_area_m2": 60.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "G",
+        "epc_score": 11,
+        "current_heating_system": "Room heaters, dual fuel (mineral and wood)",
+        "current_fuel_type": "dual fuel - mineral + wood",
+        "hot_water_system": "Electric immersion, standard tariff",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 12 mm loft insulation",
+        "windows_description": null,
+        "occupancy_status": null,
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Increase loft insulation to 270 mm",
+          "Increase hot water cylinder insulation",
+          "Low energy lighting for all fixed outlets",
+          "Solar water heating",
+          "Replace single glazed windows with low-E double glazed windows",
+          "50 mm internal or external wall insulation",
+          "Change heating to gas condensing boiler",
+          "Solar photovoltaic panels, 2.5 kWp",
+          "Wind turbine"
+        ]
+      },
+      "heat_pump": {
+        "emitter_type": "radiators",
+        "hot_water_cylinder_space_available": "yes",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "yes"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Fakenham",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_021",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Cut water heating costs.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_0739585B",
+        "submission_date": "2026-07-25",
+        "postcode": "PL15 8AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "top-floor_flat",
+        "built_form": "mid-terrace",
+        "floor_area_m2": 58.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "D",
+        "epc_score": 60,
+        "current_heating_system": "Room heaters, electric",
+        "current_fuel_type": "electricity (not community)",
+        "hot_water_system": "Electric immersion, off-peak",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 200 mm loft insulation",
+        "windows_description": "Single glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "High heat retention storage heaters",
+          "Replace single glazed windows with low-E double glazed windows"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "southeast",
+        "usable_roof_area_m2": 4,
+        "roof_shading_level": "low",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_bathrooms": 2
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "LAUNCESTON",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_022",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Store solar on the Cornish coast.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_BCF3AAB5",
+        "submission_date": "2026-07-25",
+        "postcode": "TR19 7AA"
+      },
+      "property": {
+        "epc_found": false,
+        "epc_source": "proxy_nearby",
+        "proxy_comparator_count": 6,
+        "proxy_confidence": "high",
+        "property_type": "semi-detached_bungalow",
+        "built_form": "semi-detached",
+        "floor_area_m2": 58.5,
+        "construction_age_band": "1930-1949",
+        "epc_rating": "E",
+        "epc_score": null,
+        "current_heating_system": "Boiler and radiators, LPG",
+        "current_fuel_type": "LPG (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Cavity wall, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 250 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null,
+        "proxy_postcodes": [
+          "TR19 7AF"
+        ]
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "proxy_aggregate",
+        "raw_recommendation_items": [
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp",
+          "Floor insulation (suspended floor)",
+          "Wind turbine",
+          "Cavity wall insulation"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "existing",
+        "battery_purpose": "backup",
+        "backup_power_required": "yes",
+        "battery_location_preference": "garage"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": null,
+          "article_4": false,
+          "aonb_name": "Cornwall",
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_023",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Solar for a central Oxford property.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_ADC8F9C7",
+        "submission_date": "2026-07-25",
+        "postcode": "OX1 3BG"
+      },
+      "property": {
+        "epc_found": false,
+        "property_type": "ground-floor_maisonette",
+        "built_form": "semi-detached",
+        "floor_area_m2": 436.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "F",
+        "epc_score": 37,
+        "current_heating_system": "Community scheme",
+        "current_fuel_type": "mains gas (community)",
+        "hot_water_system": "Community scheme",
+        "walls_description": "Sandstone or limestone, as built, no insulation (assumed)",
+        "roof_description": "(another dwelling above)",
+        "windows_description": "Single glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null,
+        "epc_source": "proxy_nearby",
+        "proxy_picked": true,
+        "proxy_comparator_count": 1,
+        "proxy_confidence": "low",
+        "proxy_postcodes": [
+          "OX1 3BH"
+        ]
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "proxy_aggregate",
+        "raw_recommendation_items": [
+          "Room-in-roof insulation",
+          "50 mm internal or external wall insulation",
+          "Draught proof single-glazed windows",
+          "Low energy lighting for all fixed outlets",
+          "Replace single glazed windows with low-E double glazed windows"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 18,
+        "roof_shading_level": "moderate"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Central",
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_024",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "within_12_months",
+        "motivation": "Hot water savings near York Minster.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_5F3DC0B2",
+        "submission_date": "2026-07-25",
+        "postcode": "YO1 7HH"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "top-floor_flat",
+        "built_form": "semi-detached",
+        "floor_area_m2": 233.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "E",
+        "epc_score": 41,
+        "current_heating_system": "Electric storage heaters",
+        "current_fuel_type": "electricity (not community)",
+        "hot_water_system": "Electric immersion, off-peak",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "Pitched, no insulation (assumed)",
+        "windows_description": "Single glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Draught proof single-glazed windows",
+          "High heat retention storage heaters",
+          "Replace single glazed windows with low-E double glazed windows"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "southwest",
+        "usable_roof_area_m2": 5,
+        "roof_shading_level": "low",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_occupants": 2,
+        "number_of_bathrooms": 1
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Central Historic Core Conservation Area",
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_025",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Solar hot water for a Warwick flat.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_EF2E0C24",
+        "submission_date": "2026-07-25",
+        "postcode": "CV34 4BJ"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "mid-floor_flat",
+        "built_form": "end-terrace",
+        "floor_area_m2": 72.0,
+        "construction_age_band": "2007-2011",
+        "epc_rating": "B",
+        "epc_score": 83,
+        "current_heating_system": "Community scheme",
+        "current_fuel_type": "mains gas (community)",
+        "hot_water_system": "Community scheme",
+        "walls_description": "Cavity wall, as built, insulated (assumed)",
+        "roof_description": "(another dwelling above)",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": false,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": []
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 4,
+        "roof_shading_level": "none",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_occupants": 2,
+        "number_of_bathrooms": 1
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Warwick",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_026",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_3_months",
+        "motivation": "Back up power in a rural area with an unreliable supply.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_8E473CAE",
+        "submission_date": "2026-07-25",
+        "postcode": "NR21 9AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "ground-floor_maisonette",
+        "built_form": "semi-detached",
+        "floor_area_m2": 73.0,
+        "construction_age_band": "2007-2011",
+        "epc_rating": "D",
+        "epc_score": 64,
+        "current_heating_system": "Boiler and radiators, LPG",
+        "current_fuel_type": "LPG (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Solid brick, as built, insulated (assumed)",
+        "roof_description": "(another dwelling above)",
+        "windows_description": "Mostly double glazing",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Low energy lighting for all fixed outlets",
+          "Upgrade heating controls"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "existing",
+        "battery_purpose": "both",
+        "backup_power_required": "yes",
+        "battery_location_preference": "utility_room"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Fakenham",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_027",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Summer hot water in a moors village.",
+        "technology_requested": "solar_thermal",
+        "enquiry_id": "RFQ_53000BA0",
+        "submission_date": "2026-07-25",
+        "postcode": "YO62 5AD"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "detached_house",
+        "built_form": "detached",
+        "floor_area_m2": 145.0,
+        "construction_age_band": "1983-1990",
+        "epc_rating": "E",
+        "epc_score": 54,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Cavity wall, as built, insulated (assumed)",
+        "roof_description": "Pitched, 100 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Floor insulation (suspended floor)",
+          "Floor insulation (solid floor)",
+          "Replace boiler with new condensing boiler",
+          "Solar photovoltaic panels, 2.5 kWp"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {
+        "roof_orientation": "southeast",
+        "usable_roof_area_m2": 5,
+        "roof_shading_level": "low",
+        "hot_water_cylinder_space_available": "yes",
+        "number_of_occupants": 4,
+        "number_of_bathrooms": 2
+      },
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Helmsley",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "North York Moors"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_028",
+    "input": {
+      "common": {
+        "preferred_contact_method": "either",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Generate power in the New Forest.",
+        "technology_requested": "solar_pv",
+        "enquiry_id": "RFQ_E3C8CCA3",
+        "submission_date": "2026-07-25",
+        "postcode": "SO43 7BQ"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "detached_house",
+        "built_form": "detached",
+        "floor_area_m2": 193.0,
+        "construction_age_band": null,
+        "epc_rating": "B",
+        "epc_score": 83,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas",
+        "hot_water_system": "From main system",
+        "walls_description": "Average thermal transmittance 0.21 W/m²K",
+        "roof_description": "Average thermal transmittance 0.15 W/m²K",
+        "windows_description": null,
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {
+        "roof_orientation": "south",
+        "usable_roof_area_m2": 24,
+        "roof_shading_level": "low"
+      },
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Lyndhurst",
+          "article_4": true,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "New Forest"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_029",
+    "input": {
+      "common": {
+        "preferred_contact_method": "email",
+        "desired_installation_timeline": "within_6_months",
+        "motivation": "Store new-build solar output.",
+        "technology_requested": "battery",
+        "enquiry_id": "RFQ_1A559351",
+        "submission_date": "2026-07-25",
+        "postcode": "MK10 9AA"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "semi-detached_house",
+        "built_form": "semi-detached",
+        "floor_area_m2": 221.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "B",
+        "epc_score": 82,
+        "current_heating_system": "Boiler and radiators, mains gas",
+        "current_fuel_type": "mains gas (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Solid brick, as built, no insulation (assumed)",
+        "roof_description": "Pitched, 300 mm loft insulation",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "owner_occupied",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "50 mm internal or external wall insulation",
+          "Floor insulation (solid floor)"
+        ]
+      },
+      "heat_pump": {},
+      "solar_pv": {},
+      "battery": {
+        "existing_solar_pv": "existing",
+        "battery_purpose": "self_consumption",
+        "backup_power_required": "no",
+        "battery_location_preference": "garage"
+      },
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Broughton",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": null
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  },
+  {
+    "case_id": "REAL_030",
+    "input": {
+      "common": {
+        "preferred_contact_method": "phone",
+        "desired_installation_timeline": "flexible",
+        "motivation": "Low-carbon heating on the moor.",
+        "technology_requested": "heat_pump",
+        "enquiry_id": "RFQ_C0EDF0CB",
+        "submission_date": "2026-07-25",
+        "postcode": "TQ13 7TB"
+      },
+      "property": {
+        "epc_found": true,
+        "property_type": "semi-detached_house",
+        "built_form": "semi-detached",
+        "floor_area_m2": 152.0,
+        "construction_age_band": "before 1900",
+        "epc_rating": "E",
+        "epc_score": 40,
+        "current_heating_system": "Boiler and radiators, oil",
+        "current_fuel_type": "oil (not community)",
+        "hot_water_system": "From main system",
+        "walls_description": "Granite or whinstone, as built, no insulation (assumed)",
+        "roof_description": "Pitched, limited insulation (assumed)",
+        "windows_description": "Fully double glazed",
+        "occupancy_status": "rented_(private)",
+        "access_constraints": null
+      },
+      "recommendation": {
+        "epc_recommendations_available": true,
+        "recommendation_source": "official_epc",
+        "raw_recommendation_items": [
+          "Room-in-roof insulation",
+          "Cavity wall insulation",
+          "50 mm internal or external wall insulation",
+          "Floor insulation (solid floor)",
+          "Install condensing boiler",
+          "Solar water heating",
+          "Solar photovoltaic panels, 2.5 kWp"
+        ]
+      },
+      "heat_pump": {
+        "emitter_type": "underfloor_heating",
+        "hot_water_cylinder_space_available": "yes",
+        "external_unit_space": "yes",
+        "garden_or_side_access": "yes"
+      },
+      "solar_pv": {},
+      "battery": {},
+      "solar_thermal": {},
+      "site_context": {
+        "planning": {
+          "listed_building": false,
+          "listed_grade": null,
+          "conservation_area_name": "Widecombe-in-the-Moor",
+          "article_4": false,
+          "aonb_name": null,
+          "whs_name": null,
+          "national_park_name": "Dartmoor"
+        },
+        "grid": null,
+        "data_sources": [
+          "planning.data.gov.uk"
+        ]
+      }
+    },
+    "output": {}
+  }
+]

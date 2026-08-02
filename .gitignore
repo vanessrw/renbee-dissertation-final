@@ -1,0 +1,33 @@
+# Secrets — never commit these
+.env
+*.json.key
+renbee-*.json
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Runtime outputs
+output/
+eval_outputs/
+rfq_outputs/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+
+# Claude Code internal
+.claude/
+
+# Thesis documents (kept locally, not version-controlled here)
+*.docx
+MIS docs/
+
+# Old/superseded reference files
+rfq_schema_v1.json
