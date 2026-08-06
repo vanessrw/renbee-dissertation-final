@@ -39,6 +39,7 @@ from epc_to_rfq import (
     completeness_score,
     map_recommendation_section,
     missing_fields,
+    optional_fields,
 )
 
 
@@ -235,6 +236,8 @@ class InitiateResponse(BaseModel):
     epc_found: bool
     auto_filled: dict
     missing_fields: dict[str, list[FieldSpec]]
+    # Offered but never gating. Blanks here do not block /api/generate.
+    optional_fields: dict[str, list[FieldSpec]] = {}
     completeness: dict
     site_context: dict
 
@@ -632,6 +635,7 @@ def initiate(req: InitiateRequest) -> InitiateResponse:
     rfq_input["site_context"] = site_context
 
     missing = missing_fields(rfq_input)
+    optional = optional_fields(rfq_input)
     score = completeness_score(rfq_input)
 
     sid = str(uuid.uuid4())
@@ -642,6 +646,7 @@ def initiate(req: InitiateRequest) -> InitiateResponse:
         epc_found=rfq_input["property"]["epc_found"],
         auto_filled=rfq_input["property"],
         missing_fields={k: [FieldSpec(**f) for f in v] for k, v in missing.items()},
+        optional_fields={k: [FieldSpec(**f) for f in v] for k, v in optional.items()},
         completeness=score,
         site_context=site_context,
     )

@@ -705,6 +705,7 @@
     postcode: null,
     autoFilled: null,
     missingFields: null,
+    optionalFields: null,
     chosenLmkKey: null,
     chosenProxyPostcode: null,
   };
@@ -993,6 +994,7 @@
     state.sessionId = initiateBody.session_id;
     state.autoFilled = initiateBody.auto_filled;
     state.missingFields = initiateBody.missing_fields;
+    state.optionalFields = initiateBody.optional_fields || {};
 
     // Auto-fill summary card — four states: EPC found / same-postcode proxy /
     // nearby-postcode proxy / no EPC anywhere (Case B).
@@ -1053,10 +1055,18 @@
     document.getElementById('completeness-text').textContent =
       `${initiateBody.completeness.populated} of ${initiateBody.completeness.required} required fields filled.`;
 
-    // Render dynamic form
+    // Render dynamic form. Required fields first per section, then any
+    // optional ones the server offered — those never block submission.
     const form = document.getElementById('step-2-form');
     form.innerHTML = '';
+    const formSections = {};
     Object.entries(state.missingFields).forEach(([section, fields]) => {
+      formSections[section] = [...fields];
+    });
+    Object.entries(state.optionalFields || {}).forEach(([section, fields]) => {
+      formSections[section] = (formSections[section] || []).concat(fields);
+    });
+    Object.entries(formSections).forEach(([section, fields]) => {
       const heading = document.createElement('h3');
       heading.style.fontSize = '14px';
       heading.style.marginTop = '20px';

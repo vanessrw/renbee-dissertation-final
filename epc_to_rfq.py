@@ -140,8 +140,9 @@ def _candidate_summary(p: dict) -> dict:
 # --------------------------------------------------------------------------
 # Field metadata (used by missing_fields() and for Webflow rendering)
 #
-# Each entry: { label, type, options?, required: bool }
+# Each entry: { label, type, options?, required: bool, prompt_if_empty?: bool }
 # `required` drives whether absence blocks the LLM call.
+# `prompt_if_empty` offers an optional field in the form without gating on it.
 # Order of declaration is the order Webflow should render the fields.
 # --------------------------------------------------------------------------
 
@@ -258,12 +259,13 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _BUILT_FORMS,
             "required": False,
         },
-        # Optional; auto-filled from the EPC, so only ever asked on Case B.
+        # Optional; auto-filled from the EPC, so only ever offered on Case B.
         "floor_area_m2": {
             "label": "Approximate floor area in m² (optional)",
             "type": "number",
             "options": None,
             "required": False,
+            "prompt_if_empty": True,
         },
         "construction_age_band": {
             "label": "Approximate construction age band",
@@ -409,6 +411,7 @@ FIELDS: dict[str, dict[str, dict]] = {
             "type": "number",
             "options": None,
             "required": False,
+            "prompt_if_empty": True,
         },
         "roof_shading_level": {
             "label": "How shaded is your roof?",
@@ -545,6 +548,7 @@ FIELDS: dict[str, dict[str, dict]] = {
             "type": "number",
             "options": None,
             "required": False,
+            "prompt_if_empty": True,
         },
         "roof_shading_level": {
             "label": "How shaded is your roof?",
@@ -1162,6 +1166,40 @@ def missing_fields(rfq_input: dict) -> dict:
                 })
         if missing:
             result[section_name] = missing
+
+    return result
+
+
+def optional_fields(rfq_input: dict) -> dict:
+    """Optional fields worth offering the homeowner anyway, same shape as
+    `missing_fields()`.
+
+    Only fields flagged `prompt_if_empty` are returned, so the form stays
+    minimal. Kept separate from `missing_fields()` because that result gates
+    the LLM call — a blank here must never block.
+    """
+    technology = (rfq_input.get("common") or {}).get("technology_requested")
+
+    sections = ["common", "property"]
+    if technology in _TECH_SECTIONS:
+        sections.append(_TECH_SECTIONS[technology])
+
+    result: dict[str, list[dict]] = {}
+    for section_name in sections:
+        section_data = rfq_input.get(section_name) or {}
+        offer: list[dict] = []
+        for field_name, meta in FIELDS.get(section_name, {}).items():
+            if meta.get("required") or not meta.get("prompt_if_empty"):
+                continue
+            if _is_empty(section_data.get(field_name)):
+                offer.append({
+                    "name": field_name,
+                    "label": meta["label"],
+                    "type": meta["type"],
+                    "options": meta.get("options"),
+                })
+        if offer:
+            result[section_name] = offer
 
     return result
 

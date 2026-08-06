@@ -587,6 +587,49 @@ class TestAPI(unittest.TestCase):
         }
         self.assertEqual(completeness_score(full)["score"], 1.0)
 
+    def test_optional_fields_offered_but_never_gate(self):
+        """Optional measurements are offered in the form, separately from
+        missing_fields, so a blank cannot block /api/generate."""
+        from epc_to_rfq import missing_fields, optional_fields
+
+        # Case B: no EPC, so both measurements are offered.
+        with patch("epc_fetch.fetch_epc_data",
+                   return_value={"postcode": "SW1A 2AA", "count": 0, "properties": []}), \
+             patch("epc_fetch.find_nearby_postcodes", return_value=[]):
+            r = self.client.post("/api/initiate", json={
+                "postcode": "SW1A 2AA", "technology": "solar_pv",
+            })
+        self.assertEqual(r.status_code, 200, r.text)
+        body = r.json()
+        offered = {s: {f["name"] for f in v} for s, v in body["optional_fields"].items()}
+        self.assertEqual(offered.get("property"), {"floor_area_m2"})
+        self.assertEqual(offered.get("solar_pv"), {"usable_roof_area_m2"})
+        # Never duplicated into the gating list.
+        for section, fields in body["missing_fields"].items():
+            names = {f["name"] for f in fields}
+            self.assertNotIn("floor_area_m2", names)
+            self.assertNotIn("usable_roof_area_m2", names)
+
+        # EPC found: floor area is auto-filled, so it is not offered again.
+        r = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "solar_pv",
+        })
+        offered = r.json()["optional_fields"]
+        self.assertNotIn("property", offered)
+        self.assertEqual({f["name"] for f in offered["solar_pv"]}, {"usable_roof_area_m2"})
+
+        # A populated optional value leaves nothing to offer, and never gates.
+        filled = {
+            "common": {"technology_requested": "solar_pv"},
+            "property": {"floor_area_m2": 78.0},
+            "solar_pv": {"usable_roof_area_m2": 24.0},
+        }
+        self.assertEqual(optional_fields(filled), {})
+        blank = {"common": {"technology_requested": "solar_pv"}}
+        gating = {f["name"] for v in missing_fields(blank).values() for f in v}
+        self.assertNotIn("floor_area_m2", gating)
+        self.assertNotIn("usable_roof_area_m2", gating)
+
     def test_heat_pump_type_is_asked(self):
         r = self.client.post("/api/initiate", json={
             "postcode": "E1 6AN", "technology": "heat_pump",
