@@ -8,13 +8,15 @@ journey and each has a dedicated system prompt. `run_case()` evaluates a
 case against both prompts and merges the outputs — the same prompts that
 serve the live API.
 
+Generation runs against a hosted OpenAI-compatible /chat/completions endpoint
+(Llama 3.3 70B on Vertex AI). There is no local-weights path.
+
 Public API:
-  load_model()                   -> (tokenizer, model)
-  generate_rfq_summary(...)      -> {"rfq_summary": "..."}
-  generate_recommendation(...)   -> {"recommendation_summary": "...",
-                                     "recommendation_disclaimer": "..."}
-  run_case(tokenizer, model, case) -> {"rfq_summary": ..., "recommendation_summary": ...,
-                                       "recommendation_disclaimer": ...}
+  generate_rfq_summary(rfq_input)    -> {"rfq_summary": "..."}
+  generate_recommendation(rfq_input) -> {"recommendation_summary": "...",
+                                         "recommendation_disclaimer": "..."}
+  run_case(case)                     -> {"rfq_summary": ..., "recommendation_summary": ...,
+                                         "recommendation_disclaimer": ...}
 """
 from __future__ import annotations
 
@@ -23,10 +25,10 @@ import os
 import random
 import re
 import time
-from typing import Optional
+from pathlib import Path
 
-
-MODEL_NAME = "meta-llama/Llama-3.2-3B-Instruct"
+# Model of record for the thesis. LLM_MODEL overrides it for a different target.
+MODEL_NAME = "meta/llama-3.3-70b-instruct-maas"
 RECOMMENDATION_DISCLAIMER = "Based only on official EPC recommendation data."
 
 # Backoff schedule for the cloud backend: 4s, 8s, 16s, 32s, 60s, 60s ...
@@ -90,12 +92,12 @@ YOUR JOB:
 STRICT RULES:
 - Use ONLY the provided input data
 - Every recommendation you mention MUST come from `recommendation.raw_recommendation_items` — do NOT invent suggestions
-- COSTS AND SAVINGS: quote a figure ONLY when it is given in `recommendation.recommendation_details` for that item — `indicative_cost_gbp` is the typical installation cost, `typical_yearly_saving_gbp` is the typical yearly saving. Copy the numbers exactly, formatted as £2,700. NEVER estimate, infer, round, or total them up. If an item has no figure, or `recommendation_details` is absent, simply omit that line for that step — do NOT write "unknown" or "not provided"
+- COSTS AND SAVINGS: quote a figure ONLY when it is given in `recommendation.recommendation_details` for that item. `indicative_cost_low_gbp` and `indicative_cost_high_gbp` bound the typical installation cost, `typical_yearly_saving_gbp` is the typical yearly saving. Copy the numbers exactly, formatted as £2,700. When the low and high costs differ write the range as "£4,000 to £14,000"; when they are equal write the single figure. NEVER estimate, infer, round, or total them up, and never average a range or quote only one end of it. If an item has no figure, or `recommendation_details` is absent, simply omit that line for that step — do NOT write "unknown" or "not provided"
 - If `recommendation.epc_recommendations_available` is false or the items list is empty, say so politely without fabricating advice
 - If `recommendation.recommendation_source` is `"proxy_aggregate"`, these items came from neighbouring properties' EPCs (not from the homeowner's own EPC). Phrase the prose to make this clear. If `property.proxy_picked` is true, the items came from a single nearby property the homeowner picked as similar to theirs — say "Based on a nearby property similar to yours, common upgrades include...". Otherwise, if `property.epc_source` is `"proxy_nearby"` say "Based on similar properties in nearby postcodes, common upgrades include...", and if `"proxy"` say "Based on similar properties on your street, common upgrades include..." — rather than "Your EPC recommends...".
 - If a `site_context` section is provided with planning constraints that ARE present and truthy, add one short sentence reflecting the most material one in plain English so the homeowner isn't surprised later — for example: "Because your home is listed (Grade II), your installer will need to apply for listed building consent before any external work" or "Your home is in the {conservation_area_name} conservation area, so any external equipment will likely need planning permission." Don't list every constraint; pick the most material one. NEVER state the absence of a constraint (do not say "your home is not listed" or "there are no planning restrictions"). Skip this sentence entirely if no planning constraint is present.
 - Open with ONE short sentence about their EPC rating, then list the improvements as numbered steps in the order given
-- Each step is: the improvement in plain English, then on its own line "Typical installation cost: £X" and "Typical yearly saving: £Y" — include only the figures that are present
+- Each step is: the improvement in plain English, then on its own line "Typical installation cost: £X" (or "£X to £Y" for a range) and "Typical yearly saving: £Z" — include only the figures that are present
 - No jargon and no tables. Keep each step to one short sentence plus its figures
 - Do NOT discuss the homeowner's chosen technology (heat pump / solar PV) — this output is only about the EPC recommendations
 
@@ -109,9 +111,13 @@ INPUT (excerpt):
   property.epc_rating = "D"
   recommendation.epc_recommendations_available = true
   recommendation.raw_recommendation_items = ["Loft insulation", "Heating controls upgrade"]
+  recommendation.recommendation_details = [
+    {"item": "Loft insulation", "indicative_cost_low_gbp": 100, "indicative_cost_high_gbp": 350, "typical_yearly_saving_gbp": 62},
+    {"item": "Heating controls upgrade", "indicative_cost_low_gbp": 350, "indicative_cost_high_gbp": 450}
+  ]
 
 {
-  "recommendation_summary": "Your home currently has an EPC rating of D, which means there's room to improve its energy performance. The official EPC report suggests two upgrades that could help: adding loft insulation, and upgrading your heating controls. Making these improvements could boost your rating and lower running costs over time."
+  "recommendation_summary": "Your home is rated D, so there is room to improve.\n\n1. Add loft insulation.\nTypical installation cost: £100 to £350\nTypical yearly saving: £62\n\n2. Upgrade your heating controls.\nTypical installation cost: £350 to £450"
 }
 
 EXAMPLE WITHOUT RECOMMENDATIONS:
@@ -121,38 +127,12 @@ EXAMPLE WITHOUT RECOMMENDATIONS:
 
 
 # --------------------------------------------------------------------------
-# Model loading & generation
+# Generation
 # --------------------------------------------------------------------------
 
-def load_model():
-    import torch  # lazy: not needed for assembler/API tests
-    from transformers import AutoTokenizer, AutoModelForCausalLM
-
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-
-    # bfloat16 on CPU (not MPS): fp16 crashed with inf/NaN on long generations,
-    # and bf16 on MPS produces near-uniform logits (token-salad output with
-    # trailing "!!!!"). bf16 on Apple Silicon CPU is numerically stable and
-    # uses ~6.4 GB for the 3B weights, which fits comfortably in 16 GB.
-    # Slower than MPS but correct. On CUDA, change device_map back to "auto".
-    model = AutoModelForCausalLM.from_pretrained(
-        MODEL_NAME,
-        dtype=torch.bfloat16,
-        device_map="cpu",
-    )
-    return tokenizer, model
-
-
-def cloud_backend_enabled() -> bool:
-    """True when LLM_BACKEND=cloud, i.e. generation is delegated over HTTP."""
-    return os.getenv("LLM_BACKEND", "local").strip().lower() == "cloud"
-
-
-def cloud_backend_label() -> str:
-    """Human-readable description of the active cloud target, for /health."""
-    return f"{os.getenv('LLM_MODEL', '?')} @ {os.getenv('LLM_API_BASE', '?')}"
+def llm_target_label() -> str:
+    """Human-readable description of the generation target, for /health."""
+    return f"{os.getenv('LLM_MODEL', MODEL_NAME)} @ {os.getenv('LLM_API_BASE', '?')}"
 
 
 def _cloud_auth_header() -> str:
@@ -174,21 +154,20 @@ def _cloud_auth_header() -> str:
     return f"Bearer {creds.token}"
 
 
-def generate_cloud(messages, max_new_tokens: int = 800) -> str:
+def generate_output(messages, max_new_tokens: int = 800) -> str:
     """Generate via an OpenAI-compatible /chat/completions endpoint.
 
-    Same `messages` the local path feeds to the chat template, and the same
-    sampling parameters as `generate_output`, so the only thing that changes
-    is where the forward pass happens. Returns raw text for the existing
-    `parse_model_output` / `_extract_or_fallback` pipeline.
+    Returns raw text for the `parse_model_output` / `_extract_or_fallback`
+    pipeline. Sampling parameters are fixed here (thesis III.5.1) rather than
+    read from the environment, so a run cannot silently differ from the paper.
     """
     import requests  # lazy
 
     base = os.getenv("LLM_API_BASE", "").rstrip("/")
-    model_id = os.getenv("LLM_MODEL", "")
-    if not base or not model_id:
+    model_id = os.getenv("LLM_MODEL") or MODEL_NAME
+    if not base:
         raise RuntimeError(
-            "LLM_BACKEND=cloud requires LLM_API_BASE and LLM_MODEL. "
+            "Generation requires LLM_API_BASE (the /chat/completions host). "
             "See .env.example."
         )
 
@@ -196,7 +175,7 @@ def generate_cloud(messages, max_new_tokens: int = 800) -> str:
         "model": model_id,
         "messages": messages,
         "max_tokens": max_new_tokens,
-        # Mirrors the local decoding settings (thesis III.5.1).
+        # Decoding settings of record (thesis III.5.1).
         "temperature": 0.2,
         "top_p": 0.9,
     }
@@ -241,56 +220,9 @@ def generate_cloud(messages, max_new_tokens: int = 800) -> str:
 
     made = attempt + 1
     raise RuntimeError(
-        f"cloud LLM backend {last_error} "
+        f"LLM endpoint {last_error} "
         f"(after {made} attempt{'s' if made > 1 else ''})"
     )
-
-
-def generate_output(tokenizer, model, messages, max_new_tokens: int = 800):
-    # Cloud backend short-circuits before torch is touched at all, so the
-    # API can run with LLM_BACKEND=cloud on a machine with no model weights.
-    if cloud_backend_enabled():
-        return generate_cloud(messages, max_new_tokens)
-
-    import torch  # lazy
-
-    prompt_text = tokenizer.apply_chat_template(
-        messages, add_generation_prompt=True, tokenize=False
-    )
-    inputs = tokenizer(prompt_text, return_tensors="pt").to(model.device)
-    prompt_len = inputs["input_ids"].shape[-1]
-
-    with torch.no_grad():
-        try:
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
-                temperature=0.2,
-                top_p=0.9,
-                do_sample=True,
-            )
-        except RuntimeError as e:
-            # Defensive fallback: if half-precision logits drift into inf/NaN
-            # (most likely on Apple Silicon CPU/MPS for long generations),
-            # retry with greedy decoding. argmax sidesteps torch.multinomial,
-            # so the request completes instead of 500-ing. Prose will be
-            # slightly more deterministic on this one fallback.
-            msg = str(e).lower()
-            if "inf" in msg or "nan" in msg or "probability tensor" in msg:
-                print(
-                    "[generate_rfq] sampling produced inf/NaN — "
-                    "retrying with greedy decoding"
-                )
-                outputs = model.generate(
-                    **inputs,
-                    max_new_tokens=max_new_tokens,
-                    do_sample=False,
-                )
-            else:
-                raise
-
-    new_tokens = outputs[0][prompt_len:]
-    return tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
 
 # --------------------------------------------------------------------------
@@ -417,7 +349,10 @@ def parse_model_output(raw: str) -> dict:
 
     for cand in candidates:
         try:
-            obj = json.loads(cand)
+            # strict=False permits literal control characters inside strings.
+            # The recommendation prompt asks for newline-separated steps and the
+            # model emits real newlines, which strict JSON rejects.
+            obj = json.loads(cand, strict=False)
             if isinstance(obj, dict):
                 return obj
         except json.JSONDecodeError:
@@ -451,7 +386,7 @@ def _extract_or_fallback(raw: str, parsed: dict, key: str) -> tuple[str, str]:
             # {"rfq_summary": "{\"rfq_summary\": \"...\"}"} — detect and unwrap.
             if stripped.startswith("{") and stripped.endswith("}"):
                 try:
-                    inner = json.loads(stripped)
+                    inner = json.loads(stripped, strict=False)
                     if isinstance(inner, dict) and inner.get(key):
                         return str(inner[key]).strip(), "nested_unwrapped"
                 except json.JSONDecodeError:
@@ -478,23 +413,21 @@ def _extract_or_fallback(raw: str, parsed: dict, key: str) -> tuple[str, str]:
         # Decode JSON escapes without mangling real UTF-8 (m², £); the old
         # .encode().decode("unicode_escape") turned "m²" into "mÂ²".
         try:
-            value = json.loads('"' + m.group(1) + '"')
+            value = json.loads('"' + m.group(1) + '"', strict=False)
         except json.JSONDecodeError:
             value = m.group(1)
         return value, "regex_fallback"
     return cleaned, "raw_fallback"
 
 
-def generate_rfq_summary(rfq_input: dict, tokenizer=None, model=None) -> dict:
+def generate_rfq_summary(rfq_input: dict) -> dict:
     """Generate the installer-facing RFQ summary only.
 
     Returns the parsed `rfq_summary` plus `raw_response` and `parse_status`
     for debugging.
     """
-    if not cloud_backend_enabled() and (tokenizer is None or model is None):
-        tokenizer, model = load_model()
     messages = build_rfq_prompt(rfq_input)
-    raw = generate_output(tokenizer, model, messages)
+    raw = generate_output(messages)
     parsed = parse_model_output(raw)
     summary, status = _extract_or_fallback(raw, parsed, "rfq_summary")
     return {
@@ -504,16 +437,14 @@ def generate_rfq_summary(rfq_input: dict, tokenizer=None, model=None) -> dict:
     }
 
 
-def generate_recommendation(rfq_input: dict, tokenizer=None, model=None) -> dict:
+def generate_recommendation(rfq_input: dict) -> dict:
     """Generate the homeowner-facing EPC recommendation explanation only.
 
     Returns the parsed `recommendation_summary` plus `raw_response` and
     `parse_status` for debugging.
     """
-    if not cloud_backend_enabled() and (tokenizer is None or model is None):
-        tokenizer, model = load_model()
     messages = build_recommendation_prompt(rfq_input)
-    raw = generate_output(tokenizer, model, messages, max_new_tokens=400)
+    raw = generate_output(messages, max_new_tokens=400)
     parsed = parse_model_output(raw)
     summary, status = _extract_or_fallback(raw, parsed, "recommendation_summary")
     return {
@@ -528,7 +459,7 @@ def generate_recommendation(rfq_input: dict, tokenizer=None, model=None) -> dict
 # Thesis evaluation runner — calls both production prompts and merges
 # --------------------------------------------------------------------------
 
-def run_case(tokenizer, model, case):
+def run_case(case):
     """Run a single evaluation case through both production prompts.
 
     Calls the same two functions the live API uses (`generate_rfq_summary`
@@ -536,8 +467,8 @@ def run_case(tokenizer, model, case):
     behaviour, not a separate combined prompt.
     """
     rfq_input = case["input"]
-    rfq = generate_rfq_summary(rfq_input, tokenizer=tokenizer, model=model)
-    rec = generate_recommendation(rfq_input, tokenizer=tokenizer, model=model)
+    rfq = generate_rfq_summary(rfq_input)
+    rec = generate_recommendation(rfq_input)
     return {
         "rfq_summary": rfq.get("rfq_summary", ""),
         "recommendation_summary": rec.get("recommendation_summary", ""),
@@ -546,18 +477,19 @@ def run_case(tokenizer, model, case):
 
 
 def main():
-    with open("rfq_cases_real_v1.json", "r") as f:
+    # Anchored to this file, so the script works from any working directory.
+    root = Path(__file__).resolve().parent
+    with open(root / "rfq_cases_real_v1.json", "r") as f:
         cases = json.load(f)
 
-    tokenizer, model = load_model()
     results = []
     for case in cases:
         print(f"\n=== Running {case['case_id']} ===")
-        parsed = run_case(tokenizer, model, case)
+        parsed = run_case(case)
         print(json.dumps(parsed, indent=2))
         results.append({"case_id": case["case_id"], "output": parsed})
 
-    with open("rfq_generated_outputs.json", "w") as f:
+    with open(root / "rfq_generated_outputs.json", "w") as f:
         json.dump(results, f, indent=2)
 
 

@@ -1,4 +1,4 @@
-"""End-to-end CLI: postcode + user form -> EPC fetch -> assembler -> Llama -> summaries.
+"""End-to-end CLI: postcode + user form -> EPC fetch -> assembler -> LLM -> summaries.
 
 CLI modes:
   python pipeline.py "<postcode>" [house_number]                     # assemble only (no LLM, fast)
@@ -36,23 +36,16 @@ def build_rfq_input(
     return assemble_rfq_input(epc_data, user_form, house_number=house_number)
 
 
-def generate_summaries(rfq_input: dict, tokenizer=None, model=None) -> dict:
+def generate_summaries(rfq_input: dict) -> dict:
     """Run both production prompts and merge their outputs.
 
     Calls the same two functions the live API uses, so this CLI mode and
     the live customer journey are evaluated against identical prompts.
     """
-    from generate_rfq import (
-        generate_recommendation,
-        generate_rfq_summary,
-        load_model,
-    )
+    from generate_rfq import generate_recommendation, generate_rfq_summary
 
-    if tokenizer is None or model is None:
-        tokenizer, model = load_model()
-
-    rfq = generate_rfq_summary(rfq_input, tokenizer=tokenizer, model=model)
-    rec = generate_recommendation(rfq_input, tokenizer=tokenizer, model=model)
+    rfq = generate_rfq_summary(rfq_input)
+    rec = generate_recommendation(rfq_input)
     return {**rfq, **rec}
 
 
@@ -118,20 +111,15 @@ if __name__ == "__main__":
     }
 
     if args.generate or args.rfq or args.recommendation:
-        from generate_rfq import (
-            generate_recommendation,
-            generate_rfq_summary,
-            load_model,
-        )
-        tokenizer, model = load_model()
+        from generate_rfq import generate_recommendation, generate_rfq_summary
 
         output: dict = {}
         if args.generate:
-            output = generate_summaries(rfq_input, tokenizer=tokenizer, model=model)
+            output = generate_summaries(rfq_input)
         elif args.rfq:
-            output = generate_rfq_summary(rfq_input, tokenizer=tokenizer, model=model)
+            output = generate_rfq_summary(rfq_input)
         elif args.recommendation:
-            output = generate_recommendation(rfq_input, tokenizer=tokenizer, model=model)
+            output = generate_recommendation(rfq_input)
 
         print(json.dumps({
             "input": rfq_input,

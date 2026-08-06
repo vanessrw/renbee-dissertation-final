@@ -8,7 +8,7 @@ Run everything from the `main/` directory with the venv activated.
 ```bash
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt        # includes torch + transformers (~5 GB)
+pip install -r requirements.txt        # small: no torch, no model weights
 
 cp .env.example .env                    # then fill in the tokens below
 ```
@@ -24,39 +24,23 @@ cp .env.example .env                    # then fill in the tokens below
   Vertex endpoints, so `us-central1` returns a 404.
 - `UKPN_API_KEY` — no longer functional (the UKPN headroom dataset was retired), safe
   to omit.
-- Generation backend (optional): `LLM_BACKEND=cloud` plus `LLM_API_BASE` and
-  `LLM_MODEL` sends generation to any OpenAI-compatible `/chat/completions`
-  endpoint instead of running Llama locally. Built for the Renbee demo, where
-  local CPU generation takes ~90s per journey. Defaults to `local`, which is
-  what the thesis evaluation uses. `LLM_API_KEY` is optional: leave it unset on
-  Vertex and auth falls back to Google ADC. `GET /health` reports the active
-  backend, and the eval harness labels cloud runs `cloud:<model>` so they can
-  never be mistaken for the local 3B.
-
-  For the Renbee demo the configured target is **Llama 3.3 70B on Vertex**
-  (`meta/llama-3.3-70b-instruct-maas`, `us-central1` only). It is the dense
-  Llama 3.x architecture, the same family as the local 3.2 3B, so the demo
-  stays architecturally consistent with the thesis. Enable it once in Model
-  Garden (the *API service* card, not the self-deploy one), then launch with
-  the override so `.env` stays on `local`:
-
-  ```bash
-  LLM_BACKEND=cloud uvicorn app:app --port 8000
-  ```
-
-The real Llama path also needs Hugging Face access to the gated model:
-
-```bash
-huggingface-cli login                   # request access on the Llama 3.2 3B model page
-```
+- `LLM_API_BASE` — **required for any generation.** The OpenAI-compatible
+  `/chat/completions` host. All generation is hosted; there is no local path.
+  The configured target is **Llama 3.3 70B on Vertex**
+  (`meta/llama-3.3-70b-instruct-maas`, `us-central1` only), which must be enabled
+  once in Model Garden on the *API service* card, not the self-deploy one.
+  `LLM_MODEL` overrides the model (it defaults to `MODEL_NAME` in
+  `generate_rfq.py`); `LLM_API_KEY` is optional, and leaving it unset on Vertex
+  makes auth fall back to Google ADC or the service-account key.
+  `GET /health` reports the active target.
 
 ## Run the app
 
 ```bash
-# mocked LLM: fast, no model download. Best for the demo and screen recordings.
+# mocked LLM: fast, no network, no credentials. Best for demos and screen recordings.
 DEMO_MOCK_LLM=1 uvicorn app:app --port 8000
 
-# real Llama 3.2 3B (bf16 on CPU): first /generate call loads ~6 GB of weights.
+# real hosted generation (Llama 3.3 70B on Vertex).
 uvicorn app:app --port 8000
 ```
 
@@ -108,7 +92,7 @@ dropping straight to manual entry:
   `proxy_nearby_candidates`** picker. The client either picks one
   (`lmk_key` + `proxy_postcode`, tagged `proxy_picked: true`) or takes the average
   (`use_proxy_nearby_average: true`). Both tagged `epc_source: "proxy_nearby"`.
-- **Case B**: if no nearby EPCs exist either, the 4-question manual form fires.
+- **Case B**: if no nearby EPCs exist either, the 3-question manual form fires.
 
 `test_api.py` covers all three paths with mocked postcodes.io. `GL54 2BP` (Layer 2) and
 `CV12 8UE` (Layer 1) are handy live examples.
@@ -120,10 +104,10 @@ dropping straight to manual entry:
 writes `eval_outputs/`.
 
 ```bash
-# offline smoke test — no weights, no credentials
+# offline smoke test — no network, no credentials
 python -m evaluation.run_eval --mock-gen --mock-judge
 
-# full scored run (real Llama + real Gemini judge)
+# full scored run (hosted Llama 3.3 70B + real Gemini judge)
 python -m evaluation.run_eval --repeats 3 --regenerate
 ```
 
@@ -158,8 +142,9 @@ Use `--mock-judge` to sanity-check generation without any credentials.
 |---|---|
 | `ModuleNotFoundError` | Activate the venv: `source venv/bin/activate` |
 | `EPC_BEARER_TOKEN must be set` | Add `EPC_BEARER_TOKEN=...` to `.env` |
-| `Llama-3.2-3B-Instruct is gated` | `huggingface-cli login` and request access on the model page |
+| `Generation requires LLM_API_BASE` | Add `LLM_API_BASE=...` to `.env`, or use `DEMO_MOCK_LLM=1` |
+| `LLM endpoint returned 404 ... does not have access` | Enable Llama MaaS in Vertex Model Garden on the *API service* card |
+| `LLM endpoint returned 429` after all retries | Shared-capacity throttling — raise `LLM_MAX_RETRIES` or retry later |
 | `409 ambiguous_address` | Multi-address postcode — re-call with an `lmk_key` from `candidates` |
 | `409 proxy_nearby_candidates` | 0-EPC postcode — pick a candidate or pass `use_proxy_nearby_average: true` |
 | `unknown_session` 404 | Sessions are in-memory and die on restart — re-run `/api/initiate` |
-| Llama too slow / OOM | Use hosted inference (Together AI, Replicate, Fireworks) instead of local |

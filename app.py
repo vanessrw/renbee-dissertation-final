@@ -43,9 +43,9 @@ from epc_to_rfq import (
 
 
 # --------------------------------------------------------------------------
-# Demo mode: when DEMO_MOCK_LLM=1 in the environment, swap the real Llama
+# Demo mode: when DEMO_MOCK_LLM=1 in the environment, swap the hosted LLM
 # generation functions for canned responses. Lets the Webflow demo run
-# without downloading the model weights.
+# with no network access and no credentials.
 # --------------------------------------------------------------------------
 
 DEMO_MOCK_LLM = os.getenv("DEMO_MOCK_LLM") in {"1", "true", "yes"}
@@ -53,7 +53,7 @@ DEMO_MOCK_LLM = os.getenv("DEMO_MOCK_LLM") in {"1", "true", "yes"}
 if DEMO_MOCK_LLM:
     import generate_rfq as _gen_module
 
-    def _mock_recommendation(rfq_input: dict, tokenizer=None, model=None) -> dict:
+    def _mock_recommendation(rfq_input: dict) -> dict:
         rec = rfq_input.get("recommendation") or {}
         prop = rfq_input.get("property") or {}
         items = rec.get("raw_recommendation_items") or []
@@ -100,7 +100,7 @@ if DEMO_MOCK_LLM:
             "parse_status": "mock",
         }
 
-    def _mock_rfq(rfq_input: dict, tokenizer=None, model=None) -> dict:
+    def _mock_rfq(rfq_input: dict) -> dict:
         common = rfq_input.get("common") or {}
         prop = rfq_input.get("property") or {}
         tech_raw = common.get("technology_requested", "low-carbon technology")
@@ -131,7 +131,7 @@ if DEMO_MOCK_LLM:
             f"{area} m². The property falls within the {age} construction age band "
             f"and is currently heated by: {heating}. Installation is desired {timeline}. "
             f"The homeowner's main motivation is {motivation}. Preferred contact is by {contact}. "
-            f"(Demo mock — replace with real Llama output for evaluation runs.)"
+            f"(Demo mock — replace with real model output for evaluation runs.)"
         )
         return {
             "rfq_summary": text,
@@ -170,30 +170,6 @@ app.add_middleware(
 # --------------------------------------------------------------------------
 
 _SESSIONS: dict[str, dict[str, Any]] = {}
-
-# Lazy-loaded model — only instantiated when the first /generate* call lands,
-# and only if Llama is available. Tests can monkey-patch _MODEL_BACKEND.
-_MODEL_BACKEND: Optional[dict] = None
-
-
-def _get_model_backend() -> dict:
-    """Load Llama on first use. Returns a dict with `tokenizer` and `model`.
-
-    Tests can preempt this by setting `app._MODEL_BACKEND` directly.
-    Demo mode skips the load entirely — the patched generation functions
-    don't need a real backend.
-    """
-    global _MODEL_BACKEND
-    if _MODEL_BACKEND is None:
-        from generate_rfq import cloud_backend_enabled
-        if DEMO_MOCK_LLM or cloud_backend_enabled():
-            # Neither the canned responses nor the HTTP backend need weights.
-            _MODEL_BACKEND = {"tokenizer": None, "model": None}
-        else:
-            from generate_rfq import load_model
-            tokenizer, model = load_model()
-            _MODEL_BACKEND = {"tokenizer": tokenizer, "model": model}
-    return _MODEL_BACKEND
 
 
 # --------------------------------------------------------------------------
@@ -367,15 +343,11 @@ def _require_session(session_id: str) -> dict:
 
 @app.get("/health")
 def health() -> dict:
-    from generate_rfq import (
-        MODEL_NAME, cloud_backend_enabled, cloud_backend_label,
-    )
-    cloud = cloud_backend_enabled()
+    from generate_rfq import llm_target_label
     return {
         "status": "ok",
         "demo_mock_llm": DEMO_MOCK_LLM,
-        "llm_backend": "cloud" if cloud else "local",
-        "llm_target": cloud_backend_label() if cloud else MODEL_NAME,
+        "llm_target": llm_target_label(),
     }
 
 
@@ -451,9 +423,9 @@ flowchart TD
     F -->|solar PV| G2[orientation /<br/>area / shading]
     F -->|battery| G3[existing PV / purpose /<br/>backup need / location]
     F -->|solar thermal| G4[orientation / area /<br/>shading / cylinder /<br/>occupants / bathrooms]
-    G1 & G2 & G3 & G4 --> H[Llama 3.2 3B:<br/>homeowner recommendation<br/>softens prose if proxy]
+    G1 & G2 & G3 & G4 --> H[Llama 3.3 70B:<br/>homeowner recommendation<br/>softens prose if proxy]
     H --> I[Homeowner picks<br/>installer]
-    I --> J[Llama 3.2 3B:<br/>installer-facing RFQ<br/>strict no-fabrication prompt]
+    I --> J[Llama 3.3 70B:<br/>installer-facing RFQ<br/>strict no-fabrication prompt]
     J --> K[HITL review<br/>then submit to installer]
     style A fill:#dbeafe,stroke:#3b82f6
     style B fill:#fef3c7,stroke:#f59e0b
@@ -495,7 +467,7 @@ def root():
                          .replace("__MODE_BG__", "#fef3c7") \
                          .replace("__MODE_FG__", "#92400e")
     else:
-        html = _ROOT_HTML.replace("__MODE_LABEL__", "real Llama") \
+        html = _ROOT_HTML.replace("__MODE_LABEL__", "hosted Llama 3.3 70B") \
                          .replace("__MODE_BG__", "#dcfce7") \
                          .replace("__MODE_FG__", "#166534")
     return HTMLResponse(html)
@@ -691,11 +663,8 @@ def generate(req: GenerateRequest) -> GenerateResponse:
             },
         )
 
-    backend = _get_model_backend()
     from generate_rfq import generate_recommendation
-    rec = generate_recommendation(
-        rfq_input, tokenizer=backend["tokenizer"], model=backend["model"]
-    )
+    rec = generate_recommendation(rfq_input)
 
     session["rfq_input"] = rfq_input
     session["recommendation"] = rec
@@ -727,11 +696,8 @@ def generate_rfq(req: GenerateRFQRequest) -> GenerateRFQResponse:
             },
         )
 
-    backend = _get_model_backend()
     from generate_rfq import generate_rfq_summary
-    out = generate_rfq_summary(
-        rfq_input, tokenizer=backend["tokenizer"], model=backend["model"]
-    )
+    out = generate_rfq_summary(rfq_input)
 
     session["rfq_summary"] = out.get("rfq_summary", "")
     session["vendor_id"] = req.vendor_id

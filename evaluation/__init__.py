@@ -8,7 +8,7 @@ Produces the quantitative results for Chapter IV:
     homeowner persona,
   - structural completeness as a supporting metric.
 
-The generator under test is the local Llama model (default 3.2 3B). The judge is
-Google Gemini. Both have offline mock modes so the full scoring loop can be
-validated without the model weights or an API key.
+The generator under test is hosted Llama 3.3 70B Instruct. The judge is Google
+Gemini. Both have offline mock modes so the full scoring loop can be validated
+with no network access and no credentials.
 """

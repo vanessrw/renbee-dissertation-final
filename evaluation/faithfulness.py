@@ -35,6 +35,14 @@ _STOPWORDS = {
 
 _YES_NO = {"yes", "no", "unknown", "true", "false", "none", "n/a"}
 
+# Optional in FIELDS, but still scored when supplied: `required` gates both the
+# completeness denominator and the filter below, so these would otherwise vanish.
+ALWAYS_CHECKED_IF_PRESENT: dict[str, tuple[str, ...]] = {
+    "property": ("floor_area_m2",),
+    "solar_pv": ("usable_roof_area_m2",),
+    "solar_thermal": ("usable_roof_area_m2",),
+}
+
 
 def _normalise(text: str) -> str:
     text = (text or "").lower().replace("_", " ").replace("-", " ")
@@ -104,8 +112,9 @@ def _relevant_rfq_fields(rfq_input: dict) -> list[tuple[str, str, Any]]:
     """(section, field, value) for fields the RFQ summary should preserve.
 
     Only required fields (marked required: True in FIELDS) are checked, plus
-    epc_rating which is always essential for an installer quote. Optional EPC
-    fields (walls_description, hot_water_system, postcode, etc.) are excluded
+    epc_rating which is always essential for an installer quote, plus anything in
+    ALWAYS_CHECKED_IF_PRESENT that the homeowner actually supplied. Other optional
+    EPC fields (walls_description, hot_water_system, postcode, etc.) are excluded
     because a good summary is selective — the metric measures whether the model
     conveyed what an installer needs, not whether it transcribed every attribute.
     """
@@ -132,6 +141,16 @@ def _relevant_rfq_fields(rfq_input: dict) -> list[tuple[str, str, Any]]:
                 continue
             value = data.get(field)
             if value is None or value == "" or value == []:
+                continue
+            out.append((section, field, value))
+
+        # Skip any already added, so re-promoting one to required can't double-count.
+        already = {f for s, f, _ in out if s == section}
+        for field in ALWAYS_CHECKED_IF_PRESENT.get(section, ()):
+            if field in already:
+                continue
+            value = data.get(field)
+            if value in (None, "", []):
                 continue
             out.append((section, field, value))
 

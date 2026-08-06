@@ -258,11 +258,12 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _BUILT_FORMS,
             "required": False,
         },
+        # Optional; auto-filled from the EPC, so only ever asked on Case B.
         "floor_area_m2": {
-            "label": "Approximate floor area in m²",
+            "label": "Approximate floor area in m² (optional)",
             "type": "number",
             "options": None,
-            "required": True,
+            "required": False,
         },
         "construction_age_band": {
             "label": "Approximate construction age band",
@@ -404,10 +405,10 @@ FIELDS: dict[str, dict[str, dict]] = {
             "required": True,
         },
         "usable_roof_area_m2": {
-            "label": "Approximate usable roof area in m²",
+            "label": "Approximate usable roof area in m² (optional)",
             "type": "number",
             "options": None,
-            "required": True,
+            "required": False,
         },
         "roof_shading_level": {
             "label": "How shaded is your roof?",
@@ -540,10 +541,10 @@ FIELDS: dict[str, dict[str, dict]] = {
             "required": True,
         },
         "usable_roof_area_m2": {
-            "label": "Approximate usable roof area in m²",
+            "label": "Approximate usable roof area in m² (optional)",
             "type": "number",
             "options": None,
-            "required": True,
+            "required": False,
         },
         "roof_shading_level": {
             "label": "How shaded is your roof?",
@@ -719,11 +720,32 @@ def map_property_section(cert: dict) -> dict:
 
 
 def _money(value) -> Optional[int]:
-    """'2,700' or '£2,700' -> 2700. None when absent or unparseable."""
+    """'2,700' or '£2,700' -> 2700. None when absent or unparseable.
+
+    Single figures only. EPC costs are often ranges, so use _money_range there.
+    """
     if value is None:
         return None
     digits = re.sub(r"[^\d]", "", str(value))
     return int(digits) if digits else None
+
+
+def _money_range(value) -> Optional[tuple[int, int]]:
+    """Parse an EPC cost, which may be a single figure or a range.
+
+    '£4,000 - £14,000' -> (4000, 14000);  '£2,700' -> (2700, 2700)
+
+    Most EPC indicative-cost values are ranges. Stripping non-digits and
+    concatenating turns '£4,000 - £14,000' into 400014000, so each figure has
+    to be read separately. min/max tolerates '£4,000-£14,000' with no spaces
+    and any stray third figure.
+    """
+    if value is None:
+        return None
+    nums = [int(n.replace(",", "")) for n in re.findall(r"[\d,]*\d", str(value))]
+    if not nums:
+        return None
+    return min(nums), max(nums)
 
 
 def map_recommendation_section(recommendations: list) -> dict:
@@ -734,11 +756,13 @@ def map_recommendation_section(recommendations: list) -> dict:
         if not text:
             continue
         items.append(text)
-        cost = _money(r.get("indicative-cost"))
+        cost = _money_range(r.get("indicative-cost"))
+        # typical-saving is always a single figure, never a range.
         saving = _money(r.get("typical-saving"))
         entry = {"item": text}
         if cost is not None:
-            entry["indicative_cost_gbp"] = cost
+            entry["indicative_cost_low_gbp"] = cost[0]
+            entry["indicative_cost_high_gbp"] = cost[1]
         if saving is not None:
             entry["typical_yearly_saving_gbp"] = saving
         details.append(entry)
@@ -849,7 +873,7 @@ def build_nearby_candidate_list(epc_data: dict) -> list[dict]:
     EPCs, the API hands the homeowner a list of candidates so they can either
     pick the one they feel is closest to their property or opt for the
     aggregate of all of them. The four fields shown per candidate mirror the
-    Case-B 4-question manual-entry form.
+    Case-B manual-entry form.
     """
     properties = (epc_data or {}).get("properties") or []
     out: list[dict] = []

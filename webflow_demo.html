@@ -333,6 +333,10 @@
     margin: 12px 0;
   }
   .recommendation p { margin: 0; }
+  /* The recommendation prompt returns numbered steps separated by real
+     newlines, so the text node must preserve them or the homeowner sees one
+     run-on paragraph instead of a numbered list. */
+  #recommendation-text { white-space: pre-wrap; }
   .recommendation .disclaimer {
     margin-top: 8px;
     font-size: 11px;
@@ -670,7 +674,7 @@
         </div>
         <div class="pc-row">
           <div class="pc-header"><span class="pc">SW1A 2AA</span><button class="copy-btn" type="button" data-pc="SW1A 2AA">Copy</button></div>
-          <div class="pc-meta">0 EPCs, no neighbours. Falls through to the 4-question manual form.</div>
+          <div class="pc-meta">0 EPCs, no neighbours. Falls through to the 3-question manual form.</div>
         </div>
       </div>
     </aside>

@@ -86,7 +86,7 @@ def _fake_epc_fetch_factory(fixture_path: Path):
 
 class FakeRecommendation:
     @staticmethod
-    def __call__(rfq_input, tokenizer=None, model=None):
+    def __call__(rfq_input):
         items = rfq_input.get("recommendation", {}).get("raw_recommendation_items", [])
         if not items:
             return {
@@ -106,7 +106,7 @@ class FakeRecommendation:
 
 class FakeRfq:
     @staticmethod
-    def __call__(rfq_input, tokenizer=None, model=None):
+    def __call__(rfq_input):
         tech = rfq_input.get("common", {}).get("technology_requested", "?")
         ptype = rfq_input.get("property", {}).get("property_type", "unknown")
         return {
@@ -147,10 +147,8 @@ class TestAPI(unittest.TestCase):
         import app
         cls.app_module = app
 
-        # Stub the model backend so /generate* don't try to load Llama.
-        cls.app_module._MODEL_BACKEND = {"tokenizer": None, "model": None}
-
-        # Patch the LLM functions (looked up dynamically inside handlers).
+        # Patch the LLM functions (looked up dynamically inside handlers), so
+        # no test ever reaches the hosted endpoint.
         cls.gen_rec_patcher = patch("generate_rfq.generate_recommendation", FakeRecommendation())
         cls.gen_rfq_patcher = patch("generate_rfq.generate_rfq_summary", FakeRfq())
         cls.gen_rec_patcher.start()
@@ -421,8 +419,9 @@ class TestAPI(unittest.TestCase):
         # Property required fields are missing (Case B form)
         self.assertIn("property", body["missing_fields"])
         names = {f["name"] for f in body["missing_fields"]["property"]}
+        # floor_area_m2 is optional, so Case B asks three questions.
         self.assertEqual(names, {
-            "property_type", "floor_area_m2",
+            "property_type",
             "current_heating_system", "current_fuel_type",
         })
 
@@ -507,11 +506,12 @@ class TestAPI(unittest.TestCase):
         self.assertIn("solar_thermal", body["missing_fields"])
         names = {f["name"] for f in body["missing_fields"]["solar_thermal"]}
         for required_field in (
-            "roof_orientation", "usable_roof_area_m2", "roof_shading_level",
+            "roof_orientation", "roof_shading_level",
             "hot_water_cylinder_space_available",
             "number_of_occupants", "number_of_bathrooms",
         ):
             self.assertIn(required_field, names)
+        self.assertNotIn("usable_roof_area_m2", names)  # optional, must not gate
 
     def test_contact_details_asked_but_kept_out_of_prompts(self):
         r = self.client.post("/api/initiate", json={
@@ -546,6 +546,46 @@ class TestAPI(unittest.TestCase):
         checked = {f for _, f, _ in _relevant_rfq_fields(rfq_input)}
         self.assertNotIn("contact_email", checked)
         self.assertNotIn("contact_phone", checked)
+
+    def test_optional_measurements_still_scored_when_supplied(self):
+        """Optional on the form, but preservation still checks them when supplied."""
+        from epc_to_rfq import FIELDS, completeness_score
+        from evaluation.faithfulness import _relevant_rfq_fields
+
+        self.assertFalse(FIELDS["property"]["floor_area_m2"]["required"])
+        for section in ("solar_pv", "solar_thermal"):
+            self.assertFalse(FIELDS[section]["usable_roof_area_m2"]["required"])
+
+        populated = {
+            "common": {"technology_requested": "solar_pv"},
+            "property": {"floor_area_m2": 78.0},
+            "solar_pv": {"usable_roof_area_m2": 24.0},
+        }
+        checked = {f for _, f, _ in _relevant_rfq_fields(populated)}
+        self.assertIn("floor_area_m2", checked)
+        self.assertIn("usable_roof_area_m2", checked)
+        fields = [f for _, f, _ in _relevant_rfq_fields(populated)]
+        self.assertEqual(len(fields), len(set(fields)))
+
+        # Absent means not checked, so a blank is never counted as a miss.
+        blank = {"common": {"technology_requested": "solar_pv"},
+                 "property": {}, "solar_pv": {}}
+        checked_blank = {f for _, f, _ in _relevant_rfq_fields(blank)}
+        self.assertNotIn("floor_area_m2", checked_blank)
+        self.assertNotIn("usable_roof_area_m2", checked_blank)
+
+        full = {
+            "common": {
+                "technology_requested": "solar_pv",
+                "preferred_contact_method": "email",
+                "contact_email": "a@example.com", "contact_phone": "07700 900000",
+                "desired_installation_timeline": "flexible", "motivation": "bills",
+            },
+            "property": {"property_type": "flat", "current_heating_system": "gas_boiler_combi",
+                         "current_fuel_type": "mains_gas"},
+            "solar_pv": {"roof_orientation": "south", "roof_shading_level": "low"},
+        }
+        self.assertEqual(completeness_score(full)["score"], 1.0)
 
     def test_heat_pump_type_is_asked(self):
         r = self.client.post("/api/initiate", json={

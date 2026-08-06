@@ -1,12 +1,12 @@
 """Evaluation orchestrator. Generates the two outputs for each case with the
-local Llama model (or a mock), scores them, and writes the results that feed
+hosted Llama model (or a mock), scores them, and writes the results that feed
 Chapter IV.
 
 Usage examples:
-  # offline smoke test (no weights, no API key):
+  # offline smoke test (no network, no credentials):
   python -m evaluation.run_eval --mock-gen --mock-judge
 
-  # real local 3B generation, mock judge (checks generation + preservation):
+  # real generation, mock judge (checks generation + preservation):
   python -m evaluation.run_eval --mock-judge
 
   # full scored run (needs GEMINI_API_KEY in .env):
@@ -39,7 +39,7 @@ DEFAULT_OUT = ROOT / "eval_outputs"
 
 
 # --------------------------------------------------------------------------
-# Generation (real local Llama, or mock)
+# Generation (hosted model, or mock)
 # --------------------------------------------------------------------------
 
 def _mock_generate(rfq_input: dict) -> dict:
@@ -87,40 +87,26 @@ def _mock_generate(rfq_input: dict) -> dict:
 
 
 class Generator:
-    """Wraps either the mock generator or the real local Llama model."""
+    """Wraps either the mock generator or the hosted model."""
 
     def __init__(self, mock: bool):
         self.mock = mock
-        self._backend = None
         if mock:
             self.label = "mock"
         else:
             import generate_rfq
             # The label is provenance: it keys the generation cache and is
-            # written into scores.json metadata. It must name what actually
-            # produced the text, so a stray LLM_BACKEND=cloud (set for the
-            # Renbee demo) can never be recorded as the local 3B.
-            if generate_rfq.cloud_backend_enabled():
-                self.label = f"cloud:{os.getenv('LLM_MODEL', 'unknown')}"
-            else:
-                self.label = generate_rfq.MODEL_NAME.split("/")[-1]
-
-    def _ensure_model(self):
-        if self._backend is None and not self.mock:
-            import generate_rfq
-            if generate_rfq.cloud_backend_enabled():
-                self._backend = (generate_rfq, None, None)  # no weights needed
-            else:
-                tok, model = generate_rfq.load_model()
-                self._backend = (generate_rfq, tok, model)
+            # written into scores.json metadata, so it must name what actually
+            # produced the text. Keep this format stable — changing it
+            # invalidates every cached generation from a previous paid run.
+            self.label = f"cloud:{os.getenv('LLM_MODEL') or generate_rfq.MODEL_NAME}"
 
     def generate(self, rfq_input: dict) -> dict:
         if self.mock:
             return _mock_generate(rfq_input)
-        self._ensure_model()
-        gen, tok, model = self._backend
-        rfq = gen.generate_rfq_summary(rfq_input, tokenizer=tok, model=model)
-        rec = gen.generate_recommendation(rfq_input, tokenizer=tok, model=model)
+        import generate_rfq as gen
+        rfq = gen.generate_rfq_summary(rfq_input)
+        rec = gen.generate_recommendation(rfq_input)
         return {
             "rfq_summary": rfq.get("rfq_summary", ""),
             "recommendation_summary": rec.get("recommendation_summary", ""),
@@ -358,7 +344,7 @@ def main():
     ap.add_argument("--cases", default=str(DEFAULT_CASES))
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--repeats", type=int, default=1)
-    ap.add_argument("--mock-gen", action="store_true", help="use the mock generator (no weights)")
+    ap.add_argument("--mock-gen", action="store_true", help="use the mock generator (no network)")
     ap.add_argument("--mock-judge", action="store_true", help="use the mock judge (no API key)")
     ap.add_argument("--regenerate", action="store_true", help="ignore cached generations")
     ap.add_argument("--reaggregate", metavar="SCORES_JSON",
