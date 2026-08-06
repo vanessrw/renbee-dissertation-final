@@ -9,6 +9,7 @@ Also declares the field-metadata used for:
 """
 from __future__ import annotations
 
+import re
 import uuid
 from datetime import date
 from typing import Any, Optional
@@ -144,7 +145,8 @@ def _candidate_summary(p: dict) -> dict:
 # Order of declaration is the order Webflow should render the fields.
 # --------------------------------------------------------------------------
 
-_CONTACT_METHODS = ["email", "phone", "either"]
+_CONTACT_METHODS = ["email", "phone"]
+CONTACT_DETAIL_FIELDS = ("contact_email", "contact_phone")
 _TIMELINES = ["asap", "within_3_months", "within_6_months", "within_12_months", "flexible"]
 _PROPERTY_TYPES = ["detached", "semi-detached", "terraced", "flat", "bungalow", "maisonette"]
 _BUILT_FORMS = ["detached", "semi-detached", "mid-terrace", "end-terrace", "enclosed_mid-terrace", "enclosed_end-terrace"]
@@ -152,7 +154,11 @@ _AGE_BANDS = ["before 1900", "1900-1929", "1930-1949", "1950-1966", "1967-1975",
 _TENURES = ["owner_occupied", "rented_private", "rented_social"]
 _YES_NO_UNKNOWN = ["yes", "no", "unknown"]
 _INSULATION = ["poor", "moderate", "good", "unknown"]
-_HEAT_PUMP_TYPES = ["air_source", "ground_source", "hybrid", "unsure"]
+# A sub-type, not a separate technology: MIS 3005-I p.248 folds solar assisted
+# heat pumps into air source.
+_HEAT_PUMP_TYPES = ["ground_air_source", "solar_assisted"]
+# MIS 3005-I §3.6.7 sends pitched-roof absorbers to MIS 3001, §3.6.8 covers the rest.
+_ABSORBER_MOUNTINGS = ["pitched_roof", "flat_roof", "wall", "ground_mounted", "unsure"]
 _EMITTER_TYPES = ["radiators", "underfloor_heating", "mixed", "unknown"]
 _ROOF_TYPES = ["pitched", "flat", "mixed"]
 _ROOF_ORIENTATIONS = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest", "unknown"]
@@ -200,6 +206,18 @@ FIELDS: dict[str, dict[str, dict]] = {
             "label": "How would you prefer to be contacted?",
             "type": "select",
             "options": _CONTACT_METHODS,
+            "required": True,
+        },
+        "contact_email": {
+            "label": "Your email address",
+            "type": "email",
+            "options": None,
+            "required": True,
+        },
+        "contact_phone": {
+            "label": "Your phone number",
+            "type": "tel",
+            "options": None,
             "required": True,
         },
         "desired_installation_timeline": {
@@ -302,6 +320,13 @@ FIELDS: dict[str, dict[str, dict]] = {
         },
     },
     "heat_pump": {
+        # First: ground source needs land, air source needs external unit space.
+        "heat_pump_type_interest": {
+            "label": "Which kind of heat pump?",
+            "type": "select",
+            "options": _HEAT_PUMP_TYPES,
+            "required": True,
+        },
         "emitter_type": {
             "label": "What kind of heat emitters do you have?",
             "type": "select",
@@ -326,10 +351,12 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _YES_NO_UNKNOWN,
             "required": True,
         },
-        "heat_pump_type_interest": {
-            "label": "Which type of heat pump are you interested in?",
+        # Optional: solar_assisted only. FIELDS has no conditional-required
+        # mechanism, so requiring it would ask ground-source enquiries too.
+        "absorber_mounting_location": {
+            "label": "Where would the solar absorber panels be mounted?",
             "type": "select",
-            "options": _HEAT_PUMP_TYPES,
+            "options": _ABSORBER_MOUNTINGS,
             "required": False,
         },
         "radiator_suitability_known": {
@@ -691,16 +718,36 @@ def map_property_section(cert: dict) -> dict:
     }
 
 
+def _money(value) -> Optional[int]:
+    """'2,700' or '£2,700' -> 2700. None when absent or unparseable."""
+    if value is None:
+        return None
+    digits = re.sub(r"[^\d]", "", str(value))
+    return int(digits) if digits else None
+
+
 def map_recommendation_section(recommendations: list) -> dict:
-    items = [
-        r.get("improvement-summary-text") or r.get("improvement-descr-text")
-        for r in (recommendations or [])
-    ]
-    items = [i for i in items if i]
+    items = []
+    details = []
+    for r in recommendations or []:
+        text = r.get("improvement-summary-text") or r.get("improvement-descr-text")
+        if not text:
+            continue
+        items.append(text)
+        cost = _money(r.get("indicative-cost"))
+        saving = _money(r.get("typical-saving"))
+        entry = {"item": text}
+        if cost is not None:
+            entry["indicative_cost_gbp"] = cost
+        if saving is not None:
+            entry["typical_yearly_saving_gbp"] = saving
+        details.append(entry)
     return {
         "epc_recommendations_available": bool(items),
         "recommendation_source": "official_epc",
+        # Must stay plain strings: faithfulness.preservation_score str()s each.
         "raw_recommendation_items": items,
+        "recommendation_details": details,
     }
 
 
@@ -871,13 +918,63 @@ def build_proxy_recommendation_section(epc_data: dict) -> dict:
     }
 
 
+# Named designations that restrict Permitted Development rights. article_4 and
+# listed_building are booleans, so they are handled separately below.
+_PD_RESTRICTING_DESIGNATIONS = (
+    ("conservation_area_name", "conservation area"),
+    ("aonb_name", "Area of Outstanding Natural Beauty"),
+    ("whs_name", "World Heritage Site"),
+    ("national_park_name", "National Park"),
+)
+
+
+def derive_planning_consequences(planning: dict) -> dict:
+    """Spell out what a planning designation implies, so the claim is carried by
+    the data and not only by the prompt.
+
+    The source data gives a conservation area name but nothing about what it
+    means, while the prompts instruct the model to state that Permitted
+    Development rights are restricted. The fabrication judge sees only the input,
+    so it flags a claim the prompt demanded.
+
+    Returns {} when no designation applies. Keys are omitted rather than set to
+    False, because `_prune_planning_flags` strips falsy planning values before
+    the model sees them and the prompts forbid stating a constraint's absence.
+    """
+    if not planning:
+        return {}
+
+    basis: list[str] = []
+    for key, label in _PD_RESTRICTING_DESIGNATIONS:
+        if planning.get(key):
+            basis.append(f"{label}: {planning[key]}")
+    if planning.get("article_4"):
+        basis.append("Article 4 direction in force")
+    if planning.get("listed_building"):
+        grade = planning.get("listed_grade")
+        basis.append(f"listed building (Grade {grade})" if grade else "listed building")
+
+    if not basis:
+        return {}
+    # One key per claim the prompts make, in their own words so the judge can
+    # match claim to field.
+    return {
+        "permitted_development_restricted": True,       # "PD rights are restricted"
+        "planning_permission_likely_required": True,    # "will likely need planning permission"
+        "consent_may_be_required": True,                # "confirm what consent applies"
+        "planning_consequence_basis": "; ".join(basis),
+    }
+
+
 def build_site_context(postcode: str) -> dict:
     """Cross-check the postcode against external open-data sources and
     return a single `site_context` section for the RFQ.
 
     Composition:
       planning: dict       — listed building, conservation, Article 4, AONB,
-                             WHS, National Park (from planning.data.gov.uk)
+                             WHS, National Park (from planning.data.gov.uk),
+                             plus the derived consequence keys added by
+                             `derive_planning_consequences`
       grid: dict | None    — UKPN headroom for nearest PRIMARY substation
                              (None when outside UKPN territory or no API key)
       data_sources: list   — credits surfaced on the demo page (CC BY 4.0)
@@ -888,6 +985,9 @@ def build_site_context(postcode: str) -> dict:
     from external_data import fetch_planning_constraints, fetch_ukpn_constraints
 
     planning = fetch_planning_constraints(postcode)
+    if planning:
+        # Carry the legal consequence in the data, not just in the prompt.
+        planning = {**planning, **derive_planning_consequences(planning)}
     grid = fetch_ukpn_constraints(postcode)
 
     sources: list[str] = []

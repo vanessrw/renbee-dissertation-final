@@ -197,12 +197,14 @@ class TestAPI(unittest.TestCase):
         # The form would render these in Step 2:
         common_field_names = {f["name"] for f in missing["common"]}
         self.assertEqual(common_field_names, {
-            "preferred_contact_method", "desired_installation_timeline", "motivation",
+            "preferred_contact_method", "contact_email", "contact_phone",
+            "desired_installation_timeline", "motivation",
         })
         heat_pump_field_names = {f["name"] for f in missing["heat_pump"]}
         self.assertEqual(heat_pump_field_names, {
             "emitter_type", "hot_water_cylinder_space_available",
             "external_unit_space", "garden_or_side_access",
+            "heat_pump_type_interest",
         })
 
         # Step 2: generate (with all required fields filled in)
@@ -211,6 +213,8 @@ class TestAPI(unittest.TestCase):
             "additional_fields": {
                 "common": {
                     "preferred_contact_method": "email",
+                    "contact_email": "homeowner@example.com",
+                    "contact_phone": "07700 900123",
                     "desired_installation_timeline": "within_6_months",
                     "motivation": "reduce energy bills and replace gas heating",
                 },
@@ -219,6 +223,7 @@ class TestAPI(unittest.TestCase):
                     "hot_water_cylinder_space_available": "yes",
                     "external_unit_space": "yes",
                     "garden_or_side_access": "yes",
+                    "heat_pump_type_interest": "ground_air_source",
                 },
             },
         })
@@ -507,6 +512,54 @@ class TestAPI(unittest.TestCase):
             "number_of_occupants", "number_of_bathrooms",
         ):
             self.assertIn(required_field, names)
+
+    def test_contact_details_asked_but_kept_out_of_prompts(self):
+        r = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "heat_pump",
+        })
+        self.assertEqual(r.status_code, 200, r.text)
+        fields = {f["name"]: f for f in r.json()["missing_fields"]["common"]}
+        self.assertIn("contact_email", fields)
+        self.assertIn("contact_phone", fields)
+        self.assertEqual(
+            fields["preferred_contact_method"]["options"], ["email", "phone"],
+        )
+
+        import json as _json
+        import generate_rfq
+        from evaluation.faithfulness import _relevant_rfq_fields
+        rfq_input = {
+            "common": {
+                "technology_requested": "heat_pump",
+                "preferred_contact_method": "email",
+                "contact_email": "homeowner@example.com",
+                "contact_phone": "07700 900123",
+            },
+        }
+        for build in (generate_rfq.build_rfq_prompt,
+                      generate_rfq.build_recommendation_prompt):
+            blob = _json.dumps(build(rfq_input))
+            self.assertNotIn("homeowner@example.com", blob)
+            self.assertNotIn("900123", blob)
+        self.assertEqual(rfq_input["common"]["contact_email"], "homeowner@example.com")
+
+        checked = {f for _, f, _ in _relevant_rfq_fields(rfq_input)}
+        self.assertNotIn("contact_email", checked)
+        self.assertNotIn("contact_phone", checked)
+
+    def test_heat_pump_type_is_asked(self):
+        r = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "heat_pump",
+        })
+        self.assertEqual(r.status_code, 200, r.text)
+        fields = {f["name"]: f for f in r.json()["missing_fields"]["heat_pump"]}
+        self.assertIn("heat_pump_type_interest", fields)
+        self.assertEqual(
+            fields["heat_pump_type_interest"]["options"],
+            ["ground_air_source", "solar_assisted"],
+        )
+        # Solar-assisted only, so it must stay optional.
+        self.assertNotIn("absorber_mounting_location", fields)
 
     def test_epc_not_found_falls_back(self):
         # Postcode that our fake fetcher returns 0 results for

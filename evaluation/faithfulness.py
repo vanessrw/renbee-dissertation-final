@@ -17,7 +17,7 @@ from __future__ import annotations
 import re
 from typing import Any, Optional
 
-from epc_to_rfq import FIELDS, _TECH_SECTIONS
+from epc_to_rfq import CONTACT_DETAIL_FIELDS, FIELDS, _TECH_SECTIONS
 from evaluation import rubric
 from evaluation.gemini_client import GeminiClient
 
@@ -127,6 +127,8 @@ def _relevant_rfq_fields(rfq_input: dict) -> list[tuple[str, str, Any]]:
 
         for field, meta in section_fields.items():
             if not (isinstance(meta, dict) and meta.get("required")):
+                continue
+            if field in CONTACT_DETAIL_FIELDS:
                 continue
             value = data.get(field)
             if value is None or value == "" or value == []:

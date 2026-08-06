@@ -538,7 +538,7 @@
         </label>
         <label>What would you like to install?
           <select name="technology" required>
-            <option value="heat_pump">Heat pump</option>
+            <option value="heat_pump">Heat pump (ground, air, or solar assisted)</option>
             <option value="solar_pv">Solar PV</option>
             <option value="battery">Battery storage</option>
             <option value="solar_thermal">Solar thermal</option>
@@ -1080,6 +1080,10 @@
         } else if (f.type === 'number') {
           input = document.createElement('input');
           input.type = 'number';
+        } else if (f.type === 'email' || f.type === 'tel') {
+          input = document.createElement('input');
+          input.type = f.type;
+          input.autocomplete = f.type === 'email' ? 'email' : 'tel';
         } else {
           input = document.createElement('input');
           input.type = 'text';
@@ -1415,8 +1419,13 @@
   }
 
   // -------- Helpers --------
+  // Values whose display label can't be derived by swapping underscores for spaces.
+  const OPTION_LABELS = {
+    ground_air_source: 'Ground/Air Source',
+  };
   function humanize(s) {
     if (s == null) return '';
+    if (OPTION_LABELS[s]) return OPTION_LABELS[s];
     return String(s).replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
   function sectionTitle(section) {

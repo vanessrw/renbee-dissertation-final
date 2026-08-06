@@ -90,16 +90,18 @@ YOUR JOB:
 STRICT RULES:
 - Use ONLY the provided input data
 - Every recommendation you mention MUST come from `recommendation.raw_recommendation_items` — do NOT invent suggestions
-- Do NOT include cost estimates or pricing
+- COSTS AND SAVINGS: quote a figure ONLY when it is given in `recommendation.recommendation_details` for that item — `indicative_cost_gbp` is the typical installation cost, `typical_yearly_saving_gbp` is the typical yearly saving. Copy the numbers exactly, formatted as £2,700. NEVER estimate, infer, round, or total them up. If an item has no figure, or `recommendation_details` is absent, simply omit that line for that step — do NOT write "unknown" or "not provided"
 - If `recommendation.epc_recommendations_available` is false or the items list is empty, say so politely without fabricating advice
 - If `recommendation.recommendation_source` is `"proxy_aggregate"`, these items came from neighbouring properties' EPCs (not from the homeowner's own EPC). Phrase the prose to make this clear. If `property.proxy_picked` is true, the items came from a single nearby property the homeowner picked as similar to theirs — say "Based on a nearby property similar to yours, common upgrades include...". Otherwise, if `property.epc_source` is `"proxy_nearby"` say "Based on similar properties in nearby postcodes, common upgrades include...", and if `"proxy"` say "Based on similar properties on your street, common upgrades include..." — rather than "Your EPC recommends...".
 - If a `site_context` section is provided with planning constraints that ARE present and truthy, add one short sentence reflecting the most material one in plain English so the homeowner isn't surprised later — for example: "Because your home is listed (Grade II), your installer will need to apply for listed building consent before any external work" or "Your home is in the {conservation_area_name} conservation area, so any external equipment will likely need planning permission." Don't list every constraint; pick the most material one. NEVER state the absence of a constraint (do not say "your home is not listed" or "there are no planning restrictions"). Skip this sentence entirely if no planning constraint is present.
-- Write 2-4 short sentences in conversational English; no jargon, no lists, no tables
+- Open with ONE short sentence about their EPC rating, then list the improvements as numbered steps in the order given
+- Each step is: the improvement in plain English, then on its own line "Typical installation cost: £X" and "Typical yearly saving: £Y" — include only the figures that are present
+- No jargon and no tables. Keep each step to one short sentence plus its figures
 - Do NOT discuss the homeowner's chosen technology (heat pump / solar PV) — this output is only about the EPC recommendations
 
-OUTPUT FORMAT — return ONLY a JSON object with exactly one string field:
+OUTPUT FORMAT — return ONLY a JSON object with exactly one string field, with the steps as newline-separated text inside that string:
 {
-  "recommendation_summary": "<2-4 sentences>"
+  "recommendation_summary": "Your home is rated D, so there is room to improve.\n\n1. Add room-in-roof insulation.\nTypical installation cost: £2,700\nTypical yearly saving: £309\n\n2. ..."
 }
 
 EXAMPLE WITH RECOMMENDATIONS:
@@ -325,9 +327,22 @@ def _prune_planning_flags(filtered_input: dict) -> dict:
     return filtered_input
 
 
+def _redact_contact_details(filtered_input: dict) -> dict:
+    """Drop contact details before the model sees them."""
+    from epc_to_rfq import CONTACT_DETAIL_FIELDS
+
+    common = filtered_input.get("common")
+    if isinstance(common, dict):
+        for field in CONTACT_DETAIL_FIELDS:
+            common.pop(field, None)
+    return filtered_input
+
+
 def build_rfq_prompt(rfq_input: dict):
     """Installer-facing RFQ summary only."""
-    filtered_input = _prune_planning_flags(_strip_nulls(rfq_input))
+    filtered_input = _redact_contact_details(
+        _prune_planning_flags(_strip_nulls(rfq_input))
+    )
     user_message = (
         "Generate an RFQ Summary for the following input.\n\n"
         f"INPUT DATA:\n{json.dumps(filtered_input, indent=2)}"

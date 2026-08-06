@@ -9,7 +9,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_31326F23",
         "submission_date": "2026-07-25",
-        "postcode": "E1 6AN"
+        "postcode": "E1 6AN",
+        "contact_email": "homeowner01@example.com",
+        "contact_phone": "07700 900001"
       },
       "property": {
         "epc_found": true,
@@ -35,13 +37,31 @@
           "Room-in-roof insulation",
           "50 mm internal or external wall insulation",
           "Replace single glazed windows with low-E double glazed windows"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Room-in-roof insulation",
+            "indicative_cost_gbp": 2700,
+            "typical_yearly_saving_gbp": 309
+          },
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 14000,
+            "typical_yearly_saving_gbp": 88
+          },
+          {
+            "item": "Replace single glazed windows with low-E double glazed windows",
+            "indicative_cost_gbp": 6500,
+            "typical_yearly_saving_gbp": 36
+          }
         ]
       },
       "heat_pump": {
         "emitter_type": "radiators",
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
-        "garden_or_side_access": "yes"
+        "garden_or_side_access": "yes",
+        "heat_pump_type_interest": "ground_air_source"
       },
       "solar_pv": {},
       "battery": {},
@@ -54,7 +74,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Bishopsgate"
         },
         "grid": null,
         "data_sources": [
@@ -74,7 +98,9 @@
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_6C12FD72",
         "submission_date": "2026-07-25",
-        "postcode": "OX7 3EL"
+        "postcode": "OX7 3EL",
+        "contact_email": "homeowner02@example.com",
+        "contact_phone": "07700 900002"
       },
       "property": {
         "epc_found": true,
@@ -104,6 +130,43 @@
           "Replace single glazed windows with low-E double glazed windows",
           "Solar photovoltaic panels, 2.5 kWp",
           "Wind turbine"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 445
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 111
+          },
+          {
+            "item": "Draught proof single-glazed windows",
+            "indicative_cost_gbp": 80120,
+            "typical_yearly_saving_gbp": 43
+          },
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 62
+          },
+          {
+            "item": "Replace single glazed windows with low-E double glazed windows",
+            "indicative_cost_gbp": 33006500,
+            "typical_yearly_saving_gbp": 150
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 35005500,
+            "typical_yearly_saving_gbp": 498
+          },
+          {
+            "item": "Wind turbine",
+            "indicative_cost_gbp": 1500025000,
+            "typical_yearly_saving_gbp": 934
+          }
         ]
       },
       "heat_pump": {},
@@ -122,7 +185,11 @@
           "article_4": false,
           "aonb_name": "Cotswolds",
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "Area of Outstanding Natural Beauty: Cotswolds"
         },
         "grid": null,
         "data_sources": [
@@ -136,13 +203,15 @@
     "case_id": "REAL_003",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "email",
         "desired_installation_timeline": "within_12_months",
         "motivation": "Heat water more cheaply over the summer.",
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_F5F2B739",
         "submission_date": "2026-07-25",
-        "postcode": "BA2 6AA"
+        "postcode": "BA2 6AA",
+        "contact_email": "homeowner03@example.com",
+        "contact_phone": "07700 900003"
       },
       "property": {
         "epc_found": true,
@@ -185,7 +254,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": "City of Bath",
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Bath; World Heritage Site: City of Bath"
         },
         "grid": null,
         "data_sources": [
@@ -205,7 +278,9 @@
         "technology_requested": "battery",
         "enquiry_id": "RFQ_7057FD84",
         "submission_date": "2026-07-25",
-        "postcode": "SE5 8AA"
+        "postcode": "SE5 8AA",
+        "contact_email": "homeowner04@example.com",
+        "contact_phone": "07700 900004"
       },
       "property": {
         "epc_found": true,
@@ -232,6 +307,28 @@
           "Floor insulation (solid floor)",
           "Low energy lighting for all fixed outlets",
           "Replace single glazed windows with low-E double glazed windows"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 117
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 47
+          },
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 10,
+            "typical_yearly_saving_gbp": 13
+          },
+          {
+            "item": "Replace single glazed windows with low-E double glazed windows",
+            "indicative_cost_gbp": 33006500,
+            "typical_yearly_saving_gbp": 23
+          }
         ]
       },
       "heat_pump": {},
@@ -251,7 +348,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Camberwell Grove"
         },
         "grid": null,
         "data_sources": [
@@ -271,7 +372,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_C92E59B2",
         "submission_date": "2026-07-25",
-        "postcode": "RG9 1AY"
+        "postcode": "RG9 1AY",
+        "contact_email": "homeowner05@example.com",
+        "contact_phone": "07700 900005"
       },
       "property": {
         "epc_found": true,
@@ -297,13 +400,31 @@
           "Cavity wall insulation",
           "High heat retention storage heaters",
           "Heat recovery system for mixer showers"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Cavity wall insulation",
+            "indicative_cost_gbp": 5001500,
+            "typical_yearly_saving_gbp": 207
+          },
+          {
+            "item": "High heat retention storage heaters",
+            "indicative_cost_gbp": 12001800,
+            "typical_yearly_saving_gbp": 256
+          },
+          {
+            "item": "Heat recovery system for mixer showers",
+            "indicative_cost_gbp": 585725,
+            "typical_yearly_saving_gbp": 28
+          }
         ]
       },
       "heat_pump": {
         "emitter_type": "underfloor_heating",
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
-        "garden_or_side_access": "no"
+        "garden_or_side_access": "no",
+        "heat_pump_type_interest": "ground_air_source"
       },
       "solar_pv": {},
       "battery": {},
@@ -330,13 +451,15 @@
     "case_id": "REAL_006",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "phone",
         "desired_installation_timeline": "within_6_months",
         "motivation": "Charge an electric vehicle from the roof.",
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_DE3F3EC9",
         "submission_date": "2026-07-25",
-        "postcode": "CV12 8UE"
+        "postcode": "CV12 8UE",
+        "contact_email": "homeowner06@example.com",
+        "contact_phone": "07700 900006"
       },
       "property": {
         "epc_found": true,
@@ -396,7 +519,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_4CC19ACB",
         "submission_date": "2026-07-25",
-        "postcode": "GL54 2BP"
+        "postcode": "GL54 2BP",
+        "contact_email": "homeowner07@example.com",
+        "contact_phone": "07700 900007"
       },
       "property": {
         "epc_found": false,
@@ -438,7 +563,8 @@
         "emitter_type": "mixed",
         "hot_water_cylinder_space_available": "unknown",
         "external_unit_space": "yes",
-        "garden_or_side_access": "yes"
+        "garden_or_side_access": "yes",
+        "heat_pump_type_interest": "ground_air_source"
       },
       "solar_pv": {},
       "battery": {},
@@ -451,7 +577,11 @@
           "article_4": false,
           "aonb_name": "Cotswolds",
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Bourton-on-the-Water Conservation Area; Area of Outstanding Natural Beauty: Cotswolds"
         },
         "grid": null,
         "data_sources": [
@@ -471,7 +601,9 @@
         "technology_requested": "battery",
         "enquiry_id": "RFQ_3E01B667",
         "submission_date": "2026-07-25",
-        "postcode": "SW1A 2AA"
+        "postcode": "SW1A 2AA",
+        "contact_email": "homeowner08@example.com",
+        "contact_phone": "07700 900008"
       },
       "property": {
         "epc_found": false,
@@ -512,7 +644,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Whitehall; Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -532,7 +668,9 @@
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_B184DF27",
         "submission_date": "2026-07-25",
-        "postcode": "LS6 1AA"
+        "postcode": "LS6 1AA",
+        "contact_email": "homeowner09@example.com",
+        "contact_phone": "07700 900009"
       },
       "property": {
         "epc_found": true,
@@ -558,6 +696,23 @@
           "50 mm internal or external wall insulation",
           "Low energy lighting for all fixed outlets",
           "Upgrade heating controls"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 157
+          },
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 60,
+            "typical_yearly_saving_gbp": 52
+          },
+          {
+            "item": "Upgrade heating controls",
+            "indicative_cost_gbp": 350450,
+            "typical_yearly_saving_gbp": 25
+          }
         ]
       },
       "heat_pump": {},
@@ -576,7 +731,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: HEADINGLEY; Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -590,13 +749,15 @@
     "case_id": "REAL_010",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "email",
         "desired_installation_timeline": "within_3_months",
         "motivation": "Cut the cost of heating water for a large family.",
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_52504E16",
         "submission_date": "2026-07-25",
-        "postcode": "PL4 7AA"
+        "postcode": "PL4 7AA",
+        "contact_email": "homeowner10@example.com",
+        "contact_phone": "07700 900010"
       },
       "property": {
         "epc_found": true,
@@ -622,6 +783,23 @@
           "50 mm internal or external wall insulation",
           "Replace boiler with new condensing boiler",
           "Flue gas heat recovery in conjunction with boiler"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 14000,
+            "typical_yearly_saving_gbp": 136
+          },
+          {
+            "item": "Replace boiler with new condensing boiler",
+            "indicative_cost_gbp": 3000,
+            "typical_yearly_saving_gbp": 47
+          },
+          {
+            "item": "Flue gas heat recovery in conjunction with boiler",
+            "indicative_cost_gbp": 900,
+            "typical_yearly_saving_gbp": 21
+          }
         ]
       },
       "heat_pump": {},
@@ -643,7 +821,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -663,7 +845,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_3A7641CD",
         "submission_date": "2026-07-25",
-        "postcode": "LA22 9SH"
+        "postcode": "LA22 9SH",
+        "contact_email": "homeowner11@example.com",
+        "contact_phone": "07700 900011"
       },
       "property": {
         "epc_found": true,
@@ -691,7 +875,9 @@
         "emitter_type": "radiators",
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
-        "garden_or_side_access": "yes"
+        "garden_or_side_access": "yes",
+        "heat_pump_type_interest": "solar_assisted",
+        "absorber_mounting_location": "pitched_roof"
       },
       "solar_pv": {},
       "battery": {},
@@ -704,7 +890,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": "The English Lake District",
-          "national_park_name": "Lake District"
+          "national_park_name": "Lake District",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Grasmere Town End; World Heritage Site: The English Lake District; National Park: Lake District"
         },
         "grid": null,
         "data_sources": [
@@ -724,7 +914,9 @@
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_ADE0980B",
         "submission_date": "2026-07-25",
-        "postcode": "YO62 5AD"
+        "postcode": "YO62 5AD",
+        "contact_email": "homeowner12@example.com",
+        "contact_phone": "07700 900012"
       },
       "property": {
         "epc_found": true,
@@ -752,6 +944,33 @@
           "Low energy lighting for all fixed outlets",
           "Solar water heating",
           "Solar photovoltaic panels, 2.5 kWp"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 14000,
+            "typical_yearly_saving_gbp": 211
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 6000,
+            "typical_yearly_saving_gbp": 41
+          },
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 20,
+            "typical_yearly_saving_gbp": 26
+          },
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 6000,
+            "typical_yearly_saving_gbp": 27
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 5500,
+            "typical_yearly_saving_gbp": 299
+          }
         ]
       },
       "heat_pump": {},
@@ -770,7 +989,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "North York Moors"
+          "national_park_name": "North York Moors",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Helmsley; National Park: North York Moors"
         },
         "grid": null,
         "data_sources": [
@@ -790,7 +1013,9 @@
         "technology_requested": "battery",
         "enquiry_id": "RFQ_39EE9DE2",
         "submission_date": "2026-07-25",
-        "postcode": "SO43 7BQ"
+        "postcode": "SO43 7BQ",
+        "contact_email": "homeowner13@example.com",
+        "contact_phone": "07700 900013"
       },
       "property": {
         "epc_found": true,
@@ -814,6 +1039,13 @@
         "recommendation_source": "official_epc",
         "raw_recommendation_items": [
           "Solar photovoltaic panels, 2.5 kWp"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 35005500,
+            "typical_yearly_saving_gbp": 152
+          }
         ]
       },
       "heat_pump": {},
@@ -833,7 +1065,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "New Forest"
+          "national_park_name": "New Forest",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Lyndhurst; National Park: New Forest; Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -847,13 +1083,15 @@
     "case_id": "REAL_014",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "phone",
         "desired_installation_timeline": "within_12_months",
         "motivation": "Cheaper hot water for an old moorland cottage.",
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_137FCE0F",
         "submission_date": "2026-07-25",
-        "postcode": "TQ13 7TB"
+        "postcode": "TQ13 7TB",
+        "contact_email": "homeowner14@example.com",
+        "contact_phone": "07700 900014"
       },
       "property": {
         "epc_found": true,
@@ -884,6 +1122,48 @@
           "Solar water heating",
           "Solar photovoltaic panels, 2.5 kWp",
           "Wind turbine"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Cavity wall insulation",
+            "indicative_cost_gbp": 5001500,
+            "typical_yearly_saving_gbp": 61
+          },
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 374
+          },
+          {
+            "item": "Floor insulation",
+            "indicative_cost_gbp": 8001200,
+            "typical_yearly_saving_gbp": 71
+          },
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 85,
+            "typical_yearly_saving_gbp": 40
+          },
+          {
+            "item": "Install condensing boiler",
+            "indicative_cost_gbp": 22003000,
+            "typical_yearly_saving_gbp": 294
+          },
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 65
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 900014000,
+            "typical_yearly_saving_gbp": 262
+          },
+          {
+            "item": "Wind turbine",
+            "indicative_cost_gbp": 15004000,
+            "typical_yearly_saving_gbp": 86
+          }
         ]
       },
       "heat_pump": {},
@@ -905,7 +1185,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "Dartmoor"
+          "national_park_name": "Dartmoor",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Widecombe-in-the-Moor; National Park: Dartmoor"
         },
         "grid": null,
         "data_sources": [
@@ -925,7 +1209,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_780CAFDB",
         "submission_date": "2026-07-25",
-        "postcode": "DL8 3RA"
+        "postcode": "DL8 3RA",
+        "contact_email": "homeowner15@example.com",
+        "contact_phone": "07700 900015"
       },
       "property": {
         "epc_found": true,
@@ -956,13 +1242,57 @@
           "Low energy lighting for all fixed outlets",
           "Solar water heating",
           "Solar photovoltaic panels, 2.5 kWp"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Increase loft insulation to 270 mm",
+            "indicative_cost_gbp": 100350,
+            "typical_yearly_saving_gbp": 134
+          },
+          {
+            "item": "Cavity wall insulation",
+            "indicative_cost_gbp": 5001500,
+            "typical_yearly_saving_gbp": 303
+          },
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 935
+          },
+          {
+            "item": "Floor insulation (suspended floor)",
+            "indicative_cost_gbp": 8001200,
+            "typical_yearly_saving_gbp": 186
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 85
+          },
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 45,
+            "typical_yearly_saving_gbp": 34
+          },
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 158
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 35005500,
+            "typical_yearly_saving_gbp": 329
+          }
         ]
       },
       "heat_pump": {
         "emitter_type": "radiators",
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
-        "garden_or_side_access": "yes"
+        "garden_or_side_access": "yes",
+        "heat_pump_type_interest": "solar_assisted",
+        "absorber_mounting_location": "pitched_roof"
       },
       "solar_pv": {},
       "battery": {},
@@ -975,7 +1305,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "Yorkshire Dales"
+          "national_park_name": "Yorkshire Dales",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "National Park: Yorkshire Dales"
         },
         "grid": null,
         "data_sources": [
@@ -995,7 +1329,9 @@
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_1A5E6446",
         "submission_date": "2026-07-25",
-        "postcode": "DE45 1BT"
+        "postcode": "DE45 1BT",
+        "contact_email": "homeowner16@example.com",
+        "contact_phone": "07700 900016"
       },
       "property": {
         "epc_found": false,
@@ -1047,7 +1383,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "Peak District"
+          "national_park_name": "Peak District",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Bakewell; National Park: Peak District"
         },
         "grid": null,
         "data_sources": [
@@ -1067,7 +1407,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_2C3E4996",
         "submission_date": "2026-07-25",
-        "postcode": "BA1 1LZ"
+        "postcode": "BA1 1LZ",
+        "contact_email": "homeowner17@example.com",
+        "contact_phone": "07700 900017"
       },
       "property": {
         "epc_found": false,
@@ -1102,7 +1444,8 @@
         "emitter_type": "mixed",
         "hot_water_cylinder_space_available": "unknown",
         "external_unit_space": "yes",
-        "garden_or_side_access": "no"
+        "garden_or_side_access": "no",
+        "heat_pump_type_interest": "ground_air_source"
       },
       "solar_pv": {},
       "battery": {},
@@ -1115,7 +1458,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": "City of Bath",
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Bath; World Heritage Site: City of Bath"
         },
         "grid": null,
         "data_sources": [
@@ -1135,7 +1482,9 @@
         "technology_requested": "battery",
         "enquiry_id": "RFQ_D2E14E31",
         "submission_date": "2026-07-25",
-        "postcode": "CV34 4BJ"
+        "postcode": "CV34 4BJ",
+        "contact_email": "homeowner18@example.com",
+        "contact_phone": "07700 900018"
       },
       "property": {
         "epc_found": false,
@@ -1188,7 +1537,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Warwick"
         },
         "grid": null,
         "data_sources": [
@@ -1202,13 +1555,15 @@
     "case_id": "REAL_019",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "email",
         "desired_installation_timeline": "within_6_months",
         "motivation": "Maximise self-generation on a new-build.",
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_514287FF",
         "submission_date": "2026-07-25",
-        "postcode": "MK10 9AA"
+        "postcode": "MK10 9AA",
+        "contact_email": "homeowner19@example.com",
+        "contact_phone": "07700 900019"
       },
       "property": {
         "epc_found": true,
@@ -1248,7 +1603,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Broughton"
         },
         "grid": null,
         "data_sources": [
@@ -1268,7 +1627,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_4EE62E33",
         "submission_date": "2026-07-25",
-        "postcode": "NR21 9AA"
+        "postcode": "NR21 9AA",
+        "contact_email": "homeowner20@example.com",
+        "contact_phone": "07700 900020"
       },
       "property": {
         "epc_found": true,
@@ -1300,13 +1661,61 @@
           "Change heating to gas condensing boiler",
           "Solar photovoltaic panels, 2.5 kWp",
           "Wind turbine"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Increase loft insulation to 270 mm",
+            "indicative_cost_gbp": 100300,
+            "typical_yearly_saving_gbp": 221
+          },
+          {
+            "item": "Increase hot water cylinder insulation",
+            "indicative_cost_gbp": 1530,
+            "typical_yearly_saving_gbp": 30
+          },
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 10,
+            "typical_yearly_saving_gbp": 15
+          },
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 97
+          },
+          {
+            "item": "Replace single glazed windows with low-E double glazed windows",
+            "indicative_cost_gbp": 25006500,
+            "typical_yearly_saving_gbp": 218
+          },
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 550014500,
+            "typical_yearly_saving_gbp": 316
+          },
+          {
+            "item": "Change heating to gas condensing boiler",
+            "indicative_cost_gbp": 30007000,
+            "typical_yearly_saving_gbp": 566
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 1100020000,
+            "typical_yearly_saving_gbp": 219
+          },
+          {
+            "item": "Wind turbine",
+            "indicative_cost_gbp": 15004000,
+            "typical_yearly_saving_gbp": 18
+          }
         ]
       },
       "heat_pump": {
         "emitter_type": "radiators",
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
-        "garden_or_side_access": "yes"
+        "garden_or_side_access": "yes",
+        "heat_pump_type_interest": "ground_air_source"
       },
       "solar_pv": {},
       "battery": {},
@@ -1319,7 +1728,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Fakenham"
         },
         "grid": null,
         "data_sources": [
@@ -1339,7 +1752,9 @@
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_0739585B",
         "submission_date": "2026-07-25",
-        "postcode": "PL15 8AA"
+        "postcode": "PL15 8AA",
+        "contact_email": "homeowner21@example.com",
+        "contact_phone": "07700 900021"
       },
       "property": {
         "epc_found": true,
@@ -1365,6 +1780,23 @@
           "50 mm internal or external wall insulation",
           "High heat retention storage heaters",
           "Replace single glazed windows with low-E double glazed windows"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 180
+          },
+          {
+            "item": "High heat retention storage heaters",
+            "indicative_cost_gbp": 8001200,
+            "typical_yearly_saving_gbp": 178
+          },
+          {
+            "item": "Replace single glazed windows with low-E double glazed windows",
+            "indicative_cost_gbp": 33006500,
+            "typical_yearly_saving_gbp": 121
+          }
         ]
       },
       "heat_pump": {},
@@ -1385,7 +1817,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: LAUNCESTON"
         },
         "grid": null,
         "data_sources": [
@@ -1399,13 +1835,15 @@
     "case_id": "REAL_022",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "phone",
         "desired_installation_timeline": "flexible",
         "motivation": "Store solar on the Cornish coast.",
         "technology_requested": "battery",
         "enquiry_id": "RFQ_BCF3AAB5",
         "submission_date": "2026-07-25",
-        "postcode": "TR19 7AA"
+        "postcode": "TR19 7AA",
+        "contact_email": "homeowner22@example.com",
+        "contact_phone": "07700 900022"
       },
       "property": {
         "epc_found": false,
@@ -1458,7 +1896,11 @@
           "article_4": false,
           "aonb_name": "Cornwall",
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "Area of Outstanding Natural Beauty: Cornwall"
         },
         "grid": null,
         "data_sources": [
@@ -1478,7 +1920,9 @@
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_ADC8F9C7",
         "submission_date": "2026-07-25",
-        "postcode": "OX1 3BG"
+        "postcode": "OX1 3BG",
+        "contact_email": "homeowner23@example.com",
+        "contact_phone": "07700 900023"
       },
       "property": {
         "epc_found": false,
@@ -1531,7 +1975,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Central; Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -1551,7 +1999,9 @@
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_5F3DC0B2",
         "submission_date": "2026-07-25",
-        "postcode": "YO1 7HH"
+        "postcode": "YO1 7HH",
+        "contact_email": "homeowner24@example.com",
+        "contact_phone": "07700 900024"
       },
       "property": {
         "epc_found": true,
@@ -1578,6 +2028,28 @@
           "Draught proof single-glazed windows",
           "High heat retention storage heaters",
           "Replace single glazed windows with low-E double glazed windows"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 1918
+          },
+          {
+            "item": "Draught proof single-glazed windows",
+            "indicative_cost_gbp": 80120,
+            "typical_yearly_saving_gbp": 178
+          },
+          {
+            "item": "High heat retention storage heaters",
+            "indicative_cost_gbp": 36005400,
+            "typical_yearly_saving_gbp": 1079
+          },
+          {
+            "item": "Replace single glazed windows with low-E double glazed windows",
+            "indicative_cost_gbp": 33006500,
+            "typical_yearly_saving_gbp": 391
+          }
         ]
       },
       "heat_pump": {},
@@ -1599,7 +2071,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Central Historic Core Conservation Area; Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -1613,13 +2089,15 @@
     "case_id": "REAL_025",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "email",
         "desired_installation_timeline": "within_6_months",
         "motivation": "Solar hot water for a Warwick flat.",
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_EF2E0C24",
         "submission_date": "2026-07-25",
-        "postcode": "CV34 4BJ"
+        "postcode": "CV34 4BJ",
+        "contact_email": "homeowner25@example.com",
+        "contact_phone": "07700 900025"
       },
       "property": {
         "epc_found": true,
@@ -1662,7 +2140,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Warwick"
         },
         "grid": null,
         "data_sources": [
@@ -1682,7 +2164,9 @@
         "technology_requested": "battery",
         "enquiry_id": "RFQ_8E473CAE",
         "submission_date": "2026-07-25",
-        "postcode": "NR21 9AA"
+        "postcode": "NR21 9AA",
+        "contact_email": "homeowner26@example.com",
+        "contact_phone": "07700 900026"
       },
       "property": {
         "epc_found": true,
@@ -1707,6 +2191,18 @@
         "raw_recommendation_items": [
           "Low energy lighting for all fixed outlets",
           "Upgrade heating controls"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Low energy lighting for all fixed outlets",
+            "indicative_cost_gbp": 10,
+            "typical_yearly_saving_gbp": 16
+          },
+          {
+            "item": "Upgrade heating controls",
+            "indicative_cost_gbp": 350450,
+            "typical_yearly_saving_gbp": 64
+          }
         ]
       },
       "heat_pump": {},
@@ -1726,7 +2222,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Fakenham"
         },
         "grid": null,
         "data_sources": [
@@ -1746,7 +2246,9 @@
         "technology_requested": "solar_thermal",
         "enquiry_id": "RFQ_53000BA0",
         "submission_date": "2026-07-25",
-        "postcode": "YO62 5AD"
+        "postcode": "YO62 5AD",
+        "contact_email": "homeowner27@example.com",
+        "contact_phone": "07700 900027"
       },
       "property": {
         "epc_found": true,
@@ -1773,6 +2275,28 @@
           "Floor insulation (solid floor)",
           "Replace boiler with new condensing boiler",
           "Solar photovoltaic panels, 2.5 kWp"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Floor insulation (suspended floor)",
+            "indicative_cost_gbp": 500010000,
+            "typical_yearly_saving_gbp": 120
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 500010000,
+            "typical_yearly_saving_gbp": 110
+          },
+          {
+            "item": "Replace boiler with new condensing boiler",
+            "indicative_cost_gbp": 22003500,
+            "typical_yearly_saving_gbp": 546
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 800010000,
+            "typical_yearly_saving_gbp": 238
+          }
         ]
       },
       "heat_pump": {},
@@ -1794,7 +2318,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "North York Moors"
+          "national_park_name": "North York Moors",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Helmsley; National Park: North York Moors"
         },
         "grid": null,
         "data_sources": [
@@ -1808,13 +2336,15 @@
     "case_id": "REAL_028",
     "input": {
       "common": {
-        "preferred_contact_method": "either",
+        "preferred_contact_method": "phone",
         "desired_installation_timeline": "within_6_months",
         "motivation": "Generate power in the New Forest.",
         "technology_requested": "solar_pv",
         "enquiry_id": "RFQ_E3C8CCA3",
         "submission_date": "2026-07-25",
-        "postcode": "SO43 7BQ"
+        "postcode": "SO43 7BQ",
+        "contact_email": "homeowner28@example.com",
+        "contact_phone": "07700 900028"
       },
       "property": {
         "epc_found": true,
@@ -1839,6 +2369,18 @@
         "raw_recommendation_items": [
           "Solar water heating",
           "Solar photovoltaic panels, 2.5 kWp"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 54
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 50008000,
+            "typical_yearly_saving_gbp": 298
+          }
         ]
       },
       "heat_pump": {},
@@ -1857,7 +2399,11 @@
           "article_4": true,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "New Forest"
+          "national_park_name": "New Forest",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Lyndhurst; National Park: New Forest; Article 4 direction in force"
         },
         "grid": null,
         "data_sources": [
@@ -1877,7 +2423,9 @@
         "technology_requested": "battery",
         "enquiry_id": "RFQ_1A559351",
         "submission_date": "2026-07-25",
-        "postcode": "MK10 9AA"
+        "postcode": "MK10 9AA",
+        "contact_email": "homeowner29@example.com",
+        "contact_phone": "07700 900029"
       },
       "property": {
         "epc_found": true,
@@ -1902,6 +2450,18 @@
         "raw_recommendation_items": [
           "50 mm internal or external wall insulation",
           "Floor insulation (solid floor)"
+        ],
+        "recommendation_details": [
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 359
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 86
+          }
         ]
       },
       "heat_pump": {},
@@ -1921,7 +2481,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": null
+          "national_park_name": null,
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Broughton"
         },
         "grid": null,
         "data_sources": [
@@ -1941,7 +2505,9 @@
         "technology_requested": "heat_pump",
         "enquiry_id": "RFQ_C0EDF0CB",
         "submission_date": "2026-07-25",
-        "postcode": "TQ13 7TB"
+        "postcode": "TQ13 7TB",
+        "contact_email": "homeowner30@example.com",
+        "contact_phone": "07700 900030"
       },
       "property": {
         "epc_found": true,
@@ -1971,13 +2537,51 @@
           "Install condensing boiler",
           "Solar water heating",
           "Solar photovoltaic panels, 2.5 kWp"
+        ],
+        "recommendation_details": [
+          {
+            "item": "Room-in-roof insulation",
+            "indicative_cost_gbp": 15002700,
+            "typical_yearly_saving_gbp": 73
+          },
+          {
+            "item": "Cavity wall insulation",
+            "indicative_cost_gbp": 5001500,
+            "typical_yearly_saving_gbp": 29
+          },
+          {
+            "item": "50 mm internal or external wall insulation",
+            "indicative_cost_gbp": 400014000,
+            "typical_yearly_saving_gbp": 364
+          },
+          {
+            "item": "Floor insulation (solid floor)",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 56
+          },
+          {
+            "item": "Install condensing boiler",
+            "indicative_cost_gbp": 22003000,
+            "typical_yearly_saving_gbp": 187
+          },
+          {
+            "item": "Solar water heating",
+            "indicative_cost_gbp": 40006000,
+            "typical_yearly_saving_gbp": 42
+          },
+          {
+            "item": "Solar photovoltaic panels, 2.5 kWp",
+            "indicative_cost_gbp": 50008000,
+            "typical_yearly_saving_gbp": 322
+          }
         ]
       },
       "heat_pump": {
         "emitter_type": "underfloor_heating",
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
-        "garden_or_side_access": "yes"
+        "garden_or_side_access": "yes",
+        "heat_pump_type_interest": "ground_air_source"
       },
       "solar_pv": {},
       "battery": {},
@@ -1990,7 +2594,11 @@
           "article_4": false,
           "aonb_name": null,
           "whs_name": null,
-          "national_park_name": "Dartmoor"
+          "national_park_name": "Dartmoor",
+          "permitted_development_restricted": true,
+          "planning_permission_likely_required": true,
+          "consent_may_be_required": true,
+          "planning_consequence_basis": "conservation area: Widecombe-in-the-Moor; National Park: Dartmoor"
         },
         "grid": null,
         "data_sources": [

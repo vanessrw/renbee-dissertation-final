@@ -92,6 +92,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner01@example.com",
+                "contact_phone": "07700 900001",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Cut gas use and lower carbon emissions.",
             },
@@ -100,6 +102,7 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "yes",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "yes",
+                "heat_pump_type_interest": "ground_air_source",
             },
         },
     },
@@ -111,6 +114,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner02@example.com",
+                "contact_phone": "07700 900002",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Reduce electricity bills and generate own power.",
             },
@@ -128,7 +133,9 @@ CONFIG: list[dict] = [
         "mode": "epc",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "email",
+                "contact_email": "homeowner03@example.com",
+                "contact_phone": "07700 900003",
                 "desired_installation_timeline": "within_12_months",
                 "motivation": "Heat water more cheaply over the summer.",
             },
@@ -150,6 +157,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner04@example.com",
+                "contact_phone": "07700 900004",
                 "desired_installation_timeline": "within_3_months",
                 "motivation": "Store solar power and have backup during outages.",
             },
@@ -169,6 +178,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner05@example.com",
+                "contact_phone": "07700 900005",
                 "desired_installation_timeline": "asap",
                 "motivation": "Replace an ageing oil boiler.",
             },
@@ -177,6 +188,7 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "yes",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "no",
+                "heat_pump_type_interest": "ground_air_source",
             },
         },
     },
@@ -187,7 +199,9 @@ CONFIG: list[dict] = [
         "mode": "epc",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "phone",
+                "contact_email": "homeowner06@example.com",
+                "contact_phone": "07700 900006",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Charge an electric vehicle from the roof.",
             },
@@ -206,6 +220,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner07@example.com",
+                "contact_phone": "07700 900007",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Explore options for a rural off-gas property.",
             },
@@ -214,6 +230,7 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "unknown",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "yes",
+                "heat_pump_type_interest": "ground_air_source",
             },
         },
     },
@@ -225,6 +242,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner08@example.com",
+                "contact_phone": "07700 900008",
                 "desired_installation_timeline": "within_12_months",
                 "motivation": "Add storage to an existing solar array.",
             },
@@ -250,6 +269,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner09@example.com",
+                "contact_phone": "07700 900009",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Lower bills in a shared rented house.",
             },
@@ -267,7 +288,9 @@ CONFIG: list[dict] = [
         "mode": "epc",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "email",
+                "contact_email": "homeowner10@example.com",
+                "contact_phone": "07700 900010",
                 "desired_installation_timeline": "within_3_months",
                 "motivation": "Cut the cost of heating water for a large family.",
             },
@@ -295,6 +318,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner11@example.com",
+                "contact_phone": "07700 900011",
                 "desired_installation_timeline": "within_12_months",
                 "motivation": "Low-carbon heating for a high-efficiency Lake District home.",
             },
@@ -303,6 +328,8 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "yes",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "yes",
+                "heat_pump_type_interest": "solar_assisted",
+                "absorber_mounting_location": "pitched_roof",
             },
         },
     },
@@ -314,6 +341,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner12@example.com",
+                "contact_phone": "07700 900012",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Generate own power in a national park village.",
             },
@@ -332,6 +361,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner13@example.com",
+                "contact_phone": "07700 900013",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Store energy and reduce grid reliance.",
             },
@@ -351,7 +382,9 @@ CONFIG: list[dict] = [
         "select_rating": "F",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "phone",
+                "contact_email": "homeowner14@example.com",
+                "contact_phone": "07700 900014",
                 "desired_installation_timeline": "within_12_months",
                 "motivation": "Cheaper hot water for an old moorland cottage.",
             },
@@ -374,6 +407,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner15@example.com",
+                "contact_phone": "07700 900015",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Replace expensive off-gas heating.",
             },
@@ -382,6 +417,8 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "yes",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "yes",
+                "heat_pump_type_interest": "solar_assisted",
+                "absorber_mounting_location": "pitched_roof",
             },
         },
     },
@@ -393,6 +430,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner16@example.com",
+                "contact_phone": "07700 900016",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Explore solar for a Peak District home with no EPC on record.",
             },
@@ -411,6 +450,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner17@example.com",
+                "contact_phone": "07700 900017",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Assess heat pump feasibility near Bath city centre.",
             },
@@ -419,6 +460,7 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "unknown",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "no",
+                "heat_pump_type_interest": "ground_air_source",
             },
         },
     },
@@ -430,6 +472,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner18@example.com",
+                "contact_phone": "07700 900018",
                 "desired_installation_timeline": "within_3_months",
                 "motivation": "Add storage in a Warwick townhouse.",
             },
@@ -449,7 +493,9 @@ CONFIG: list[dict] = [
         "select_rating": "A",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "email",
+                "contact_email": "homeowner19@example.com",
+                "contact_phone": "07700 900019",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Maximise self-generation on a new-build.",
             },
@@ -469,6 +515,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner20@example.com",
+                "contact_phone": "07700 900020",
                 "desired_installation_timeline": "within_12_months",
                 "motivation": "Move off oil in a poorly-rated rural home.",
             },
@@ -477,6 +525,7 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "yes",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "yes",
+                "heat_pump_type_interest": "ground_air_source",
             },
         },
     },
@@ -488,6 +537,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner21@example.com",
+                "contact_phone": "07700 900021",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Cut water heating costs.",
             },
@@ -509,7 +560,9 @@ CONFIG: list[dict] = [
         "mode": "proxy_nearby",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "phone",
+                "contact_email": "homeowner22@example.com",
+                "contact_phone": "07700 900022",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Store solar on the Cornish coast.",
             },
@@ -529,6 +582,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner23@example.com",
+                "contact_phone": "07700 900023",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Solar for a central Oxford property.",
             },
@@ -547,6 +602,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner24@example.com",
+                "contact_phone": "07700 900024",
                 "desired_installation_timeline": "within_12_months",
                 "motivation": "Hot water savings near York Minster.",
             },
@@ -568,7 +625,9 @@ CONFIG: list[dict] = [
         "select_rating": "B",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "email",
+                "contact_email": "homeowner25@example.com",
+                "contact_phone": "07700 900025",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Solar hot water for a Warwick flat.",
             },
@@ -590,6 +649,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner26@example.com",
+                "contact_phone": "07700 900026",
                 "desired_installation_timeline": "within_3_months",
                 "motivation": "Back up power in a rural area with an unreliable supply.",
             },
@@ -610,6 +671,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner27@example.com",
+                "contact_phone": "07700 900027",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Summer hot water in a moors village.",
             },
@@ -631,7 +694,9 @@ CONFIG: list[dict] = [
         "select_rating": "B",
         "form": {
             "common": {
-                "preferred_contact_method": "either",
+                "preferred_contact_method": "phone",
+                "contact_email": "homeowner28@example.com",
+                "contact_phone": "07700 900028",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Generate power in the New Forest.",
             },
@@ -650,6 +715,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "email",
+                "contact_email": "homeowner29@example.com",
+                "contact_phone": "07700 900029",
                 "desired_installation_timeline": "within_6_months",
                 "motivation": "Store new-build solar output.",
             },
@@ -669,6 +736,8 @@ CONFIG: list[dict] = [
         "form": {
             "common": {
                 "preferred_contact_method": "phone",
+                "contact_email": "homeowner30@example.com",
+                "contact_phone": "07700 900030",
                 "desired_installation_timeline": "flexible",
                 "motivation": "Low-carbon heating on the moor.",
             },
@@ -677,6 +746,7 @@ CONFIG: list[dict] = [
                 "hot_water_cylinder_space_available": "yes",
                 "external_unit_space": "yes",
                 "garden_or_side_access": "yes",
+                "heat_pump_type_interest": "ground_air_source",
             },
         },
     },
