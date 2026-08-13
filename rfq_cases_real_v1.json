@@ -64,7 +64,11 @@
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
         "garden_or_side_access": "yes",
-        "heat_pump_type_interest": "ground_air_source"
+        "heat_pump_type_interest": "ground_air_source",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 2,
+        "smart_meter_installed": "yes"
       },
       "solar_pv": {},
       "battery": {},
@@ -87,6 +91,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "air_source_cost_low_gbp": 8000,
+        "air_source_cost_high_gbp": 10000,
+        "ground_source_cost_low_gbp": 18000,
+        "ground_source_cost_high_gbp": 22000,
+        "net_cost_after_grant_low_gbp": 500,
+        "net_cost_after_grant_high_gbp": 2500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; flat or maisonette"
       }
     },
     "output": {}
@@ -183,7 +205,11 @@
       "solar_pv": {
         "roof_orientation": "south",
         "usable_roof_area_m2": 28,
-        "roof_shading_level": "low"
+        "roof_shading_level": "low",
+        "roof_condition": "yes",
+        "number_of_bedrooms": 3,
+        "number_of_bathrooms": 2,
+        "number_of_occupants": 4
       },
       "battery": {},
       "solar_thermal": {},
@@ -205,6 +231,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "3-4 bed detached",
+        "system_size_kw": 5,
+        "panels_low": 12,
+        "panels_high": 13,
+        "installed_cost_low_gbp": 7000,
+        "installed_cost_high_gbp": 9500,
+        "annual_saving_low_gbp": 650,
+        "annual_saving_high_gbp": 950,
+        "match_type": "exact",
+        "match_basis": "3 bedrooms; detached"
       }
     },
     "output": {}
@@ -352,7 +394,8 @@
         "existing_solar_pv": "existing",
         "battery_purpose": "both",
         "backup_power_required": "yes",
-        "battery_location_preference": "garage"
+        "battery_location_preference": "garage",
+        "battery_space_available": "yes"
       },
       "solar_thermal": {},
       "site_context": {
@@ -442,7 +485,11 @@
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
         "garden_or_side_access": "no",
-        "heat_pump_type_interest": "ground_air_source"
+        "heat_pump_type_interest": "ground_air_source",
+        "number_of_bedrooms": 1,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 1,
+        "smart_meter_installed": "no"
       },
       "solar_pv": {},
       "battery": {},
@@ -461,6 +508,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "air_source_cost_low_gbp": 8000,
+        "air_source_cost_high_gbp": 10000,
+        "ground_source_cost_low_gbp": 18000,
+        "ground_source_cost_high_gbp": 22000,
+        "net_cost_after_grant_low_gbp": 500,
+        "net_cost_after_grant_high_gbp": 2500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "1 bedroom; flat or maisonette"
       }
     },
     "output": {}
@@ -506,7 +571,11 @@
       "solar_pv": {
         "roof_orientation": "west",
         "usable_roof_area_m2": 18,
-        "roof_shading_level": "moderate"
+        "roof_shading_level": "moderate",
+        "roof_condition": "yes",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 2
       },
       "battery": {},
       "solar_thermal": {},
@@ -524,6 +593,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "system_size_kw": 3,
+        "panels_low": 7,
+        "panels_high": 8,
+        "installed_cost_low_gbp": 5000,
+        "installed_cost_high_gbp": 6500,
+        "annual_saving_low_gbp": 350,
+        "annual_saving_high_gbp": 550,
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; flat or maisonette"
       }
     },
     "output": {}
@@ -583,7 +668,11 @@
         "hot_water_cylinder_space_available": "unknown",
         "external_unit_space": "yes",
         "garden_or_side_access": "yes",
-        "heat_pump_type_interest": "ground_air_source"
+        "heat_pump_type_interest": "ground_air_source",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 3,
+        "smart_meter_installed": "yes"
       },
       "solar_pv": {},
       "battery": {},
@@ -606,6 +695,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "air_source_cost_low_gbp": 8000,
+        "air_source_cost_high_gbp": 10000,
+        "ground_source_cost_low_gbp": 18000,
+        "ground_source_cost_high_gbp": 22000,
+        "net_cost_after_grant_low_gbp": 500,
+        "net_cost_after_grant_high_gbp": 2500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; terraced"
       }
     },
     "output": {}
@@ -652,7 +759,8 @@
         "existing_solar_pv": "planned",
         "battery_purpose": "self_consumption",
         "backup_power_required": "no",
-        "battery_location_preference": "utility_room"
+        "battery_location_preference": "utility_room",
+        "battery_space_available": "yes"
       },
       "solar_thermal": {},
       "site_context": {
@@ -741,7 +849,11 @@
       "solar_pv": {
         "roof_orientation": "southwest",
         "usable_roof_area_m2": 22,
-        "roof_shading_level": "none"
+        "roof_shading_level": "none",
+        "roof_condition": "no",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 3
       },
       "battery": {},
       "solar_thermal": {},
@@ -763,6 +875,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "system_size_kw": 3,
+        "panels_low": 7,
+        "panels_high": 8,
+        "installed_cost_low_gbp": 5000,
+        "installed_cost_high_gbp": 6500,
+        "annual_saving_low_gbp": 350,
+        "annual_saving_high_gbp": 550,
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; flat or maisonette"
       }
     },
     "output": {}
@@ -903,7 +1031,11 @@
         "external_unit_space": "yes",
         "garden_or_side_access": "yes",
         "heat_pump_type_interest": "solar_assisted",
-        "absorber_mounting_location": "pitched_roof"
+        "absorber_mounting_location": "pitched_roof",
+        "number_of_bedrooms": 4,
+        "number_of_bathrooms": 2,
+        "number_of_occupants": 4,
+        "smart_meter_installed": "no"
       },
       "solar_pv": {},
       "battery": {},
@@ -926,6 +1058,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "3-4 bed detached",
+        "air_source_cost_low_gbp": 11000,
+        "air_source_cost_high_gbp": 15000,
+        "ground_source_cost_low_gbp": 22000,
+        "ground_source_cost_high_gbp": 30000,
+        "net_cost_after_grant_low_gbp": 3500,
+        "net_cost_after_grant_high_gbp": 7500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "4 bedrooms; detached"
       }
     },
     "output": {}
@@ -1008,7 +1158,11 @@
       "solar_pv": {
         "roof_orientation": "south",
         "usable_roof_area_m2": 20,
-        "roof_shading_level": "low"
+        "roof_shading_level": "low",
+        "roof_condition": "yes",
+        "number_of_bedrooms": 3,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 4
       },
       "battery": {},
       "solar_thermal": {},
@@ -1030,6 +1184,23 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "3 bed semi-detached",
+        "system_size_kw": 4,
+        "panels_low": 10,
+        "panels_high": 10,
+        "installed_cost_low_gbp": 6000,
+        "installed_cost_high_gbp": 8000,
+        "annual_saving_low_gbp": 500,
+        "annual_saving_high_gbp": 800,
+        "match_type": "nearest_band",
+        "match_basis": "3 bedrooms; terraced",
+        "match_note": "No band matches this property exactly; the figures shown are for the closest comparable band."
       }
     },
     "output": {}
@@ -1086,7 +1257,8 @@
         "existing_solar_pv": "existing",
         "battery_purpose": "self_consumption",
         "backup_power_required": "no",
-        "battery_location_preference": "garage"
+        "battery_location_preference": "garage",
+        "battery_space_available": "yes"
       },
       "solar_thermal": {},
       "site_context": {
@@ -1340,7 +1512,11 @@
         "external_unit_space": "yes",
         "garden_or_side_access": "yes",
         "heat_pump_type_interest": "solar_assisted",
-        "absorber_mounting_location": "pitched_roof"
+        "absorber_mounting_location": "pitched_roof",
+        "number_of_bedrooms": 3,
+        "number_of_bathrooms": 2,
+        "number_of_occupants": 3,
+        "smart_meter_installed": "yes"
       },
       "solar_pv": {},
       "battery": {},
@@ -1363,6 +1539,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "3-4 bed detached",
+        "air_source_cost_low_gbp": 11000,
+        "air_source_cost_high_gbp": 15000,
+        "ground_source_cost_low_gbp": 22000,
+        "ground_source_cost_high_gbp": 30000,
+        "net_cost_after_grant_low_gbp": 3500,
+        "net_cost_after_grant_high_gbp": 7500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "3 bedrooms; detached"
       }
     },
     "output": {}
@@ -1419,7 +1613,11 @@
       "solar_pv": {
         "roof_orientation": "southwest",
         "usable_roof_area_m2": 25,
-        "roof_shading_level": "low"
+        "roof_shading_level": "low",
+        "roof_condition": "yes",
+        "number_of_bedrooms": 1,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 1
       },
       "battery": {},
       "solar_thermal": {},
@@ -1441,6 +1639,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "system_size_kw": 3,
+        "panels_low": 7,
+        "panels_high": 8,
+        "installed_cost_low_gbp": 5000,
+        "installed_cost_high_gbp": 6500,
+        "annual_saving_low_gbp": 350,
+        "annual_saving_high_gbp": 550,
+        "match_type": "exact",
+        "match_basis": "1 bedroom; flat or maisonette"
       }
     },
     "output": {}
@@ -1494,7 +1708,11 @@
         "hot_water_cylinder_space_available": "unknown",
         "external_unit_space": "yes",
         "garden_or_side_access": "no",
-        "heat_pump_type_interest": "ground_air_source"
+        "heat_pump_type_interest": "ground_air_source",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 2,
+        "smart_meter_installed": "no"
       },
       "solar_pv": {},
       "battery": {},
@@ -1517,6 +1735,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "air_source_cost_low_gbp": 8000,
+        "air_source_cost_high_gbp": 10000,
+        "ground_source_cost_low_gbp": 18000,
+        "ground_source_cost_high_gbp": 22000,
+        "net_cost_after_grant_low_gbp": 500,
+        "net_cost_after_grant_high_gbp": 2500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; flat or maisonette"
       }
     },
     "output": {}
@@ -1575,7 +1811,8 @@
         "existing_solar_pv": "planned",
         "battery_purpose": "both",
         "backup_power_required": "yes",
-        "battery_location_preference": "utility_room"
+        "battery_location_preference": "unsure",
+        "battery_space_available": "no"
       },
       "solar_thermal": {},
       "site_context": {
@@ -1641,7 +1878,11 @@
       "solar_pv": {
         "roof_orientation": "south",
         "usable_roof_area_m2": 30,
-        "roof_shading_level": "none"
+        "roof_shading_level": "none",
+        "roof_condition": "yes",
+        "number_of_bedrooms": 5,
+        "number_of_bathrooms": 3,
+        "number_of_occupants": 5
       },
       "battery": {},
       "solar_thermal": {},
@@ -1663,6 +1904,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "4-5 bed detached",
+        "system_size_kw": 6,
+        "panels_low": 15,
+        "panels_high": 15,
+        "installed_cost_low_gbp": 8000,
+        "installed_cost_high_gbp": 11000,
+        "annual_saving_low_gbp": 800,
+        "annual_saving_high_gbp": 1200,
+        "match_type": "exact",
+        "match_basis": "5 bedrooms; detached"
       }
     },
     "output": {}
@@ -1774,7 +2031,11 @@
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
         "garden_or_side_access": "yes",
-        "heat_pump_type_interest": "ground_air_source"
+        "heat_pump_type_interest": "ground_air_source",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 2,
+        "smart_meter_installed": "yes"
       },
       "solar_pv": {},
       "battery": {},
@@ -1797,6 +2058,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "air_source_cost_low_gbp": 8000,
+        "air_source_cost_high_gbp": 10000,
+        "ground_source_cost_low_gbp": 18000,
+        "ground_source_cost_high_gbp": 22000,
+        "net_cost_after_grant_low_gbp": 500,
+        "net_cost_after_grant_high_gbp": 2500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; terraced"
       }
     },
     "output": {}
@@ -1945,9 +2224,10 @@
       "solar_pv": {},
       "battery": {
         "existing_solar_pv": "existing",
-        "battery_purpose": "backup",
+        "battery_purpose": "backup_power",
         "backup_power_required": "yes",
-        "battery_location_preference": "garage"
+        "battery_location_preference": "garage",
+        "battery_space_available": "yes"
       },
       "solar_thermal": {},
       "site_context": {
@@ -2057,7 +2337,11 @@
       "solar_pv": {
         "roof_orientation": "south",
         "usable_roof_area_m2": 18,
-        "roof_shading_level": "moderate"
+        "roof_shading_level": "moderate",
+        "roof_condition": "no",
+        "number_of_bedrooms": 2,
+        "number_of_bathrooms": 1,
+        "number_of_occupants": 2
       },
       "battery": {},
       "solar_thermal": {},
@@ -2079,6 +2363,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "1-2 bed flat/terrace",
+        "system_size_kw": 3,
+        "panels_low": 7,
+        "panels_high": 8,
+        "installed_cost_low_gbp": 5000,
+        "installed_cost_high_gbp": 6500,
+        "annual_saving_low_gbp": 350,
+        "annual_saving_high_gbp": 550,
+        "match_type": "exact",
+        "match_basis": "2 bedrooms; flat or maisonette"
       }
     },
     "output": {}
@@ -2312,7 +2612,8 @@
         "existing_solar_pv": "existing",
         "battery_purpose": "both",
         "backup_power_required": "yes",
-        "battery_location_preference": "utility_room"
+        "battery_location_preference": "utility_room",
+        "battery_space_available": "yes"
       },
       "solar_thermal": {},
       "site_context": {
@@ -2494,7 +2795,11 @@
       "solar_pv": {
         "roof_orientation": "south",
         "usable_roof_area_m2": 24,
-        "roof_shading_level": "low"
+        "roof_shading_level": "low",
+        "roof_condition": "yes",
+        "number_of_bedrooms": 4,
+        "number_of_bathrooms": 2,
+        "number_of_occupants": 4
       },
       "battery": {},
       "solar_thermal": {},
@@ -2516,6 +2821,22 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "solar_pv",
+        "source": "Renbee indicative cost tables",
+        "table": "Solar Panel Costs by System Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "3-4 bed detached",
+        "system_size_kw": 5,
+        "panels_low": 12,
+        "panels_high": 13,
+        "installed_cost_low_gbp": 7000,
+        "installed_cost_high_gbp": 9500,
+        "annual_saving_low_gbp": 650,
+        "annual_saving_high_gbp": 950,
+        "match_type": "exact",
+        "match_basis": "4 bedrooms; detached"
       }
     },
     "output": {}
@@ -2579,7 +2900,8 @@
         "existing_solar_pv": "existing",
         "battery_purpose": "self_consumption",
         "backup_power_required": "no",
-        "battery_location_preference": "garage"
+        "battery_location_preference": "garage",
+        "battery_space_available": "yes"
       },
       "solar_thermal": {},
       "site_context": {
@@ -2697,7 +3019,11 @@
         "hot_water_cylinder_space_available": "yes",
         "external_unit_space": "yes",
         "garden_or_side_access": "yes",
-        "heat_pump_type_interest": "ground_air_source"
+        "heat_pump_type_interest": "ground_air_source",
+        "number_of_bedrooms": 4,
+        "number_of_bathrooms": 2,
+        "number_of_occupants": 5,
+        "smart_meter_installed": "yes"
       },
       "solar_pv": {},
       "battery": {},
@@ -2720,6 +3046,24 @@
         "data_sources": [
           "planning.data.gov.uk"
         ]
+      },
+      "cost_estimate": {
+        "technology": "heat_pump",
+        "source": "Renbee indicative cost tables",
+        "table": "Quick Cost Summary by Property Size",
+        "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost.",
+        "matched_band": "Large period property",
+        "air_source_cost_low_gbp": 14000,
+        "air_source_cost_high_gbp": 18000,
+        "ground_source_cost_low_gbp": 28000,
+        "ground_source_cost_high_gbp": 35000,
+        "net_cost_after_grant_low_gbp": 6500,
+        "net_cost_after_grant_high_gbp": 10500,
+        "grant_name": "Boiler Upgrade Scheme",
+        "grant_amount_gbp": 7500,
+        "grant_applies_to": "air source",
+        "match_type": "exact",
+        "match_basis": "4 bedrooms; semi-detached"
       }
     },
     "output": {}

@@ -87,20 +87,23 @@ def _fake_epc_fetch_factory(fixture_path: Path):
 class FakeRecommendation:
     @staticmethod
     def __call__(rfq_input):
+        # Select the disclaimer the way production does, so the two cannot drift.
+        from generate_rfq import recommendation_disclaimer
+
         items = rfq_input.get("recommendation", {}).get("raw_recommendation_items", [])
         if not items:
             return {
                 "recommendation_summary": (
                     "Your property has no official EPC improvement recommendations on record."
                 ),
-                "recommendation_disclaimer": "Based only on official EPC recommendation data.",
+                "recommendation_disclaimer": recommendation_disclaimer(rfq_input),
             }
         return {
             "recommendation_summary": (
                 f"Your home's EPC report suggests these upgrades: "
                 f"{', '.join(items[:3])}. Following them could improve your rating."
             ),
-            "recommendation_disclaimer": "Based only on official EPC recommendation data.",
+            "recommendation_disclaimer": recommendation_disclaimer(rfq_input),
         }
 
 
@@ -117,7 +120,13 @@ class FakeRfq:
         }
 
 
-class TestAPI(unittest.TestCase):
+class MockedAPITestCase(unittest.TestCase):
+    """EPC fetch, external data and both LLM calls mocked.
+
+    Carries no test methods, so a subclass inherits the environment without
+    re-running anything.
+    """
+
     @classmethod
     def setUpClass(cls):
         # Patch BEFORE importing app, so app picks up the mocks at import time.
@@ -167,6 +176,8 @@ class TestAPI(unittest.TestCase):
         cls.nearby_patcher.stop()
         cls.fetch_patcher.stop()
 
+
+class TestAPI(MockedAPITestCase):
     def test_health(self):
         r = self.client.get("/health")
         self.assertEqual(r.status_code, 200)
@@ -203,6 +214,8 @@ class TestAPI(unittest.TestCase):
             "emitter_type", "hot_water_cylinder_space_available",
             "external_unit_space", "garden_or_side_access",
             "heat_pump_type_interest",
+            "number_of_bedrooms", "number_of_bathrooms",
+            "number_of_occupants", "smart_meter_installed",
         })
 
         # Step 2: generate (with all required fields filled in)
@@ -222,6 +235,10 @@ class TestAPI(unittest.TestCase):
                     "external_unit_space": "yes",
                     "garden_or_side_access": "yes",
                     "heat_pump_type_interest": "ground_air_source",
+                    "number_of_bedrooms": 3,
+                    "number_of_bathrooms": 2,
+                    "number_of_occupants": 4,
+                    "smart_meter_installed": "yes",
                 },
             },
         })
@@ -286,9 +303,11 @@ class TestAPI(unittest.TestCase):
         names = {f["name"] for f in body["missing_fields"]["battery"]}
         for required_field in (
             "existing_solar_pv", "battery_purpose",
-            "backup_power_required", "battery_location_preference",
+            "backup_power_required", "battery_space_available",
+            "battery_location_preference",
         ):
             self.assertIn(required_field, names)
+        self.assertNotIn("monthly_electricity_bill_gbp", names)  # optional, must not gate
 
     def test_proxy_aggregates_from_multiple_neighbours(self):
         # CV12 8UE has 9 synthetic addresses in the test fixture. With use_proxy=True
@@ -583,7 +602,9 @@ class TestAPI(unittest.TestCase):
             },
             "property": {"property_type": "flat", "current_heating_system": "gas_boiler_combi",
                          "current_fuel_type": "mains_gas"},
-            "solar_pv": {"roof_orientation": "south", "roof_shading_level": "low"},
+            "solar_pv": {"roof_orientation": "south", "roof_shading_level": "low",
+                         "roof_condition": "yes", "number_of_bedrooms": 3,
+                         "number_of_bathrooms": 2, "number_of_occupants": 4},
         }
         self.assertEqual(completeness_score(full)["score"], 1.0)
 
@@ -603,7 +624,8 @@ class TestAPI(unittest.TestCase):
         body = r.json()
         offered = {s: {f["name"] for f in v} for s, v in body["optional_fields"].items()}
         self.assertEqual(offered.get("property"), {"floor_area_m2"})
-        self.assertEqual(offered.get("solar_pv"), {"usable_roof_area_m2"})
+        self.assertEqual(offered.get("solar_pv"),
+                         {"usable_roof_area_m2", "monthly_electricity_bill_gbp"})
         # Never duplicated into the gating list.
         for section, fields in body["missing_fields"].items():
             names = {f["name"] for f in fields}
@@ -616,13 +638,15 @@ class TestAPI(unittest.TestCase):
         })
         offered = r.json()["optional_fields"]
         self.assertNotIn("property", offered)
-        self.assertEqual({f["name"] for f in offered["solar_pv"]}, {"usable_roof_area_m2"})
+        self.assertEqual({f["name"] for f in offered["solar_pv"]},
+                         {"usable_roof_area_m2", "monthly_electricity_bill_gbp"})
 
         # A populated optional value leaves nothing to offer, and never gates.
         filled = {
             "common": {"technology_requested": "solar_pv"},
             "property": {"floor_area_m2": 78.0},
-            "solar_pv": {"usable_roof_area_m2": 24.0},
+            "solar_pv": {"usable_roof_area_m2": 24.0,
+                         "monthly_electricity_bill_gbp": 95},
         }
         self.assertEqual(optional_fields(filled), {})
         blank = {"common": {"technology_requested": "solar_pv"}}
@@ -643,6 +667,24 @@ class TestAPI(unittest.TestCase):
         )
         # Solar-assisted only, so it must stay optional.
         self.assertNotIn("absorber_mounting_location", fields)
+
+    def test_heat_pump_sizing_and_supply_fields(self):
+        """Household size and supply questions gate; the fuse label only offers."""
+        r = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "heat_pump",
+        })
+        self.assertEqual(r.status_code, 200, r.text)
+        body = r.json()
+        gating = {f["name"] for f in body["missing_fields"]["heat_pump"]}
+        for required_field in (
+            "number_of_bedrooms", "number_of_bathrooms",
+            "number_of_occupants", "smart_meter_installed",
+        ):
+            self.assertIn(required_field, gating)
+        self.assertNotIn("smart_meter_cutout_fuse_label", gating)
+
+        offered = {f["name"] for f in body["optional_fields"]["heat_pump"]}
+        self.assertEqual(offered, {"smart_meter_cutout_fuse_label"})
 
     def test_epc_not_found_falls_back(self):
         # Postcode that our fake fetcher returns 0 results for
@@ -719,6 +761,453 @@ class TestAPI(unittest.TestCase):
         # (we can't check address directly because property section doesn't carry it;
         #  but we can check the EPC rating made it through)
         self.assertEqual(body["auto_filled"]["epc_rating"], "C")
+
+
+class TestEvalCases(unittest.TestCase):
+    """The committed evaluation cases must stay in step with FIELDS.
+
+    Promoting a field to `required: True` without backfilling the cases drops
+    completeness for reasons that have nothing to do with the model. Catch that
+    here rather than in a scored run.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        path = Path(__file__).parent / "rfq_cases_real_v1.json"
+        cls.cases = json.loads(path.read_text(encoding="utf-8"))
+
+    def test_every_case_complete_except_the_deliberate_one(self):
+        from epc_to_rfq import completeness_score
+
+        incomplete = {
+            c["case_id"]: round(completeness_score(c["input"])["score"], 2)
+            for c in self.cases
+            if completeness_score(c["input"])["score"] < 1.0
+        }
+        # REAL_021 omits number_of_occupants on purpose, so the completeness
+        # metric and the missing_fields path both get exercised.
+        self.assertEqual(incomplete, {"REAL_021": 0.93})
+
+    def test_form_answers_are_valid_options(self):
+        from epc_to_rfq import FIELDS, _TECH_SECTIONS
+
+        # `property` is auto-filled from the EPC in EPC vocabulary rather than
+        # form vocabulary, so only the form-answered sections are checkable.
+        bad = []
+        for case in self.cases:
+            tech = case["input"]["common"]["technology_requested"]
+            for section in ("common", _TECH_SECTIONS[tech]):
+                for name, value in (case["input"].get(section) or {}).items():
+                    meta = FIELDS.get(section, {}).get(name)
+                    if not meta or meta["type"] != "select" or not meta["options"]:
+                        continue
+                    if value not in meta["options"]:
+                        bad.append(f"{case['case_id']}.{section}.{name}={value!r}")
+        self.assertEqual(bad, [])
+
+    def test_cases_match_the_generator_config(self):
+        """Hand-edited cases must not drift from build_cases.py, or the next
+        rebuild silently reverts them."""
+        import ast
+
+        from epc_to_rfq import _TECH_SECTIONS
+
+        src = (Path(__file__).parent / "evaluation" / "build_cases.py").read_text(
+            encoding="utf-8"
+        )
+        marker = "CONFIG: list[dict] = "
+        start = src.index(marker)
+        config = ast.literal_eval(src[start + len(marker):src.index("\n]\n", start) + 2])
+        by_id = {c["case_id"]: c for c in config}
+
+        self.assertEqual({c["case_id"] for c in self.cases}, set(by_id))
+        drift = []
+        for case in self.cases:
+            section = _TECH_SECTIONS[case["input"]["common"]["technology_requested"]]
+            form = by_id[case["case_id"]]["form"].get(section, {})
+            built = case["input"][section]
+            for name in set(form) | set(built):
+                if form.get(name) != built.get(name):
+                    drift.append(
+                        f"{case['case_id']}.{section}.{name}: "
+                        f"config={form.get(name)!r} case={built.get(name)!r}"
+                    )
+        self.assertEqual(drift, [])
+
+
+class TestCostEstimate(unittest.TestCase):
+    """Renbee cost tables and band matching. Pure functions, no HTTP.
+
+    The fabrication judge receives rfq_input as "the only facts that are true",
+    so a mistyped price reads to it as supported. Transcription correctness has
+    to be pinned here, the same lesson as the £400,014,000 cost bug.
+    """
+
+    def test_solar_pv_table_transcribed_exactly(self):
+        from cost_tables import SOLAR_PV_ROWS
+
+        self.assertEqual(
+            [(r["kw"], r["panels"], r["cost"], r["saving"], r["band"])
+             for r in SOLAR_PV_ROWS],
+            [
+                (3, (7, 8), (5000, 6500), (350, 550), "1-2 bed flat/terrace"),
+                (4, (10, 10), (6000, 8000), (500, 800), "3 bed semi-detached"),
+                (5, (12, 13), (7000, 9500), (650, 950), "3-4 bed detached"),
+                (6, (15, 15), (8000, 11000), (800, 1200), "4-5 bed detached"),
+            ],
+        )
+
+    def test_heat_pump_table_transcribed_exactly(self):
+        from cost_tables import HEAT_PUMP_LARGE_ROW, HEAT_PUMP_ROWS
+
+        rows = HEAT_PUMP_ROWS + [HEAT_PUMP_LARGE_ROW]
+        self.assertEqual(
+            [(r["band"], r["ashp"], r["gshp"], r["net"]) for r in rows],
+            [
+                ("1-2 bed flat/terrace", (8000, 10000), (18000, 22000), (500, 2500)),
+                ("3-4 bed detached", (11000, 15000), (22000, 30000), (3500, 7500)),
+                ("Large period property", (14000, 18000), (28000, 35000), (6500, 10500)),
+            ],
+        )
+
+    def test_net_cost_is_air_source_minus_the_grant(self):
+        """A transcription check, not a derivation: if this breaks, one of the
+        two columns was typed wrong."""
+        from cost_tables import BUS_GRANT_GBP, HEAT_PUMP_LARGE_ROW, HEAT_PUMP_ROWS
+
+        for row in HEAT_PUMP_ROWS + [HEAT_PUMP_LARGE_ROW]:
+            self.assertEqual(row["net"][0], row["ashp"][0] - BUS_GRANT_GBP, row["band"])
+            self.assertEqual(row["net"][1], row["ashp"][1] - BUS_GRANT_GBP, row["band"])
+
+    def test_property_type_beats_built_form_for_flats(self):
+        """EPC built-form describes the building, not the dwelling: 160 of the
+        355 flat certificates in output/ carry a non-terrace built form. This
+        is the REAL_017 case (mid-floor flat in a detached block)."""
+        from cost_tables import classify_style
+
+        self.assertEqual(classify_style("mid-floor_flat", "detached"), "flat")
+        self.assertEqual(classify_style("ground-floor_maisonette", "semi-detached"), "flat")
+        self.assertEqual(classify_style("top-floor_flat", "mid-terrace"), "flat")
+
+    def test_classify_style_handles_the_real_vocabulary(self):
+        from cost_tables import classify_style
+
+        cases = {
+            # Inconsistent separators come straight out of the EPC data.
+            ("enclosed-mid-terrace_house", None): "terrace",
+            ("enclosed_end-terrace_house", None): "terrace",
+            ("mid-terrace_house", None): "terrace",
+            ("terraced", None): "terrace",
+            ("semi-detached_house", None): "semi",
+            ("detached_house", None): "detached",
+            # Bungalows fall out of the same tests.
+            ("semi-detached_bungalow", None): "semi",
+            ("detached_bungalow", None): "detached",
+            # property_type names no form, so built_form is consulted.
+            ("bungalow", "detached"): "detached",
+            (None, "end-terrace"): "terrace",
+        }
+        for (ptype, bform), expected in cases.items():
+            self.assertEqual(classify_style(ptype, bform), expected, (ptype, bform))
+
+        self.assertIsNone(classify_style(None, "not_recorded"))
+        self.assertIsNone(classify_style(None, None))
+
+    def _estimate(self, technology, beds, **prop):
+        from cost_tables import build_cost_estimate
+
+        return build_cost_estimate({
+            "common": {"technology_requested": technology},
+            "property": prop,
+            technology: {"number_of_bedrooms": beds},
+        })
+
+    def test_nearest_band_resolutions(self):
+        """The combinations the tables do not cover, pinned for both tables."""
+        cases = [
+            # (property_type, beds, expected solar band, expected heat pump band)
+            ("mid-terrace_house", 3, "3 bed semi-detached", "3-4 bed detached"),
+            ("semi-detached_house", 4, "3-4 bed detached", "3-4 bed detached"),
+            ("top-floor_flat", 5, "4-5 bed detached", "3-4 bed detached"),
+            ("detached_house", 2, "1-2 bed flat/terrace", "1-2 bed flat/terrace"),
+        ]
+        for ptype, beds, solar_band, hp_band in cases:
+            solar = self._estimate("solar_pv", beds, property_type=ptype)
+            self.assertEqual(solar["matched_band"], solar_band, (ptype, beds))
+            self.assertEqual(solar["match_type"], "nearest_band", (ptype, beds))
+
+            hp = self._estimate("heat_pump", beds, property_type=ptype)
+            self.assertEqual(hp["matched_band"], hp_band, (ptype, beds))
+            self.assertEqual(hp["match_type"], "nearest_band", (ptype, beds))
+
+    def test_four_bed_detached_overlap_resolves_to_the_cheaper_row(self):
+        """4 beds detached matches both "3-4 bed detached" and "4-5 bed
+        detached" exactly, so the tie-break must be pinned rather than left to
+        list order."""
+        solar = self._estimate("solar_pv", 4, property_type="detached_house")
+        self.assertEqual(solar["matched_band"], "3-4 bed detached")
+        self.assertEqual(solar["match_type"], "exact")
+        self.assertEqual(solar["system_size_kw"], 5)
+
+    def test_exact_matches_carry_no_hedge(self):
+        solar = self._estimate("solar_pv", 3, property_type="semi-detached_house")
+        self.assertEqual(solar["matched_band"], "3 bed semi-detached")
+        self.assertEqual(solar["match_type"], "exact")
+        self.assertNotIn("match_note", solar)
+
+        hp = self._estimate("heat_pump", 2, property_type="mid-terrace_house")
+        self.assertEqual(hp["matched_band"], "1-2 bed flat/terrace")
+        self.assertEqual(hp["match_type"], "exact")
+        self.assertNotIn("match_note", hp)
+
+    def test_large_period_property_rule(self):
+        from cost_tables import is_large_period
+
+        # REAL_030: 152 m², before 1900, semi-detached, 4 beds.
+        self.assertTrue(is_large_period("semi", 4, 152.0, "before 1900"))
+        # Pins the 150 m² threshold.
+        self.assertFalse(is_large_period("semi", 4, 149.9, "before 1900"))
+        # REAL_011: large but not period.
+        self.assertFalse(is_large_period("detached", 4, 160.0, "1967-1975"))
+        # Out-of-vocabulary bands fail closed.
+        self.assertFalse(is_large_period("detached", 4, 200.0, "2007-2011"))
+        self.assertFalse(is_large_period("detached", 4, 200.0, None))
+        # REAL_023 regression: a maisonette whose EPC recorded the whole
+        # building's 436 m² must not price as a mansion.
+        self.assertFalse(is_large_period("flat", 3, 436.0, "before 1900"))
+        # Bedrooms alone can qualify it.
+        self.assertTrue(is_large_period("detached", 5, 90.0, "1900-1929"))
+
+    def test_large_period_reaches_the_estimate(self):
+        hp = self._estimate("heat_pump", 4, property_type="semi-detached_house",
+                            floor_area_m2=152.0, construction_age_band="before 1900")
+        self.assertEqual(hp["matched_band"], "Large period property")
+        self.assertEqual(hp["air_source_cost_low_gbp"], 14000)
+        self.assertEqual(hp["ground_source_cost_high_gbp"], 35000)
+
+    def test_no_estimate_without_a_table_or_a_bedroom_count(self):
+        for technology in ("battery", "solar_thermal"):
+            self.assertIsNone(self._estimate(technology, 3, property_type="detached_house"))
+        for beds in (None, "", "abc", -1):
+            self.assertIsNone(
+                self._estimate("solar_pv", beds, property_type="detached_house"), beds)
+
+    def test_bedrooms_are_read_from_the_requested_technology_only(self):
+        """A battery enquiry carrying a stray heat_pump dict must not produce a
+        heat pump price."""
+        from cost_tables import build_cost_estimate
+
+        self.assertIsNone(build_cost_estimate({
+            "common": {"technology_requested": "battery"},
+            "property": {"property_type": "detached_house"},
+            "heat_pump": {"number_of_bedrooms": 4},
+        }))
+
+    def test_string_bedrooms_behave_like_ints(self):
+        """The demo builds additional_fields from FormData, so every answer
+        arrives as a string while the tests and eval cases send ints."""
+        as_int = self._estimate("solar_pv", 3, property_type="semi-detached_house")
+        as_str = self._estimate("solar_pv", "3", property_type="semi-detached_house")
+        self.assertEqual(as_int, as_str)
+
+    def test_no_falsy_values_in_the_output(self):
+        """_strip_nulls keeps False and 0, and a small model narrates
+        `approximate: false` as "this is an exact match"."""
+        for estimate in (
+            self._estimate("solar_pv", 3, property_type="semi-detached_house"),
+            self._estimate("heat_pump", 9, property_type="detached_house"),
+        ):
+            for key, value in estimate.items():
+                self.assertNotIsInstance(value, bool, key)
+                self.assertTrue(value, key)
+
+    def test_guide_price_caveat_is_carried_as_data(self):
+        """The prompt requires the cost block to close with this caveat, so the
+        field has to exist or the fabrication judge scores a prompt-mandated
+        sentence as unsupported. In the first scored run that one sentence was
+        41 of 51 recommendation fabrication flags."""
+        from cost_tables import GUIDE_PRICE_NOTE
+
+        for tech, beds in (("solar_pv", 3), ("heat_pump", 4)):
+            est = self._estimate(tech, beds, property_type="detached_house")
+            self.assertEqual(est["guide_price_note"], GUIDE_PRICE_NOTE)
+
+        # The prompt must quote the field, not paraphrase it, or the sentence
+        # the model writes will not be the sentence the data supports.
+        import generate_rfq
+        self.assertIn("cost_estimate.guide_price_note",
+                      generate_rfq.RECOMMENDATION_SYSTEM_PROMPT)
+        # Twice per worked example: once in the input excerpt, once in the
+        # example output the model is shown.
+        self.assertEqual(
+            generate_rfq.RECOMMENDATION_SYSTEM_PROMPT.count(GUIDE_PRICE_NOTE), 4,
+            "both worked examples and their input excerpts must use the exact note",
+        )
+
+    def test_studio_flat_is_not_clamped(self):
+        """0 bedrooms is legitimate and must resolve, not be rounded up."""
+        solar = self._estimate("solar_pv", 0, property_type="top-floor_flat")
+        self.assertEqual(solar["matched_band"], "1-2 bed flat/terrace")
+        self.assertEqual(solar["match_type"], "nearest_band")
+
+    def test_cost_estimate_never_reaches_the_installer_prompt(self):
+        """The installer sets their own price; quoting homeowner guide prices
+        back at them is wrong and would move the RFQ fabrication denominator."""
+        from generate_rfq import build_rfq_prompt
+
+        rfq_input = {
+            "common": {"technology_requested": "heat_pump", "postcode": "E1 6AN"},
+            "property": {"property_type": "detached_house"},
+            "heat_pump": {"number_of_bedrooms": 4},
+            "cost_estimate": self._estimate("heat_pump", 4,
+                                            property_type="detached_house"),
+        }
+        message = build_rfq_prompt(rfq_input)[1]["content"]
+        self.assertNotIn("cost_estimate", message)
+        self.assertNotIn("11,000", message)
+        self.assertNotIn("Boiler Upgrade Scheme", message)
+
+    def test_cost_estimate_reaches_the_recommendation_prompt(self):
+        from generate_rfq import build_recommendation_prompt
+
+        rfq_input = {
+            "common": {"technology_requested": "solar_pv"},
+            "property": {"property_type": "semi-detached_house", "epc_rating": "D"},
+            "solar_pv": {"number_of_bedrooms": 3},
+            "recommendation": {"raw_recommendation_items": ["Loft insulation"]},
+            "cost_estimate": self._estimate("solar_pv", 3,
+                                            property_type="semi-detached_house"),
+        }
+        message = build_recommendation_prompt(rfq_input)[1]["content"]
+        self.assertIn("cost_estimate", message)
+        self.assertIn("3 bed semi-detached", message)
+
+
+class TestCostEstimateWiring(MockedAPITestCase):
+    """The /api/generate path: derivation, staleness, injection, disclaimer."""
+
+    def _run(self, technology, extra, common_extra=None):
+        sid = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": technology,
+        }).json()["session_id"]
+        common = {
+            "preferred_contact_method": "email",
+            "contact_email": "a@example.com",
+            "contact_phone": "07700 900000",
+            "desired_installation_timeline": "flexible",
+            "motivation": "cut bills",
+        }
+        common.update(common_extra or {})
+        r = self.client.post("/api/generate", json={
+            "session_id": sid,
+            "additional_fields": {"common": common, technology: extra},
+        })
+        return r
+
+    HEAT_PUMP = {
+        "heat_pump_type_interest": "ground_air_source", "emitter_type": "radiators",
+        "hot_water_cylinder_space_available": "yes", "external_unit_space": "yes",
+        "garden_or_side_access": "yes", "number_of_bedrooms": 4,
+        "number_of_bathrooms": 2, "number_of_occupants": 4,
+        "smart_meter_installed": "yes",
+    }
+    SOLAR_PV = {
+        "roof_orientation": "south", "roof_shading_level": "low",
+        "roof_condition": "yes", "number_of_bedrooms": 3,
+        "number_of_bathrooms": 2, "number_of_occupants": 4,
+    }
+    BATTERY = {
+        "existing_solar_pv": "none", "battery_purpose": "both",
+        "backup_power_required": "yes", "battery_space_available": "yes",
+        "battery_location_preference": "garage",
+    }
+
+    def test_heat_pump_enquiry_gets_a_band(self):
+        r = self._run("heat_pump", self.HEAT_PUMP)
+        self.assertEqual(r.status_code, 200, r.text)
+        est = r.json()["rfq_input"]["cost_estimate"]
+        self.assertEqual(est["technology"], "heat_pump")
+        self.assertEqual(est["air_source_cost_low_gbp"], 11000)
+        self.assertEqual(est["net_cost_after_grant_low_gbp"], 3500)
+
+    def test_battery_enquiry_gets_no_band(self):
+        r = self._run("battery", self.BATTERY)
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertNotIn("cost_estimate", r.json()["rfq_input"])
+
+    def test_disclaimer_names_the_sources_actually_used(self):
+        from generate_rfq import (RECOMMENDATION_DISCLAIMER,
+                                  RECOMMENDATION_DISCLAIMER_WITH_COSTS)
+
+        with_costs = self._run("solar_pv", self.SOLAR_PV).json()
+        self.assertEqual(with_costs["recommendation_disclaimer"],
+                         RECOMMENDATION_DISCLAIMER_WITH_COSTS)
+        self.assertIn("Renbee", with_costs["recommendation_disclaimer"])
+
+        epc_only = self._run("battery", self.BATTERY).json()
+        self.assertEqual(epc_only["recommendation_disclaimer"],
+                         RECOMMENDATION_DISCLAIMER)
+
+    def test_bedrooms_posted_as_strings(self):
+        """The demo builds additional_fields from FormData, so every numeric
+        answer arrives as a string. Without coercion this 500s in production
+        while every int-based test stays green."""
+        as_strings = {k: (str(v) if isinstance(v, int) else v)
+                      for k, v in self.HEAT_PUMP.items()}
+        r = self._run("heat_pump", as_strings)
+        self.assertEqual(r.status_code, 200, r.text)
+        self.assertEqual(r.json()["rfq_input"]["cost_estimate"]["matched_band"],
+                         "3-4 bed detached")
+
+    def test_a_second_call_does_not_leave_a_stale_band(self):
+        sid = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "heat_pump",
+        }).json()["session_id"]
+        common = {
+            "preferred_contact_method": "email", "contact_email": "a@example.com",
+            "contact_phone": "07700 900000",
+            "desired_installation_timeline": "flexible", "motivation": "cut bills",
+        }
+        bands = []
+        for beds in (4, 1):
+            body = self.client.post("/api/generate", json={
+                "session_id": sid,
+                "additional_fields": {
+                    "common": common,
+                    "heat_pump": {**self.HEAT_PUMP, "number_of_bedrooms": beds},
+                },
+            }).json()
+            bands.append(body["rfq_input"]["cost_estimate"]["matched_band"])
+        self.assertEqual(bands, ["3-4 bed detached", "1-2 bed flat/terrace"])
+
+    def test_client_cannot_inject_a_cost_estimate(self):
+        sid = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "heat_pump",
+        }).json()["session_id"]
+        body = self.client.post("/api/generate", json={
+            "session_id": sid,
+            "additional_fields": {
+                "common": {
+                    "preferred_contact_method": "email",
+                    "contact_email": "a@example.com",
+                    "contact_phone": "07700 900000",
+                    "desired_installation_timeline": "flexible",
+                    "motivation": "cut bills",
+                },
+                "heat_pump": self.HEAT_PUMP,
+                "cost_estimate": {"air_source_cost_low_gbp": 1},
+            },
+        }).json()
+        self.assertEqual(body["rfq_input"]["cost_estimate"]["air_source_cost_low_gbp"],
+                         11000)
+
+    def test_solar_pv_household_fields_are_asked(self):
+        r = self.client.post("/api/initiate", json={
+            "postcode": "E1 6AN", "technology": "solar_pv",
+        })
+        gating = {f["name"] for f in r.json()["missing_fields"]["solar_pv"]}
+        for name in ("number_of_bedrooms", "number_of_bathrooms", "number_of_occupants"):
+            self.assertIn(name, gating)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ Endpoints reflect the customer journey (two LLM moments):
 
   POST /api/initiate         postcode + technology -> EPC fetch + assemble + missing_fields
   POST /api/generate         additional fields -> homeowner-facing recommendation summary
-  POST /api/generate-rfq     vendor selection -> installer-facing RFQ summary
+  POST /api/generate-rfq     homeowner asks for quotes -> installer-facing RFQ summary
 
 Session state (the assembled RFQ dict) is held in-memory keyed by session_id.
 For Renbee production, replace `_SESSIONS` with Redis or a small DB.
@@ -91,15 +91,61 @@ if DEMO_MOCK_LLM:
                 f"report suggests these upgrades: {top}. Following them could "
                 f"improve your rating and reduce running costs over time."
             )
+        from generate_rfq import recommendation_disclaimer
+
+        text += _mock_cost_block(rfq_input)
         return {
             "recommendation_summary": text,
-            "recommendation_disclaimer": "Based only on official EPC recommendation data.",
+            "recommendation_disclaimer": recommendation_disclaimer(rfq_input),
             "raw_response": (
                 "[mock LLM — DEMO_MOCK_LLM=1]\n"
                 f'{{"recommendation_summary": {json.dumps(text)}}}'
             ),
             "parse_status": "mock",
         }
+
+    def _gbp(low, high) -> str:
+        """Same rendering contract the real prompt is given."""
+        return f"£{low:,}" if low == high else f"£{low:,} to £{high:,}"
+
+    def _mock_cost_block(rfq_input: dict) -> str:
+        """Mirror the real prompt's cost block so a mocked demo isn't missing
+        the feature entirely."""
+        est = rfq_input.get("cost_estimate")
+        if not est:
+            return ""
+        tech = "solar panels" if est["technology"] == "solar_pv" else "heat pump"
+        lines = [f"\n\nIndicative cost for your {tech}"]
+        if est["match_type"] == "nearest_band":
+            lines.append(
+                "Your home doesn't fall exactly into one of the standard bands, so "
+                f"these figures are for the closest comparable band, a {est['matched_band']}."
+            )
+        else:
+            lines.append(f"These figures are for a {est['matched_band']} home like yours.")
+
+        if est["technology"] == "solar_pv":
+            panels = (f"{est['panels_low']}" if est["panels_low"] == est["panels_high"]
+                      else f"{est['panels_low']}-{est['panels_high']}")
+            lines += [
+                f"System size: {est['system_size_kw']} kW ({panels} panels)",
+                "Typical installed cost: " + _gbp(est["installed_cost_low_gbp"],
+                                                  est["installed_cost_high_gbp"]),
+                "Typical yearly saving: " + _gbp(est["annual_saving_low_gbp"],
+                                                 est["annual_saving_high_gbp"]),
+            ]
+        else:
+            lines += [
+                "Air source heat pump: " + _gbp(est["air_source_cost_low_gbp"],
+                                                est["air_source_cost_high_gbp"]) + " installed",
+                "Ground source heat pump: " + _gbp(est["ground_source_cost_low_gbp"],
+                                                   est["ground_source_cost_high_gbp"]) + " installed",
+                f"If you qualify for the {est['grant_name']}, an air source system would "
+                "come down to " + _gbp(est["net_cost_after_grant_low_gbp"],
+                                       est["net_cost_after_grant_high_gbp"]) + ".",
+            ]
+        lines.append(est["guide_price_note"])
+        return "\n".join(lines)
 
     def _mock_rfq(rfq_input: dict) -> dict:
         common = rfq_input.get("common") or {}
@@ -321,13 +367,36 @@ class SaveRFQResponse(BaseModel):
 # Internal helpers
 # --------------------------------------------------------------------------
 
+# System-side sections. The client never supplies these, so a payload naming
+# one is either confused or hostile.
+_DERIVED_SECTIONS = frozenset({"site_context", "cost_estimate"})
+
+
 def _merge_additional_fields(rfq_input: dict, additional: dict) -> dict:
     """Merge Step 2 answers into the assembled dict (in place + returned)."""
     for section, fields in (additional or {}).items():
+        if section in _DERIVED_SECTIONS:
+            continue
         if section not in rfq_input or not isinstance(rfq_input[section], dict):
             rfq_input[section] = {}
         for k, v in (fields or {}).items():
             rfq_input[section][k] = v
+    return rfq_input
+
+
+def _attach_cost_estimate(rfq_input: dict) -> dict:
+    """Derive the indicative cost band, or clear a stale one.
+
+    Assigned unconditionally so a second /api/generate with a different bedroom
+    count cannot leave the previous band behind.
+    """
+    from cost_tables import build_cost_estimate
+
+    estimate = build_cost_estimate(rfq_input)
+    if estimate:
+        rfq_input["cost_estimate"] = estimate
+    else:
+        rfq_input.pop("cost_estimate", None)
     return rfq_input
 
 
@@ -422,14 +491,13 @@ flowchart TD
     D -->|picks their<br/>address| E
     D -->|use the typical<br/>values for this<br/>street| P1[Average across all<br/>properties on the<br/>same street]
     C & E & P1 & P2A & P2B & S --> F{Step 2: tech<br/>specific form}
-    F -->|heat pump| G1[emitter / cylinder /<br/>external space /<br/>garden access]
-    F -->|solar PV| G2[orientation /<br/>area / shading]
-    F -->|battery| G3[existing PV / purpose /<br/>backup need / location]
-    F -->|solar thermal| G4[orientation / area /<br/>shading / cylinder /<br/>occupants / bathrooms]
-    G1 & G2 & G3 & G4 --> H[Llama 3.3 70B:<br/>homeowner recommendation<br/>softens prose if proxy]
-    H --> I[Homeowner picks<br/>installer]
-    I --> J[Llama 3.3 70B:<br/>installer-facing RFQ<br/>strict no-fabrication prompt]
-    J --> K[HITL review<br/>then submit to installer]
+    F -->|heat pump| G1[emitter / cylinder /<br/>external space / garden access /<br/>bedrooms / bathrooms /<br/>occupants / smart meter]
+    F -->|solar PV| G2[orientation / shading /<br/>roof condition]
+    F -->|battery| G3[existing PV / purpose /<br/>backup need / space /<br/>location]
+    F -->|solar thermal| G4[orientation / shading /<br/>cylinder / occupants /<br/>bathrooms]
+    G1 & G2 & G3 & G4 --> H[Llama 3.3 70B:<br/>homeowner recommendation<br/>+ indicative cost band]
+    G1 & G2 & G3 & G4 --> J[Llama 3.3 70B:<br/>installer-facing RFQ<br/>strict no-fabrication prompt]
+    H & J --> K[One page: recommendation<br/>+ editable RFQ<br/>HITL review then submit]
     style A fill:#dbeafe,stroke:#3b82f6
     style B fill:#fef3c7,stroke:#f59e0b
     style N fill:#fef3c7,stroke:#f59e0b
@@ -668,6 +736,8 @@ def generate(req: GenerateRequest) -> GenerateResponse:
             },
         )
 
+    _attach_cost_estimate(rfq_input)
+
     from generate_rfq import generate_recommendation
     rec = generate_recommendation(rfq_input)
 
@@ -687,7 +757,11 @@ def generate(req: GenerateRequest) -> GenerateResponse:
 
 @app.post("/api/generate-rfq", response_model=GenerateRFQResponse)
 def generate_rfq(req: GenerateRFQRequest) -> GenerateRFQResponse:
-    """Vendor-selection moment: produce the installer-facing RFQ summary."""
+    """Second LLM moment: produce the installer-facing RFQ summary.
+
+    `vendor_id` is optional tracking only. There is no vendor-selection step in
+    the flow; Renbee matches installers itself.
+    """
     session = _require_session(req.session_id)
     rfq_input = session["rfq_input"]
 
@@ -700,6 +774,10 @@ def generate_rfq(req: GenerateRFQRequest) -> GenerateRFQResponse:
                 "missing_fields": still_missing,
             },
         )
+
+    # A client may skip /api/generate entirely, so derive it here too. Pure and
+    # offline, so recomputing costs nothing.
+    _attach_cost_estimate(rfq_input)
 
     from generate_rfq import generate_rfq_summary
     out = generate_rfq_summary(rfq_input)

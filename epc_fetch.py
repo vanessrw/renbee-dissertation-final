@@ -2,6 +2,7 @@ import json
 import os
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional
 
 import requests
@@ -309,8 +310,11 @@ def fetch_epc_data(postcode):
         "properties": properties,
     }
 
-    os.makedirs("output", exist_ok=True)
-    filename = f"output/{postcode.replace(' ', '_')}.json"
+    # Anchored to this file, not the working directory, so running from a
+    # notebook or another folder writes to the same cache.
+    out_dir = Path(__file__).resolve().parent / "output"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    filename = out_dir / f"{postcode.replace(' ', '_')}.json"
     with open(filename, "w") as f:
         json.dump(result, f, indent=2)
     print(f"\nSaved to {filename}")

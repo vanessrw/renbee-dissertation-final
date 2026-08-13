@@ -1,0 +1,17 @@
+metric,mean,std_between_case,std_within_case,n_cases,n_obs
+completeness.score,0.998,0.013,,30,30
+rfq.preservation_rate,0.893,0.064,0.017,30,90
+rfq.fabrication_rate,0.017,0.021,0.013,30,90
+rfq.fabricated_statements,0.256,0.318,0.189,30,90
+rfq.total_statements,14.233,1.456,0.364,30,90
+rfq.site_context_coverage,0.964,0.186,0.0,28,84
+rfq.clarity,4.578,0.523,0.246,30,90
+rfq.usability,3.211,0.956,0.306,30,90
+rfq.perceived_efficiency,3.344,0.892,0.364,30,90
+recommendation.preservation_rate,0.989,0.061,0.016,29,87
+recommendation.fabrication_rate,0.051,0.093,0.012,30,90
+recommendation.fabricated_statements,0.256,0.391,0.079,30,90
+recommendation.total_statements,11.667,8.077,0.306,30,90
+recommendation.clarity,4.867,0.28,0.079,30,90
+recommendation.understandability,3.878,0.702,0.18,30,90
+recommendation.perceived_helpfulness,3.722,0.895,0.247,30,90

@@ -154,6 +154,8 @@ _BUILT_FORMS = ["detached", "semi-detached", "mid-terrace", "end-terrace", "encl
 _AGE_BANDS = ["before 1900", "1900-1929", "1930-1949", "1950-1966", "1967-1975", "1976-1982", "1983-1990", "1991-1995", "1996-2002", "2003-2006", "2007 onwards"]
 _TENURES = ["owner_occupied", "rented_private", "rented_social"]
 _YES_NO_UNKNOWN = ["yes", "no", "unknown"]
+# No "unknown": these are things a homeowner can see for themselves.
+_YES_NO = ["yes", "no"]
 _INSULATION = ["poor", "moderate", "good", "unknown"]
 # A sub-type, not a separate technology: MIS 3005-I p.248 folds solar assisted
 # heat pumps into air source.
@@ -165,7 +167,6 @@ _ROOF_TYPES = ["pitched", "flat", "mixed"]
 _ROOF_ORIENTATIONS = ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest", "unknown"]
 _ROOF_PITCHES = ["flat", "shallow", "moderate", "steep", "unknown"]
 _ROOF_SHADING = ["none", "low", "moderate", "high"]
-_ROOF_CONDITIONS = ["good", "acceptable", "poor", "unknown"]
 _DAYTIME_USAGE = ["low", "medium", "high"]
 _HW_HEATING_TYPES = [
     "combi_boiler", "system_boiler_with_cylinder",
@@ -337,7 +338,7 @@ FIELDS: dict[str, dict[str, dict]] = {
             "required": True,
         },
         "hot_water_cylinder_space_available": {
-            "label": "Is there space for a hot water cylinder?",
+            "label": "Is there space indoors for a hot water cylinder?",
             "type": "select",
             "options": _YES_NO_UNKNOWN,
             "required": True,
@@ -353,6 +354,41 @@ FIELDS: dict[str, dict[str, dict]] = {
             "type": "select",
             "options": _YES_NO_UNKNOWN,
             "required": True,
+        },
+        # Heat load and cylinder sizing follow property scale and household
+        # hot-water demand (the same reason solar thermal asks). Sizing itself
+        # is in MIS 3005-D, the Design standard, not MIS 3005-I.
+        "number_of_bedrooms": {
+            "label": "How many bedrooms does the property have?",
+            "type": "number",
+            "options": None,
+            "required": True,
+        },
+        "number_of_bathrooms": {
+            "label": "How many bathrooms does the property have?",
+            "type": "number",
+            "options": None,
+            "required": True,
+        },
+        "number_of_occupants": {
+            "label": "How many people live in the property?",
+            "type": "number",
+            "options": None,
+            "required": True,
+        },
+        # Supply capacity feeds the DNO notification required by MIS 3005-I §3.1.7.
+        "smart_meter_installed": {
+            "label": "Do you have a smart meter?",
+            "type": "select",
+            "options": _YES_NO,
+            "required": True,
+        },
+        "smart_meter_cutout_fuse_label": {
+            "label": "What does the label on your main cutout fuse say? (optional)",
+            "type": "text",
+            "options": None,
+            "required": False,
+            "prompt_if_empty": True,
         },
         # Optional: solar_assisted only. FIELDS has no conditional-required
         # mechanism, so requiring it would ask ground-source enquiries too.
@@ -419,6 +455,33 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _ROOF_SHADING,
             "required": True,
         },
+        # A roof needing work before panels go on changes the quote, so ask.
+        "roof_condition": {
+            "label": "Is your roof in good condition?",
+            "type": "select",
+            "options": _YES_NO,
+            "required": True,
+        },
+        # Bedrooms key the indicative cost table in cost_tables.py. Bathrooms
+        # and occupants are asked for parity with the heat pump form.
+        "number_of_bedrooms": {
+            "label": "How many bedrooms does the property have?",
+            "type": "number",
+            "options": None,
+            "required": True,
+        },
+        "number_of_bathrooms": {
+            "label": "How many bathrooms does the property have?",
+            "type": "number",
+            "options": None,
+            "required": True,
+        },
+        "number_of_occupants": {
+            "label": "How many people live in the property?",
+            "type": "number",
+            "options": None,
+            "required": True,
+        },
         "roof_type": {
             "label": "Roof type",
             "type": "select",
@@ -431,23 +494,19 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _ROOF_PITCHES,
             "required": False,
         },
-        "roof_condition": {
-            "label": "Roof condition",
-            "type": "select",
-            "options": _ROOF_CONDITIONS,
-            "required": False,
-        },
         "number_of_roof_faces": {
             "label": "How many roof faces could be used?",
             "type": "number",
             "options": None,
             "required": False,
         },
-        "annual_electricity_bill_gbp": {
-            "label": "Approximate annual electricity bill in GBP",
+        # Monthly, not annual: it is the figure a homeowner actually knows.
+        "monthly_electricity_bill_gbp": {
+            "label": "Approximate monthly electricity cost in GBP (optional)",
             "type": "number",
             "options": None,
             "required": False,
+            "prompt_if_empty": True,
         },
         "daytime_electricity_usage": {
             "label": "Daytime electricity usage",
@@ -493,6 +552,13 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _YES_NO_UNKNOWN,
             "required": True,
         },
+        # Precondition for the location question below.
+        "battery_space_available": {
+            "label": "Is there space for the battery (for example in a garage)?",
+            "type": "select",
+            "options": _YES_NO,
+            "required": True,
+        },
         "battery_location_preference": {
             "label": "Where would you prefer the battery to be installed?",
             "type": "select",
@@ -511,11 +577,12 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _BATTERY_CAPACITIES,
             "required": False,
         },
-        "annual_electricity_bill_gbp": {
-            "label": "Approximate annual electricity bill in GBP",
+        "monthly_electricity_bill_gbp": {
+            "label": "Approximate monthly electricity cost in GBP (optional)",
             "type": "number",
             "options": None,
             "required": False,
+            "prompt_if_empty": True,
         },
         "daytime_electricity_usage": {
             "label": "Daytime electricity usage",
@@ -557,7 +624,7 @@ FIELDS: dict[str, dict[str, dict]] = {
             "required": True,
         },
         "hot_water_cylinder_space_available": {
-            "label": "Is there space for a hot water cylinder?",
+            "label": "Is there space indoors for a hot water cylinder?",
             "type": "select",
             "options": _YES_NO_UNKNOWN,
             "required": True,
@@ -598,10 +665,11 @@ FIELDS: dict[str, dict[str, dict]] = {
             "options": _ROOF_PITCHES,
             "required": False,
         },
+        # Same key as solar_pv, so same wording. Optional here: only solar PV asks it.
         "roof_condition": {
-            "label": "Roof condition",
+            "label": "Is your roof in good condition?",
             "type": "select",
-            "options": _ROOF_CONDITIONS,
+            "options": _YES_NO,
             "required": False,
         },
         "collector_type_preference": {

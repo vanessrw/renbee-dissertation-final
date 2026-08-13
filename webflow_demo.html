@@ -500,7 +500,7 @@
   }
   .loading-dots::after { content: ''; animation: pulseDots 1.5s infinite; }
 
-  /* Inline button spinner (used on Step 4 vendor cards) */
+  /* Inline button spinner (used on the Save RFQ button) */
   .button-spinner {
     display: inline-block;
     width: 12px; height: 12px;
@@ -597,7 +597,7 @@
       </div>
     </section>
 
-    <!-- Step 3 — recommendation + RFQ generation -->
+    <!-- Step 3 — recommendation and RFQ, both generated on submitting step 2 -->
     <section class="card hidden" id="step-3">
       <h2>Your home energy recommendation</h2>
       <p class="lead">Based on your home's official EPC data.</p>
@@ -605,9 +605,8 @@
         <p id="recommendation-text"></p>
         <p class="disclaimer" id="recommendation-disclaimer"></p>
       </div>
-      <button type="button" class="primary" id="generate-rfq-btn">Generate RFQ</button>
 
-      <div class="rfq-preview hidden" id="rfq-preview">
+      <div class="rfq-preview" id="rfq-preview">
         <h3>Here's the RFQ we'll send (review and edit before submitting)</h3>
         <label class="rfq-field-label" for="rfq-text">RFQ summary (editable)</label>
         <textarea id="rfq-text" class="editable" rows="8"></textarea>
@@ -617,7 +616,6 @@
         <textarea id="rfq-json" class="editable mono" rows="14" spellcheck="false"></textarea>
         <div style="margin-top: 12px;">
           <button type="button" class="primary" id="confirm-submit">Confirm and submit</button>
-          <button type="button" class="secondary" id="cancel-submit">Cancel</button>
         </div>
       </div>
     </section>
@@ -693,10 +691,13 @@
 
 <script>
   // -------- API base detection --------
-  // Same-origin if served by FastAPI; fallback to localhost:8000 if opened via file://
+  // Same-origin if served by FastAPI; fallback to localhost:8000 if opened via file://.
+  // Derived from the served path rather than hardcoded to "", so the page also works
+  // behind a path-prefix proxy (e.g. Vertex AI Workbench serves it at
+  // /proxy/8000/demo, where a root-relative /api/initiate would miss the prefix).
   const API_BASE = (location.protocol === 'file:' || !location.host)
     ? 'http://localhost:8000'
-    : '';
+    : location.pathname.replace(/\/demo\/?$/, '');
 
   // -------- State --------
   const state = {
@@ -1132,8 +1133,8 @@
     }
 
     showLoading(
-      "Generating your recommendation",
-      "Asking Llama to summarise your EPC data"
+      "Generating your recommendation and RFQ",
+      "Two separate prompts: your EPC summary, then the installer-facing RFQ"
     );
 
     const { status, body } = await apiCall('/api/generate', {
@@ -1142,7 +1143,14 @@
     });
     if (status === 200) {
       logRawLlm('POST /api/generate (homeowner recommendation)', body.raw_response, body.parse_status);
-      enterStep3(body);
+      // Second LLM moment, fired straight after the first. Still a separate
+      // prompt and a separate call; there is just no homeowner decision
+      // between them, so both land on one page.
+      const rfq = await apiCall('/api/generate-rfq', { session_id: state.sessionId });
+      if (rfq.status === 200) {
+        logRawLlm('POST /api/generate-rfq (installer-facing RFQ)', rfq.body.raw_response, rfq.body.parse_status);
+      }
+      enterStep3(body, rfq);
     } else if (status === 422) {
       // Server-side re-check fell through (rare); go back to step 2
       showSection('step-2');
@@ -1179,15 +1187,29 @@
     return out;
   }
 
-  // -------- Step 3 — show recommendation --------
-  function enterStep3(body) {
+  // -------- Step 3 — recommendation and RFQ on one page --------
+  function enterStep3(body, rfq) {
     setActiveStep(3);
     document.getElementById('recommendation-text').textContent = body.recommendation_summary;
     document.getElementById('recommendation-disclaimer').textContent = body.recommendation_disclaimer;
+
+    const text = document.getElementById('rfq-text');
+    const json = document.getElementById('rfq-json');
+    if (rfq && rfq.status === 200) {
+      text.value = rfq.body.rfq_summary || '';
+      json.value = JSON.stringify(rfq.body.rfq_input || {}, null, 2);
+    } else {
+      // The recommendation succeeded, so show it rather than failing the whole
+      // journey, and say plainly that the RFQ half did not come back.
+      const code = rfq ? rfq.status : 'no response';
+      text.value = `The RFQ could not be generated (${code}). See the API debug log below.`;
+      json.value = JSON.stringify(body.rfq_input || {}, null, 2);
+    }
+    validateRfqJson();
     showSection('step-3');
   }
 
-  // -------- Step 3 — generate RFQ (installer-facing) + editable preview --------
+  // -------- Step 3 — editable RFQ preview --------
   // Live JSON validity hint for the editable structured-data box.
   function validateRfqJson() {
     const ta = document.getElementById('rfq-json');
@@ -1203,54 +1225,6 @@
     }
   }
   document.getElementById('rfq-json').addEventListener('input', validateRfqJson);
-
-  document.getElementById('generate-rfq-btn').addEventListener('click', async (e) => {
-    const btn = e.currentTarget;
-    const alreadyGenerated = !document.getElementById('rfq-preview').classList.contains('hidden');
-
-    // If an RFQ is already on screen, this is a re-generate: warn that it
-    // discards any manual edits before overwriting the boxes.
-    if (alreadyGenerated) {
-      const ok = confirm('Regenerate the RFQ? This replaces the current RFQ and discards any edits you have made.');
-      if (!ok) return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="button-spinner"></span>Generating...';
-
-    // No vendor_id — installer selection has been removed from the flow.
-    const { status, body } = await apiCall('/api/generate-rfq', {
-      session_id: state.sessionId,
-    });
-
-    btn.disabled = false;
-
-    if (status === 200) {
-      logRawLlm('POST /api/generate-rfq (installer-facing RFQ)', body.raw_response, body.parse_status);
-      // Editable RFQ prose + editable structured JSON (local edits only).
-      document.getElementById('rfq-text').value = body.rfq_summary || '';
-      document.getElementById('rfq-json').value = JSON.stringify(body.rfq_input || {}, null, 2);
-      validateRfqJson();
-      document.getElementById('rfq-preview').classList.remove('hidden');
-      // Relabel so it's clear a second click re-runs (and the warning above
-      // guards against silently clobbering edits).
-      btn.textContent = 'Regenerate RFQ';
-      document.getElementById('rfq-preview').scrollIntoView({ behavior: 'smooth' });
-    } else {
-      btn.textContent = alreadyGenerated ? 'Regenerate RFQ' : 'Generate RFQ';
-      if (status === 404) {
-        alert('Your session expired (server may have restarted). Refresh and start over.');
-      } else {
-        alert(`Unexpected error (${status}). See the API debug log at the bottom.`);
-      }
-    }
-  });
-
-  document.getElementById('cancel-submit').addEventListener('click', () => {
-    document.getElementById('rfq-preview').classList.add('hidden');
-    // Preview discarded — reset the button back to its first-run label.
-    document.getElementById('generate-rfq-btn').textContent = 'Generate RFQ';
-  });
 
   document.getElementById('confirm-submit').addEventListener('click', () => {
     // Don't advance the HITL review with invalid JSON — the final RFQ must parse.

@@ -30,6 +30,23 @@ from pathlib import Path
 # Model of record for the thesis. LLM_MODEL overrides it for a different target.
 MODEL_NAME = "meta/llama-3.3-70b-instruct-maas"
 RECOMMENDATION_DISCLAIMER = "Based only on official EPC recommendation data."
+RECOMMENDATION_DISCLAIMER_WITH_COSTS = (
+    "Based on official EPC recommendation data, plus Renbee's indicative cost "
+    "tables for the technology you asked about. The cost and saving ranges are "
+    "typical figures for a comparable property, not a quote for yours."
+)
+
+
+def recommendation_disclaimer(rfq_input: dict) -> str:
+    """Name every source the prose actually used.
+
+    The EPC-only wording becomes false the moment a cost_estimate figure
+    appears, but for battery and solar thermal the prose genuinely is EPC-only,
+    and claiming a cost source that produced nothing is its own dishonesty.
+    """
+    if (rfq_input or {}).get("cost_estimate"):
+        return RECOMMENDATION_DISCLAIMER_WITH_COSTS
+    return RECOMMENDATION_DISCLAIMER
 
 # Backoff schedule for the cloud backend: 4s, 8s, 16s, 32s, 60s, 60s ...
 _RETRY_BASE_SECONDS = 4.0
@@ -99,7 +116,12 @@ STRICT RULES:
 - Open with ONE short sentence about their EPC rating, then list the improvements as numbered steps in the order given
 - Each step is: the improvement in plain English, then on its own line "Typical installation cost: £X" (or "£X to £Y" for a range) and "Typical yearly saving: £Z" — include only the figures that are present
 - No jargon and no tables. Keep each step to one short sentence plus its figures
-- Do NOT discuss the homeowner's chosen technology (heat pump / solar PV) — this output is only about the EPC recommendations
+- Do NOT discuss the homeowner's chosen technology EXCEPT in the cost block described below. Roof orientation, emitter type, cylinder space, grid headroom and every other technology detail stay out of this output
+- COST BLOCK: if a `cost_estimate` section is present, add ONE block after the numbered EPC steps, headed "Indicative cost for your <technology in plain English>". If `cost_estimate` is ABSENT, write nothing at all about the chosen technology — no costs, no grants, no system sizes — and do NOT say that an estimate is unavailable
+- COST ESTIMATE FIGURES: every figure in the cost block MUST be copied verbatim from `cost_estimate`, formatted as £6,000. Where a low and a high value are given, write the range as "£6,000 to £8,000"; where they are equal, write the single figure. NEVER add, subtract, average, round, total, annualise or convert any of them, and never quote only one end of a range. Do NOT introduce figures that are not in `cost_estimate` — no payback periods, no lifetime savings, no per-panel prices, no monthly figures. Do NOT combine these figures with the EPC step costs above; they are separate and must never be summed
+- BAND HONESTY: `cost_estimate.matched_band` names the band the figures come from and you MUST name it. If `cost_estimate.match_type` is `"nearest_band"`, you MUST also say the figures are for the closest comparable band, as `cost_estimate.match_note` states. If it is `"exact"`, name the band without hedging
+- HEAT PUMP COSTS: when `cost_estimate.technology` is `"heat_pump"`, give BOTH the air source range and the ground source range, then the range after the Boiler Upgrade Scheme grant. The after-grant range is already given in `net_cost_after_grant_low_gbp` / `_high_gbp` — never work it out yourself, and attach it only to the air source figure (`cost_estimate.grant_applies_to`). Phrase the grant conditionally — "if you qualify for the Boiler Upgrade Scheme" — never as a certainty
+- Close the cost block with `cost_estimate.guide_price_note`, reproduced as given. Do not paraphrase it and do not add any further caveat of your own
 
 OUTPUT FORMAT — return ONLY a JSON object with exactly one string field, with the steps as newline-separated text inside that string:
 {
@@ -118,6 +140,40 @@ INPUT (excerpt):
 
 {
   "recommendation_summary": "Your home is rated D, so there is room to improve.\n\n1. Add loft insulation.\nTypical installation cost: £100 to £350\nTypical yearly saving: £62\n\n2. Upgrade your heating controls.\nTypical installation cost: £350 to £450"
+}
+
+EXAMPLE WITH A SOLAR PV COST ESTIMATE (nearest band):
+INPUT (excerpt):
+  property.epc_rating = "D"
+  recommendation.recommendation_details = [
+    {"item": "Loft insulation", "indicative_cost_low_gbp": 100, "indicative_cost_high_gbp": 350, "typical_yearly_saving_gbp": 62}
+  ]
+  cost_estimate = {
+    "technology": "solar_pv", "matched_band": "3 bed semi-detached", "match_type": "nearest_band",
+    "match_note": "No band matches this property exactly; the figures shown are for the closest comparable band.",
+    "system_size_kw": 4, "panels_low": 10, "panels_high": 10,
+    "installed_cost_low_gbp": 6000, "installed_cost_high_gbp": 8000,
+    "annual_saving_low_gbp": 500, "annual_saving_high_gbp": 800,
+    "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost."
+  }
+
+{
+  "recommendation_summary": "Your home is rated D, so there is room to improve.\n\n1. Add loft insulation.\nTypical installation cost: £100 to £350\nTypical yearly saving: £62\n\nIndicative cost for your solar panels\nYour home doesn't fall exactly into one of the standard sizes, so these figures are for the closest comparable band, a 3 bed semi-detached.\nSystem size: 4 kW (10 panels)\nTypical installed cost: £6,000 to £8,000\nTypical yearly saving: £500 to £800\nThese are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost."
+}
+
+EXAMPLE WITH A HEAT PUMP COST ESTIMATE (exact band):
+INPUT (excerpt):
+  cost_estimate = {
+    "technology": "heat_pump", "matched_band": "3-4 bed detached", "match_type": "exact",
+    "air_source_cost_low_gbp": 11000, "air_source_cost_high_gbp": 15000,
+    "ground_source_cost_low_gbp": 22000, "ground_source_cost_high_gbp": 30000,
+    "net_cost_after_grant_low_gbp": 3500, "net_cost_after_grant_high_gbp": 7500,
+    "grant_name": "Boiler Upgrade Scheme", "grant_applies_to": "air source",
+    "guide_price_note": "These are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost."
+  }
+
+{
+  "recommendation_summary": "Your home is rated D, so there is room to improve.\n\n1. Add loft insulation.\nTypical installation cost: £100 to £350\nTypical yearly saving: £62\n\nIndicative cost for your heat pump\nThese figures are for a 3-4 bed detached home like yours.\nAir source heat pump: £11,000 to £15,000 installed\nGround source heat pump: £22,000 to £30,000 installed\nIf you qualify for the Boiler Upgrade Scheme, an air source system would come down to £3,500 to £7,500.\nThese are typical guide prices for a comparable property, not a quotation. The installer's survey confirms the actual cost."
 }
 
 EXAMPLE WITHOUT RECOMMENDATIONS:
@@ -275,6 +331,10 @@ def build_rfq_prompt(rfq_input: dict):
     filtered_input = _redact_contact_details(
         _prune_planning_flags(_strip_nulls(rfq_input))
     )
+    # Homeowner-facing guide prices. The installer sets their own price, so
+    # quoting these back at them is wrong and would move the RFQ fabrication
+    # denominator.
+    filtered_input.pop("cost_estimate", None)
     user_message = (
         "Generate an RFQ Summary for the following input.\n\n"
         f"INPUT DATA:\n{json.dumps(filtered_input, indent=2)}"
@@ -307,6 +367,8 @@ def build_recommendation_prompt(rfq_input: dict):
     site_context = filtered_input.get("site_context") or {}
     if site_context.get("planning"):
         minimal["site_context"] = {"planning": site_context["planning"]}
+    if filtered_input.get("cost_estimate"):
+        minimal["cost_estimate"] = filtered_input["cost_estimate"]
     user_message = (
         "Produce a homeowner-facing recommendation summary based on the "
         "EPC data below. Follow the strict rules in the system prompt.\n\n"
@@ -444,12 +506,15 @@ def generate_recommendation(rfq_input: dict) -> dict:
     `parse_status` for debugging.
     """
     messages = build_recommendation_prompt(rfq_input)
-    raw = generate_output(messages, max_new_tokens=400)
+    # 700, not 400: the heat pump cost block adds three ranges plus a grant and
+    # hedge sentence. On truncation parse_model_output finds no balanced JSON
+    # and the fallback dumps raw model text into the homeowner UI.
+    raw = generate_output(messages, max_new_tokens=700)
     parsed = parse_model_output(raw)
     summary, status = _extract_or_fallback(raw, parsed, "recommendation_summary")
     return {
         "recommendation_summary": summary,
-        "recommendation_disclaimer": RECOMMENDATION_DISCLAIMER,
+        "recommendation_disclaimer": recommendation_disclaimer(rfq_input),
         "raw_response": raw,
         "parse_status": status,
     }

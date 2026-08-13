@@ -20,6 +20,15 @@ cannot supply them. They are chosen to be valid and varied for coverage.
   North York Moors, New Forest, Dartmoor, Yorkshire Dales, Peak District).
 - **Completeness**: 29 cases at 1.00; **REAL_021 is deliberately incomplete (0.93)** so the
   completeness metric can actually fail, and the `missing_fields` path is exercised.
+- **Household and supply fields** (heat pump, added Aug 2026): bedrooms 1-4, bathrooms 1-2,
+  occupants 1-5, tracking each case's property type rather than repeated. `smart_meter_installed`
+  is 5 yes / 3 no. Solar PV `roof_condition` is 6 yes / 2 no; battery `battery_space_available`
+  is 6 yes / 1 no (REAL_018, a mid-floor flat, which also carries
+  `battery_location_preference: unsure` so the pair stays coherent).
+
+`TestEvalCases` in `test_api.py` guards this file: every case complete except REAL_021, every
+form answer a valid option, and no drift from `build_cases.py`. Run `python test_api.py` after
+editing either file.
 
 **Not covered (documented limitations, not fixable by adding cases):**
 - **Grid headroom** — the UKPN dataset the pipeline queried has been retired, so
