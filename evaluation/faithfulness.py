@@ -1,16 +1,8 @@
 """Faithfulness scoring for RQ1: information preservation + fabrication.
 
-Information preservation is deterministic and objective: for each relevant field
-in the structured input, we check whether its information is represented in the
-generated text. This is a heuristic (token-overlap with normalisation), but it
-removes judge bias from the preservation number and acts as an objective anchor
-that the LLM-judge quality scores can be reviewed against (see review.py).
-
 Fabrication is Gemini-judged: the judge sees the structured input and the
 output and counts statements not supported by the input.
 
-The two together answer "did the model keep what it was given, and did it invent
-anything it was not given".
 """
 from __future__ import annotations
 

@@ -1,15 +1,5 @@
 """Thin wrapper around the Google Gemini API used as the LLM judge.
 
-One entry point, `judge_json()`, sends a system + user prompt and returns a
-parsed JSON object. Design goals:
-
-  - Offline mock mode (GEMINI_MOCK=1 or mock=True) so the whole scoring loop can
-    be exercised with no API key and no cost. Callers pass a `mock_response`
-    describing the shape they expect back.
-  - Lazy import of the SDK so mock mode works without the package installed.
-  - Defensive JSON parsing (the model is asked for JSON, but we still tolerate
-    code fences or surrounding prose).
-
 The model is configurable via GEMINI_MODEL (default gemini-3.5-flash-lite). The
 API key is read from GEMINI_API_KEY in the environment / .env.
 

@@ -4,17 +4,6 @@ This is NOT a scoring step. It reads an existing eval_outputs/scores.json and
 renders a single HTML page so you can eyeball how the two scoring methods behave
 and where they agree or diverge:
 
-  - Deterministic information preservation (objective token-overlap): which input
-    fields were kept in the generated text and which were dropped, field by
-    field.
-  - LLM judge (Gemini): the fabrication statements it flagged and the 1-5 quality
-    scores with the justification it wrote.
-
-The two are shown side by side per output, with a divergence note that points
-out cases worth a closer look (for example, the deterministic metric says
-information was dropped while the judge still rated clarity highly, or the judge
-flagged fabrication). No human ratings are involved.
-
 Usage:
     python -m evaluation.review
     python -m evaluation.review --scores eval_outputs/scores.json --out eval_outputs/review.html

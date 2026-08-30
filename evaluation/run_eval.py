@@ -1,16 +1,5 @@
 """Evaluation orchestrator. Generates the two outputs for each case with the
-hosted Llama model (or a mock), scores them, and writes the results that feed
-Chapter IV.
-
-Usage examples:
-  # offline smoke test (no network, no credentials):
-  python -m evaluation.run_eval --mock-gen --mock-judge
-
-  # real generation, mock judge (checks generation + preservation):
-  python -m evaluation.run_eval --mock-judge
-
-  # full scored run (needs GEMINI_API_KEY in .env):
-  python -m evaluation.run_eval --repeats 3
+hosted Llama model, scores them, and writes the results.
 
 Outputs (under --out, default eval_outputs/):
   generated.json   raw generated outputs (cached so the slow step runs once)

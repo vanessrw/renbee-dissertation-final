@@ -1,4 +1,4 @@
-"""Constrained Llama generation for the two LLM tasks in the thesis (§III.5):
+"""Constrained Llama generation for the two LLM tasks:
 
   - Task 1: RFQ summary  (installer-facing prose)
   - Task 2: EPC recommendation  (homeowner-facing plain English)

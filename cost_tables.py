@@ -5,10 +5,6 @@ verbatim. Every figure the recommendation prose quotes is copied from here,
 never computed — the same contract as the EPC cost figures produced by
 `map_recommendation_section` in epc_to_rfq.py.
 
-These are commercial guide prices. They are not MCS figures, not EPC figures,
-and not derived from the homeowner's own property, so the recommendation
-disclaimer names them as a separate source.
-
 Deliberately imports nothing from the project, so it can be pulled into app.py,
 generate_rfq.py, evaluation/build_cases.py and the tests without touching the
 epc_to_rfq import graph.

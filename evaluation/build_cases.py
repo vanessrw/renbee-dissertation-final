@@ -1,25 +1,5 @@
 """Build real-postcode-derived evaluation cases.
 
-This replaces the hand-authored synthetic cases with cases
-grounded in live UK data. For each curated postcode the script drives the same
-production code the live API uses:
-
-  - epc_fetch.fetch_epc_data (or the neighbour-fallback variant) for the real
-    Energy Performance Certificate attributes and improvement recommendations,
-  - epc_to_rfq.assemble_rfq_input to merge those with the homeowner form answers
-    into the structured RFQ input,
-  - epc_to_rfq.build_site_context for the real planning + grid site context.
-
-Honest framing (also stated in the thesis):
-
-  - Real, per postcode: the property attributes, the EPC recommendations, and
-    the site_context. These come from the live APIs.
-  - Assigned, per case: the homeowner form answers (the required common fields
-    and the technology-specific required fields, plus property_overrides on the
-    no-EPC Case B path). A postcode cannot supply these, so they are assigned
-    valid, varied values for coverage. This is inherent to the task, not a
-    synthetic shortcut.
-
 No LLM and no Gemini are involved here, so this runs now against the EPC and
 planning APIs, independent of the pending Vertex judge billing.
 
