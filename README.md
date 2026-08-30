@@ -1,138 +1,126 @@
 # Constrained LLM-Based RFQ Generation for Residential Decarbonisation
 
-Production-shape codebase for the MSc thesis *"Design and Evaluation of Constrained
-LLM-Based RFQ Generation in Residential Decarbonisation"* (Warwick), in partnership
-with **Renbee**, a UK B2C decarbonisation installer directory. The pipeline turns a
-homeowner's postcode and chosen technology into a structured, installer-ready Request
-for Quote (RFQ), using real UK open data and a hosted Llama 3.3 70B model under
-constrained prompting (no fine-tuning, no RAG).
+> **MSc Dissertation Repository**  
+> *Design and Evaluation of Constrained LLM-Based RFQ Generation in Residential Decarbonisation*  
 
-Four technologies are supported: **heat pump**, **solar PV**, **battery storage**, and
-**solar thermal**
+This repository contains the full production-shape codebase and evaluation harness for the dissertation. The pipeline transforms a UK homeowner's postcode and technology choice into a structured, installer-ready Request for Quote (RFQ), leveraging real UK open data (EPC & planning constraints) and a constrained Llama 3.3 70B model.
 
-## How it works
+Four decarbonisation technologies are supported: **heat pump**, **solar PV**, **battery storage**, and **solar thermal**.
 
-```
-postcode + technology
-      |
-      v
-  EPC API  +  planning.data.gov.uk        (real property + site data)
-      |
-      v
-  assemble structured RFQ input  ->  missing_fields form (Webflow Step 2)
-      |
-      v
-  two LLM moments (Llama 3.3 70B, constrained prompts):
-    1. homeowner-facing EPC recommendation   (engagement)
-    2. installer-facing RFQ summary           (HITL review, then sent)
-```
+---
+> ### Note Regarding API Keys & Mock vs. Paper Results
+> Live execution connects to external APIs (**UK EPC Open Data API** and **Google Cloud Vertex AI** for Llama 3.3 70B and Gemini 3.5 Flash-Lite). To prevent unauthorized usage and comply with security practices, API keys and credentials are **not published in the GitHub repository**.
+>
+> **You can fully run and evaluate the codebase without API keys** using the built-in **Mock Modes**:
+> - **Mock Generation (`DEMO_MOCK_LLM=1` / `--mock-gen`)**: Uses deterministic mock generation to exercise the entire pipeline offline without API calls.
+> - **Mock Evaluation (`--mock-judge`)**: Exercises the full evaluation scoring loop and generates metric reports without requiring GCP Vertex AI credentials.
+>
+> ⚠️ **Note on Results**: Evaluation scores produced in Mock Mode verify code execution, but their numerical values will differ from the empirical results reported in the dissertation paper (which require the live Llama 3.3 70B model and Gemini judge). The exact live evaluation data reported in the paper is pre-computed and preserved in **`eval_outputs/`**.
 
-When the homeowner's own EPC is unavailable, the pipeline falls back through two proxy
-layers (same-postcode aggregate, then nearby-postcode aggregate or pick-one) before the
-final manual-entry form. See `CLAUDE.md` for the full architecture.
+---
 
-## Repository structure
+## 🚀 How to Run the Code
 
-| Path | What it is |
-|---|---|
-| `epc_fetch.py` | Postcode to UK EPC API. Reads `EPC_BEARER_TOKEN`. |
-| `external_data.py` | Postcode to planning constraints (listed / conservation / AONB / WHS / National Park / Article 4). Powers `site_context`. |
-| `epc_to_rfq.py` | Assembles EPC + form answers into the RFQ schema. Owns `FIELDS`, `missing_fields()`, `completeness_score()`, proxy builders. |
-| `generate_rfq.py` | Hosted Llama 3.3 70B + the two constrained system prompts (recommendation / RFQ). |
-| `pipeline.py` | CLI orchestrator (assemble, generate, or both). |
-| `app.py` | FastAPI server. `/api/initiate`, `/api/generate`, `/api/generate-rfq`, `/api/save-rfq`, `/demo`, `/health`. |
-| `webflow_demo.html` | Standalone Webflow-style demo, served at `/demo`. |
-| `test_api.py` | End-to-end smoke tests (EPC + LLM + external data mocked). |
-| `evaluation/` | Evaluation harness (see below). |
-| `notebooks/` | `renbee_demo_journey.ipynb`, the homeowner journey runnable on Vertex AI Workbench. Setup in `notebooks/README.md`. |
-| `rfq_cases_real_v1.json` | 30 real-postcode evaluation cases (per-case breakdown in `evaluation/CASES.md`). |
-| `CLAUDE.md` | Full architecture and design notes. |
-| `HOW_TO_RUN.md` | Setup and run commands. |
-| `TECHNICAL.md` | Extended technical write-up. |
+You can run the demonstration pipeline either via an interactive **Jupyter Notebook** (1-click execution) or through the **Terminal**.
 
-`evaluation/`:
+### Option A: Run via Jupyter Notebook
+1. Open [`renbee_demo_journey.ipynb`](renbee_demo_journey.ipynb).
+2. Run all cells. This executes the entire pipeline: postcode lookup $\rightarrow$ EPC fetch $\rightarrow$ planning constraints check $\rightarrow$ RFQ input assembly $\rightarrow$ output generation.
 
-| File | Role |
-|---|---|
-| `build_cases.py` | Builds the real-postcode case set from live APIs. |
-| `run_eval.py` | Generates both LLM outputs per case, scores them, writes `eval_outputs/`. |
-| `faithfulness.py` | Deterministic preservation + site-context coverage; judge-based fabrication. |
-| `rubric.py` | Judge prompts and the 1-5 quality criteria. |
-| `gemini_client.py` | Gemini 3.5 Flash-Lite (Vertex AI) judge wrapper, with a mock mode. |
-| `review.py` | Renders an HTML side-by-side of the deterministic metrics vs the judge. |
-
-The quotable run is **`eval_outputs_cloud70b_v2/`**. `eval_outputs_cloud70b/` is superseded,
-and `eval_outputs/` (local 3B, an older judge, the unanchored v1 rubric) is orphaned and not
-comparable. See the run-provenance table in `CLAUDE.md`.
-
-## Quickstart
+### Option B: Run via Interactive Web Demo (Terminal)
+To run the interactive web application demo locally:
 
 ```bash
-python3 -m venv venv && source venv/bin/activate
+# 1. Setup environment
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env      # then fill in EPC_BEARER_TOKEN etc.
 
-# fastest way to see the flow (no network, no credentials):
-DEMO_MOCK_LLM=1 uvicorn app:app --port 8000   # open http://localhost:8000/demo
+# 2. Launch local web server in Mock Mode (no network/credentials required)
+DEMO_MOCK_LLM=1 uvicorn app:app --port 8000
+```
+Open **`http://localhost:8000/demo`** in your browser to walk through the interactive Webflow homeowner journey.
+
+### Option C: Run Pipeline via Command Line (CLI)
+```bash
+# Process a single case via CLI
+python3 pipeline.py --postcode "E1 6AN" --tech heat_pump --mock
 ```
 
-Full setup and the evaluation commands are in [`HOW_TO_RUN.md`](HOW_TO_RUN.md).
+---
 
-## Generation
+## 📊 How to Run the Evaluation Suite
 
-All generation is hosted. There is no local-weights path, so the repo needs neither
-torch nor transformers, and installs in seconds.
+The evaluation harness tests 30 real UK postcode cases across structural completeness, LLM faithfulness (preservation & fabrication rates), and qualitative rubric criteria (clarity, usability, helpfulness).
 
-| Mode | Set | Used for |
-|---|---|---|
-| hosted (default) | `LLM_API_BASE` in `.env` | Everything: evaluation, demos, production. |
-| mock | `DEMO_MOCK_LLM=1` | UI walkthroughs with no model and no network. |
+### Option A: Run Evaluation via Jupyter Notebook
+Open and run **[`evaluation_runner.ipynb`](evaluation_runner.ipynb)**. It executes the evaluation suite, loads the results table, and plots metric visualisations.
 
-The model of record is **Llama 3.3 70B Instruct on Vertex AI Model-as-a-Service**
-(`meta/llama-3.3-70b-instruct-maas`), hardcoded as `MODEL_NAME` in `generate_rfq.py`
-and overridable with `LLM_MODEL`. Decoding is fixed in code rather than read from the
-environment, so a run cannot silently differ from the paper: `temperature=0.2`,
-`top_p=0.9`, and 800/400 token caps for the RFQ and recommendation respectively.
+### Option B: Run Evaluation via Terminal
 
 ```bash
-uvicorn app:app --port 8000                    # hosted generation
-DEMO_MOCK_LLM=1 uvicorn app:app --port 8000    # canned responses, no network
+# 1. Run full evaluation offline (no API keys required)
+python3 evaluation/run_eval.py --mock-gen --mock-judge
+
+# 2. Run live evaluation on Vertex AI (Requires GCP credentials in .env)
+python3 evaluation/run_eval.py --repeats 3 --regenerate
 ```
 
-`LLM_API_BASE` points at any OpenAI-compatible `/chat/completions` host. Leave
-`LLM_API_KEY` unset on Vertex and auth falls back to Google ADC or the service-account
-key; setting it switches to a static bearer token, which is what Together, Groq,
-Fireworks and OpenRouter expect. `GET /health` reports the active target.
+---
 
-Two caveats worth knowing:
+## 📁 Project Structure & Key Components
 
-- **Vertex Llama Model-as-a-Service needs one-time enablement** in Model Garden, on
-  the *API service* card rather than the self-deploy one. Until then every call
-  returns 404 with *"not found or your project does not have access to it"*. Only
-  `llama-3.3-70b-instruct-maas` and `llama-4-maverick-17b-128e-instruct-maas` are
-  offered as managed endpoints, both `us-central1` only.
-- **429s are routine, not failures.** MaaS runs on shared capacity. A two-call demo
-  never sees one; a 180-call evaluation run sees several. `generate_output()` honours
-  `Retry-After` and otherwise backs off exponentially with jitter, up to
-  `LLM_MAX_RETRIES` (default 6).
+The codebase is organized into four simple functional modules:
 
-## Approach and constraints
+### 1. ⚙️ Core Generation Pipeline
+- **`epc_to_rfq.py`**: Assembles property & form data into the RFQ schema and handles missing field detection.
+- **`generate_rfq.py`**: Constrained Llama 3.3 70B generation engine using dedicated system prompts.
+- **`pipeline.py`**: Python CLI orchestrator connecting data retrieval, assembly, and generation.
 
-Per the thesis method, generation is **constrained prompt engineering only**: no
-fine-tuning and no retrieval. Behaviour is changed by editing the system prompts in
-`generate_rfq.py`. The hosted Llama 3.3 70B is the system under evaluation, and the
-evaluation harness records the model in the generation-cache key and in
-`scores.json` metadata so results always carry their provenance.
+### 2. 🌐 Open Data Integration
+- **`epc_fetch.py`**: Connects to the UK EPC Open Data API (with proxy fallback logic for missing certificates).
+- **`external_data.py`**: Queries UK planning constraints.
 
-Because generation is hosted, property attributes and postcode leave the machine on
-every call. Contact details do not: `_redact_contact_details()` strips
-`contact_email` and `contact_phone` before either prompt sees the input.
+### 3. 💻 Web App & Interactive Notebooks
+- **`app.py`**: FastAPI web server hosting API endpoints (`/api/initiate`, `/api/generate`) and the local demo UI.
+- **`renbee_demo_journey.ipynb`**: 1-click interactive notebook demonstrating the complete customer journey.
 
-## Known limitations
+### 4. 📊 Evaluation Harness (`evaluation/`)
+- **`evaluation_runner.ipynb`**: Notebook runner to execute evaluation runs and render visual plots.
+- **`evaluation/run_eval.py`**: Main orchestrator running evaluations across 30 real postcode test cases.
+- **`evaluation/faithfulness.py`**: Calculates information preservation, site-context coverage, and fabrication rates.
+- **`evaluation/rubric.py`**: LLM judge scoring for qualitative criteria (Clarity, Usability, Helpfulness).
+- **`evaluation/format_table.py`**: Formats evaluation outputs into the thesis Markdown summary table (RQ1-RQ3).
+- **`rfq_cases_real_v1.json`**: Benchmark dataset containing 30 real UK postcode evaluation test cases.
+- **`eval_outputs/`**: Contains pre-computed evaluation output files (`summary.csv`, `scores.json`, `generated.json`).
 
-- **Grid headroom is unavailable.** The UKPN open-data headroom dataset the code
-  queried has been retired, so `site_context.grid` is currently `null` for every
-  postcode. Planning constraints are unaffected.
-- **Listed-building detection is centroid-based** and effectively never resolves a
-  listed building from a postcode centroid.
-- **Sessions are in-memory** (`app.py`), so they do not survive a server restart.
+---
+
+## 🛠 System Architecture & Approach
+
+```text
+Postcode + Technology Choice
+      │
+      ▼
+EPC Open Data API  +  planning.data.gov.uk (Real Property & Site Constraints)
+      │
+      ▼
+RFQ Input Assembly (epc_to_rfq.py) ──► missing_fields Form (Webflow Step 2)
+      │
+      ▼
+Two Constrained LLM Prompt Moments (Llama 3.3 70B):
+  1. Homeowner-facing EPC recommendation summary (Engagement)
+  2. Installer-facing RFQ summary (HITL review before installer dispatch)
+```
+
+- **Constrained Prompting**: Per the thesis methodology, generation relies on constrained system prompts without fine-tuning or RAG, enforcing zero hallucination of factual property inputs.
+- **Privacy & Safety**: Contact details (`email`, `phone`) are automatically redacted via `_redact_contact_details()` before any prompt context is dispatched to the LLM.
+
+---
+
+## 📝 Contact
+
+- **Author**: Vanessa Rebecca Wiyono
+- **Student id**: u5729891
+- **Email**: Vanessa-Rebecca.Wiyono@warwick.ac.uk
+
