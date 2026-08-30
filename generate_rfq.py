@@ -219,6 +219,12 @@ def generate_output(messages, max_new_tokens: int = 800) -> str:
     """
     import requests  # lazy
 
+    if os.getenv("DEMO_MOCK_LLM") in {"1", "true", "yes"}:
+        return json.dumps({
+            "rfq_summary": "The homeowner is requesting a quotation based on property details provided. [mock generator]",
+            "recommendation_summary": "Your property has recommendation items on record. [mock generator]"
+        }, ensure_ascii=False)
+
     base = os.getenv("LLM_API_BASE", "").rstrip("/")
     model_id = os.getenv("LLM_MODEL") or MODEL_NAME
     if not base:
