@@ -3,20 +3,6 @@
   - Task 1: RFQ summary  (installer-facing prose)
   - Task 2: EPC recommendation  (homeowner-facing plain English)
 
-The two tasks map directly to the two LLM moments in the Renbee customer
-journey and each has a dedicated system prompt. `run_case()` evaluates a
-case against both prompts and merges the outputs — the same prompts that
-serve the live API.
-
-Generation runs against a hosted OpenAI-compatible /chat/completions endpoint
-(Llama 3.3 70B on Vertex AI). There is no local-weights path.
-
-Public API:
-  generate_rfq_summary(rfq_input)    -> {"rfq_summary": "..."}
-  generate_recommendation(rfq_input) -> {"recommendation_summary": "...",
-                                         "recommendation_disclaimer": "..."}
-  run_case(case)                     -> {"rfq_summary": ..., "recommendation_summary": ...,
-                                         "recommendation_disclaimer": ...}
 """
 from __future__ import annotations
 

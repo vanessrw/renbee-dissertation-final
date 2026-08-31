@@ -4,7 +4,7 @@ hosted Llama model, scores them, and writes the results.
 Outputs (under --out, default eval_outputs/):
   generated.json   raw generated outputs (cached so the slow step runs once)
   scores.json      per-case, per-repeat metric breakdown + run metadata
-  summary.csv      aggregate table ready to quote in Chapter IV
+  summary.csv      aggregate table
 """
 from __future__ import annotations
 

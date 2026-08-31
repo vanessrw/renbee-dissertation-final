@@ -1,19 +1,10 @@
-"""Renbee indicative cost tables (solar PV and heat pump only).
-
-Two static lookup tables from Renbee's homeowner cost guidance, transcribed
-verbatim. Every figure the recommendation prose quotes is copied from here,
-never computed — the same contract as the EPC cost figures produced by
-`map_recommendation_section` in epc_to_rfq.py.
-
-Deliberately imports nothing from the project, so it can be pulled into app.py,
-generate_rfq.py, evaluation/build_cases.py and the tests without touching the
-epc_to_rfq import graph.
+"""Indicative cost tables (solar PV and heat pump only).
 """
 from __future__ import annotations
 
 from typing import Any, Optional
 
-SOURCE = "Renbee indicative cost tables"
+SOURCE = "Indicative cost tables"
 
 # The prompt requires the cost block to close with this caveat. It is carried as
 # data for the same reason derive_planning_consequences exists: the fabrication

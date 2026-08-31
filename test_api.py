@@ -1,15 +1,4 @@
 """End-to-end smoke test for the API, with EPC fetcher and LLM mocked.
-
-Run:
-  python test_api.py
-
-Validates:
-  /health
-  /api/initiate (postcode + tech)
-  /api/generate (Step 2 fields)
-  /api/generate-rfq (vendor selection)
-  /api/session/{id}
-  Error paths: ambiguous postcode, unknown session, missing required fields
 """
 from __future__ import annotations
 

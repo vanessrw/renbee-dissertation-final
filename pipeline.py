@@ -1,15 +1,4 @@
 """End-to-end CLI: postcode + user form -> EPC fetch -> assembler -> LLM -> summaries.
-
-CLI modes:
-  python pipeline.py "<postcode>" [house_number]                     # assemble only (no LLM, fast)
-  python pipeline.py --generate "<postcode>" [house_number]          # both prompts (RFQ + recommendation)
-  python pipeline.py --recommendation "<postcode>" [house_number]    # homeowner-facing only
-  python pipeline.py --rfq "<postcode>" [house_number]               # installer-facing only
-
-`--generate` runs the same two production prompts the live API uses and
-merges their outputs — the convenience flag for thesis-evaluation spot
-checks. For Renbee's live integration, the API in `app.py` calls the
-split functions directly at the appropriate moments.
 """
 from __future__ import annotations
 

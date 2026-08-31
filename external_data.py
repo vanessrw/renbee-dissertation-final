@@ -1,24 +1,4 @@
 """External data sources for site-intelligence enrichment.
-
-Two pure functions, both failure-tolerant (any network or HTTP error returns
-an empty/None result so the rest of the pipeline keeps working):
-
-  fetch_planning_constraints(postcode) -> dict
-      Hits planning.data.gov.uk (free, Open Government Licence) for the
-      postcode's centroid and returns flags for listed buildings,
-      conservation areas, Article 4 directions, AONBs, World Heritage Sites,
-      and National Parks.
-
-  fetch_ukpn_constraints(postcode) -> dict | None
-      Hits the UKPN Open Data Portal (CC BY 4.0 / OGL UK 3.0, registration
-      required for the headroom dataset) for the nearest PRIMARY substation
-      and returns its demand + generation headroom figures. Returns None when
-      the postcode isn't in UKPN's licence area or when no API key is set.
-
-Both functions cache responses in-process keyed by postcode.
-
-Attribution required by UKPN's CC BY 4.0 licence; the demo page surfaces this
-in the site-intelligence panel footer.
 """
 from __future__ import annotations
 

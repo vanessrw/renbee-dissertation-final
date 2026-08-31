@@ -1,19 +1,4 @@
-"""FastAPI wrapper for the Renbee RFQ pipeline.
-
-Endpoints reflect the customer journey (two LLM moments):
-
-  POST /api/initiate         postcode + technology -> EPC fetch + assemble + missing_fields
-  POST /api/generate         additional fields -> homeowner-facing recommendation summary
-  POST /api/generate-rfq     homeowner asks for quotes -> installer-facing RFQ summary
-
-Session state (the assembled RFQ dict) is held in-memory keyed by session_id.
-For Renbee production, replace `_SESSIONS` with Redis or a small DB.
-
-Run locally:
-  uvicorn app:app --reload --port 8000
-
-Health check:
-  GET /health
+"""FastAPI wrapper for the RFQ pipeline.
 """
 from __future__ import annotations
 
