@@ -12,7 +12,7 @@ Four decarbonisation technologies are supported: **heat pump**, **solar PV**, **
 > Live execution connects to external APIs (**UK EPC Open Data API** and **Google Cloud Vertex AI** for Llama 3.3 70B and Gemini 3.5 Flash-Lite). To prevent unauthorized usage and comply with security practices, API keys and credentials are **not published in the GitHub repository**.
 >
 > **Both included Jupyter Notebooks are pre-configured to run in Mock Mode**:
-> - **[`renbee_demo_journey_mock.ipynb`](renbee_demo_journey_mock.ipynb)**: Runs the complete customer journey offline with canned mock generation (`DEMO_MOCK_LLM=1`).
+> - **[`demo_journey_mock.ipynb`](demo_journey_mock.ipynb)**: Runs the complete customer journey offline with canned mock generation (`DEMO_MOCK_LLM=1`).
 > - **[`evaluation_runner_mock.ipynb`](evaluation_runner_mock.ipynb)**: Runs the 30-case evaluation harness offline without requiring GCP Vertex AI credentials (`--mock-gen --mock-judge`).
 >
 > ⚠️ **Note on Results**: Evaluation scores produced in Mock Mode verify code execution, but their numerical values will differ from the empirical results reported in the dissertation paper (which require the live Llama 3.3 70B model and Gemini judge). The exact live evaluation data reported in the paper is pre-computed and preserved in **`eval_outputs/`**.
@@ -24,7 +24,7 @@ Four decarbonisation technologies are supported: **heat pump**, **solar PV**, **
 You can run the demonstration pipeline either via an interactive **Jupyter Notebook** (1-click execution) or through the **Terminal**.
 
 ### Option A: Run via Jupyter Notebook (Mock Mode)
-1. Open [`renbee_demo_journey_mock.ipynb`](renbee_demo_journey_mock.ipynb).
+1. Open [`demo_journey_mock.ipynb`](demo_journey_mock.ipynb).
 2. Click **Run All**. This executes the entire pipeline offline: postcode lookup $\rightarrow$ EPC fetch $\rightarrow$ planning constraints check $\rightarrow$ RFQ input assembly $\rightarrow$ output generation.
 
 ### Option B: Run via Interactive Web Demo (Terminal)
@@ -81,7 +81,7 @@ The codebase is organized into four simple functional modules:
 
 ### 3. 💻 Web App & Interactive Notebooks
 - **`app.py`**: FastAPI web server hosting API endpoints (`/api/initiate`, `/api/generate`) and the local demo UI.
-- **`renbee_demo_journey_mock.ipynb`**: 1-click interactive notebook demonstrating the complete customer journey in Mock Mode.
+- **`demo_journey_mock.ipynb`**: 1-click interactive notebook demonstrating the complete customer journey in Mock Mode.
 
 ### 4. 📊 Evaluation Harness (`evaluation/`)
 - **`evaluation_runner_mock.ipynb`**: Notebook runner to execute evaluation runs in Mock Mode and render visual plots.
