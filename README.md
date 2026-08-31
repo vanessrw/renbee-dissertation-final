@@ -122,3 +122,10 @@ Two Constrained LLM Prompt Moments (Llama 3.3 70B):
 - **Student id**: u5729891
 - **Email**: Vanessa-Rebecca.Wiyono@warwick.ac.uk
 
+## 🔒 License
+
+Copyright © 2026 Vanessa Rebecca Wiyono. All rights reserved.
+
+This repository is provided for academic and portfolio viewing purposes only. The source code may not be copied, modified, distributed, reproduced, or used in other projects without prior written permission from the author.
+
+
