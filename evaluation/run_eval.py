@@ -13,16 +13,19 @@ import csv
 import json
 import os
 import statistics
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from epc_to_rfq import completeness_score
 from evaluation import faithfulness, rubric
 from evaluation.gemini_client import GeminiClient
-
-HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent
 DEFAULT_CASES = ROOT / "rfq_cases_real_v1.json"
 DEFAULT_OUT = ROOT / "eval_outputs"
 

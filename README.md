@@ -11,9 +11,9 @@ Four decarbonisation technologies are supported: **heat pump**, **solar PV**, **
 > ### Note Regarding API Keys & Mock vs. Paper Results
 > Live execution connects to external APIs (**UK EPC Open Data API** and **Google Cloud Vertex AI** for Llama 3.3 70B and Gemini 3.5 Flash-Lite). To prevent unauthorized usage and comply with security practices, API keys and credentials are **not published in the GitHub repository**.
 >
-> **You can fully run and evaluate the codebase without API keys** using the built-in **Mock Modes**:
-> - **Mock Generation (`DEMO_MOCK_LLM=1` / `--mock-gen`)**: Uses deterministic mock generation to exercise the entire pipeline offline without API calls.
-> - **Mock Evaluation (`--mock-judge`)**: Exercises the full evaluation scoring loop and generates metric reports without requiring GCP Vertex AI credentials.
+> **Both included Jupyter Notebooks are pre-configured to run in Mock Mode**:
+> - **[`renbee_demo_journey_mock.ipynb`](renbee_demo_journey_mock.ipynb)**: Runs the complete customer journey offline with canned mock generation (`DEMO_MOCK_LLM=1`).
+> - **[`evaluation_runner_mock.ipynb`](evaluation_runner_mock.ipynb)**: Runs the 30-case evaluation harness offline without requiring GCP Vertex AI credentials (`--mock-gen --mock-judge`).
 >
 > ⚠️ **Note on Results**: Evaluation scores produced in Mock Mode verify code execution, but their numerical values will differ from the empirical results reported in the dissertation paper (which require the live Llama 3.3 70B model and Gemini judge). The exact live evaluation data reported in the paper is pre-computed and preserved in **`eval_outputs/`**.
 
@@ -23,9 +23,9 @@ Four decarbonisation technologies are supported: **heat pump**, **solar PV**, **
 
 You can run the demonstration pipeline either via an interactive **Jupyter Notebook** (1-click execution) or through the **Terminal**.
 
-### Option A: Run via Jupyter Notebook
-1. Open [`renbee_demo_journey.ipynb`](renbee_demo_journey.ipynb).
-2. Run all cells. This executes the entire pipeline: postcode lookup $\rightarrow$ EPC fetch $\rightarrow$ planning constraints check $\rightarrow$ RFQ input assembly $\rightarrow$ output generation.
+### Option A: Run via Jupyter Notebook (Mock Mode)
+1. Open [`renbee_demo_journey_mock.ipynb`](renbee_demo_journey_mock.ipynb).
+2. Click **Run All**. This executes the entire pipeline offline: postcode lookup $\rightarrow$ EPC fetch $\rightarrow$ planning constraints check $\rightarrow$ RFQ input assembly $\rightarrow$ output generation.
 
 ### Option B: Run via Interactive Web Demo (Terminal)
 To run the interactive web application demo locally:
@@ -41,11 +41,6 @@ DEMO_MOCK_LLM=1 uvicorn app:app --port 8000
 ```
 Open **`http://localhost:8000/demo`** in your browser to walk through the interactive Webflow homeowner journey.
 
-### Option C: Run Pipeline via Command Line (CLI)
-```bash
-# Process a single case via CLI
-python3 pipeline.py --postcode "E1 6AN" --tech heat_pump --mock
-```
 
 ---
 
@@ -53,8 +48,8 @@ python3 pipeline.py --postcode "E1 6AN" --tech heat_pump --mock
 
 The evaluation harness tests 30 real UK postcode cases across structural completeness, LLM faithfulness (preservation & fabrication rates), and qualitative rubric criteria (clarity, usability, helpfulness).
 
-### Option A: Run Evaluation via Jupyter Notebook
-Open and run **[`evaluation_runner.ipynb`](evaluation_runner.ipynb)**. It executes the evaluation suite, loads the results table, and plots metric visualisations.
+### Option A: Run Evaluation via Jupyter Notebook (Mock Mode)
+Open and run **[`evaluation_runner_mock.ipynb`](evaluation_runner_mock.ipynb)**. It executes the evaluation suite offline, loads the summary table, and plots metric visualisations.
 
 ### Option B: Run Evaluation via Terminal
 
@@ -83,10 +78,10 @@ The codebase is organized into four simple functional modules:
 
 ### 3. 💻 Web App & Interactive Notebooks
 - **`app.py`**: FastAPI web server hosting API endpoints (`/api/initiate`, `/api/generate`) and the local demo UI.
-- **`renbee_demo_journey.ipynb`**: 1-click interactive notebook demonstrating the complete customer journey.
+- **`renbee_demo_journey_mock.ipynb`**: 1-click interactive notebook demonstrating the complete customer journey in Mock Mode.
 
 ### 4. 📊 Evaluation Harness (`evaluation/`)
-- **`evaluation_runner.ipynb`**: Notebook runner to execute evaluation runs and render visual plots.
+- **`evaluation_runner_mock.ipynb`**: Notebook runner to execute evaluation runs in Mock Mode and render visual plots.
 - **`evaluation/run_eval.py`**: Main orchestrator running evaluations across 30 real postcode test cases.
 - **`evaluation/faithfulness.py`**: Calculates information preservation, site-context coverage, and fabrication rates.
 - **`evaluation/rubric.py`**: LLM judge scoring for qualitative criteria (Clarity, Usability, Helpfulness).
