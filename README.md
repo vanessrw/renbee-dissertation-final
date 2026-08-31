@@ -31,13 +31,16 @@ You can run the demonstration pipeline either via an interactive **Jupyter Noteb
 To run the interactive web application demo locally:
 
 ```bash
-# 1. Setup environment
+# Setup environment
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Launch local web server in Mock Mode (no network/credentials required)
+# Option 1: Launch local web server in Mock Mode (no network/credentials required)
 DEMO_MOCK_LLM=1 uvicorn app:app --port 8000
+
+# Option 2: Launch local web server with Real Model (requires GCP credentials in .env)
+uvicorn app:app --port 8000
 ```
 Open **`http://localhost:8000/demo`** in your browser to walk through the interactive Webflow homeowner journey.
 
@@ -54,10 +57,10 @@ Open and run **[`evaluation_runner_mock.ipynb`](evaluation_runner_mock.ipynb)**.
 ### Option B: Run Evaluation via Terminal
 
 ```bash
-# 1. Run full evaluation offline (no API keys required)
+# Option 1: Run full evaluation offline (no API keys required)
 python3 evaluation/run_eval.py --mock-gen --mock-judge
 
-# 2. Run live evaluation on Vertex AI (Requires GCP credentials in .env)
+# Option 2: Run live evaluation on Vertex AI (Requires GCP credentials in .env)
 python3 evaluation/run_eval.py --repeats 3 --regenerate
 ```
 
